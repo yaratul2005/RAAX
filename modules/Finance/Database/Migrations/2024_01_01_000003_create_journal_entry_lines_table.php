@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('journal_entry_lines', function (Blueprint $table) {
+            $table->id();
+            $table->uuid('tenant_id');
+            $table->foreignId('journal_entry_id')->constrained('journal_entries')->onDelete('cascade');
+            $table->foreignId('ledger_account_id')->constrained('ledger_accounts')->onDelete('restrict');
+            $table->bigInteger('debit_amount')->default(0)->comment('Stored in cents');
+            $table->bigInteger('credit_amount')->default(0)->comment('Stored in cents');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        if (config('database.default') !== 'sqlite') {
+            DB::statement('ALTER TABLE journal_entry_lines ENABLE ROW LEVEL SECURITY;');
+            DB::statement('ALTER TABLE journal_entry_lines FORCE ROW LEVEL SECURITY;');
+            DB::statement("
+                CREATE POLICY tenant_isolation_policy ON journal_entry_lines
+                FOR ALL
+                TO app_user
+                USING (tenant_id = NULLIF(current_setting('app.current_tenant_id', TRUE), '')::UUID);
+            ");
+        }
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('journal_entry_lines');
+    }
+};
