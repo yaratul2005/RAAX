@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Modules\HR\Models\AttendanceLog;
+use Modules\HR\Events\AttendanceLogged;
+
 use Modules\HR\Models\Employee;
 use Modules\HR\Models\Shift;
 
@@ -64,7 +66,7 @@ class AttendanceLogger
             }
         }
 
-        return AttendanceLog::create([
+        $log = AttendanceLog::create([
             'id' => Str::uuid()->toString(),
             'tenant_id' => $tenantId,
             'employee_id' => $employeeId,
@@ -72,8 +74,10 @@ class AttendanceLogger
             'date' => $date,
             'check_in' => $checkInTime,
             'late_minutes' => $lateMinutes,
-            'status' => $status,
-        ]);
+
+        event(new AttendanceLogged($log));
+
+        return $log;
     }
 
     public function checkOut(string $employeeId, string $checkOutTimeStr): AttendanceLog
@@ -106,7 +110,6 @@ class AttendanceLogger
         $log->update([
             'check_out' => $checkOutTime,
             'worked_minutes' => $workedMinutes,
-        ]);
 
         return $log;
     }
