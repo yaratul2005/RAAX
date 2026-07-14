@@ -15,4 +15,7 @@ Route::middleware('tenant')->group(function () {
 
     Route::post('/hr/attendance/check-in', [AttendanceController::class, 'checkIn']);
     Route::post('/hr/attendance/check-out', [AttendanceController::class, 'checkOut']);
+    Route::post('/hr/salaries', [\Modules\HR\Http\Controllers\PayrollController::class, 'storeSalaryProfile']);
+    Route::post('/hr/payroll/generate', [\Modules\HR\Http\Controllers\PayrollController::class, 'generateBatch']);
+    Route::post('/hr/payroll/{payslip}/pay', [\Modules\HR\Http\Controllers\PayrollController::class, 'pay']);
 });

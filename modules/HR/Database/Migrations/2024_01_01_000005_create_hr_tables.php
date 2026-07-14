@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email');
+            $table->string('gender')->default('male');
             $table->string('phone')->nullable();
             $table->uuid('department_id');
             $table->uuid('designation_id');
