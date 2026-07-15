@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-class FIFOValuationEngine
+class FIFOValuationEngine implements \Modules\Inventory\Contracts\FIFOValuationEngineInterface
 {
     protected TenantContextManager $tenantManager;
 
