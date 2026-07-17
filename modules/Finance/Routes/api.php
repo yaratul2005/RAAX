@@ -13,4 +13,7 @@ Route::middleware('tenant')->group(function () {
     Route::post('/finance/invoices', [\Modules\Finance\Http\Controllers\AgingController::class, 'store']);
     Route::get('/finance/aging/ap', [\Modules\Finance\Http\Controllers\AgingController::class, 'agingAp']);
     Route::get('/finance/aging/ar', [\Modules\Finance\Http\Controllers\AgingController::class, 'agingAr']);
+    Route::post('/finance/bank/statements', [\Modules\Finance\Http\Controllers\BankReconciliationController::class, 'upload']);
+    Route::post('/finance/bank/statements/{statement}/reconcile', [\Modules\Finance\Http\Controllers\BankReconciliationController::class, 'reconcile']);
+    Route::get('/finance/bank/statements/{statement}/unmatched', [\Modules\Finance\Http\Controllers\BankReconciliationController::class, 'unmatched']);
 });
