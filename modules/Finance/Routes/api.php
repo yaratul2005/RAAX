@@ -16,4 +16,7 @@ Route::middleware('tenant')->group(function () {
     Route::post('/finance/bank/statements', [\Modules\Finance\Http\Controllers\BankReconciliationController::class, 'upload']);
     Route::post('/finance/bank/statements/{statement}/reconcile', [\Modules\Finance\Http\Controllers\BankReconciliationController::class, 'reconcile']);
     Route::get('/finance/bank/statements/{statement}/unmatched', [\Modules\Finance\Http\Controllers\BankReconciliationController::class, 'unmatched']);
+    Route::post('/finance/fiscal-years', [\Modules\Finance\Http\Controllers\ConsolidatedReportingController::class, 'storeFiscalYear']);
+    Route::post('/finance/fiscal-years/{fiscalYear}/close', [\Modules\Finance\Http\Controllers\ConsolidatedReportingController::class, 'closeFiscalYear']);
+    Route::get('/finance/reports/consolidated-trial-balance', [\Modules\Finance\Http\Controllers\ConsolidatedReportingController::class, 'consolidatedTrialBalance']);
 });
