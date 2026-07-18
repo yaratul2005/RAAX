@@ -12,6 +12,7 @@ class FinanceServiceProvider extends ServiceProvider
     }
 
     public function boot(): void
+        \Illuminate\Support\Facades\Event::listen(\Modules\Inventory\Events\IntercompanyTransferCompleted::class, \Modules\Finance\Listeners\ReconcileIntercompanyTransfer::class);
     {
         // Boot Finance module services
     }
