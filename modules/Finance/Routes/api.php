@@ -22,4 +22,7 @@ Route::middleware('tenant')->group(function () {
     Route::post('/finance/vat/deposits', [\Modules\Finance\Http\Controllers\VATComplianceController::class, 'storeDeposit']);
     Route::get('/finance/vat/returns/{period}', [\Modules\Finance\Http\Controllers\VATComplianceController::class, 'previewReturn']);
     Route::post('/finance/vat/returns/{period}/submit', [\Modules\Finance\Http\Controllers\VATComplianceController::class, 'submitReturn']);
+    Route::post('/finance/vat/vds', [\Modules\Finance\Http\Controllers\VATAdjustmentController::class, 'issueVds']);
+    Route::post('/finance/vat/credit-notes', [\Modules\Finance\Http\Controllers\VATAdjustmentController::class, 'processCreditNote']);
+    Route::post('/finance/vat/debit-notes', [\Modules\Finance\Http\Controllers\VATAdjustmentController::class, 'processDebitNote']);
 });
