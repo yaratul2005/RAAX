@@ -19,4 +19,7 @@ Route::middleware('tenant')->group(function () {
     Route::post('/finance/fiscal-years', [\Modules\Finance\Http\Controllers\ConsolidatedReportingController::class, 'storeFiscalYear']);
     Route::post('/finance/fiscal-years/{fiscalYear}/close', [\Modules\Finance\Http\Controllers\ConsolidatedReportingController::class, 'closeFiscalYear']);
     Route::get('/finance/reports/consolidated-trial-balance', [\Modules\Finance\Http\Controllers\ConsolidatedReportingController::class, 'consolidatedTrialBalance']);
+    Route::post('/finance/vat/deposits', [\Modules\Finance\Http\Controllers\VATComplianceController::class, 'storeDeposit']);
+    Route::get('/finance/vat/returns/{period}', [\Modules\Finance\Http\Controllers\VATComplianceController::class, 'previewReturn']);
+    Route::post('/finance/vat/returns/{period}/submit', [\Modules\Finance\Http\Controllers\VATComplianceController::class, 'submitReturn']);
 });
