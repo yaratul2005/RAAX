@@ -60,6 +60,7 @@ return [
 
         'single' => [
             'driver' => 'single',
+            'formatter' => env('LOG_STDERR_FORMATTER', MonologFormatterJsonFormatter::class),
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
@@ -67,6 +68,7 @@ return [
 
         'daily' => [
             'driver' => 'daily',
+            'formatter' => env('LOG_STDERR_FORMATTER', MonologFormatterJsonFormatter::class),
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => env('LOG_DAILY_DAYS', 14),
