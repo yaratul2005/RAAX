@@ -1,37 +1,99 @@
-# RAAX ERP Base Core
+# RAAX ERP - Enterprise Modular Monolith
 
-RAAX ERP is an enterprise-grade ERP system built on Laravel 12 using a Domain-Driven Modular Monolith architecture.
+![Architecture](https://img.shields.io/badge/Architecture-Modular_Monolith-0F766E?style=for-the-badge)
+![Tech Stack](https://img.shields.io/badge/Stack-PHP_8.3_|_Laravel_12-10B981?style=for-the-badge)
+![Security](https://img.shields.io/badge/Security-PostgreSQL_RLS-F59E0B?style=for-the-badge)
+![Repository](https://img.shields.io/badge/Git_Tree-<1.5_MB_Clean-3B82F6?style=for-the-badge)
 
-## Architecture & Configuration
+<p align="center">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" fill="none" width="100%">
+  <rect width="800" height="300" rx="8" fill="#0F172A"/>
+  <path d="M 0 30 L 800 30 M 0 60 L 800 60" stroke="#1E293B" stroke-width="0.5"/>
+  <text x="400" y="45" font-family="monospace" font-size="14" fill="#0F766E" text-anchor="middle" font-weight="bold">RAAX CORE ARCHITECTURE BLUEPRINT</text>
+  <rect x="50" y="100" width="180" height="80" rx="4" fill="#1E293B" stroke="#0F766E" stroke-width="1.5"/>
+  <text x="140" y="145" font-family="monospace" font-size="14" fill="#F8FAFC" text-anchor="middle">modules/Finance</text>
+  <rect x="310" y="100" width="180" height="80" rx="4" fill="#1E293B" stroke="#0F766E" stroke-width="1.5"/>
+  <text x="400" y="145" font-family="monospace" font-size="14" fill="#F8FAFC" text-anchor="middle">modules/HR</text>
+  <rect x="570" y="100" width="180" height="80" rx="4" fill="#1E293B" stroke="#0F766E" stroke-width="1.5"/>
+  <text x="660" y="145" font-family="monospace" font-size="14" fill="#F8FAFC" text-anchor="middle">modules/Inventory</text>
+  <rect x="250" y="220" width="300" height="50" rx="4" fill="#0F766E" fill-opacity="0.1" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4,4"/>
+  <text x="400" y="250" font-family="monospace" font-size="13" fill="#10B981" text-anchor="middle">PostgreSQL 16 Database (RLS Enforced)</text>
+</svg>
+</p>
 
-* **Modular Structure:** The application code is separated into business modules located in the root `/modules/` directory. Currently implemented modules include:
-  * `Finance`: Double-entry accounting, general ledger, chart of accounts, trial balance, and Bangladesh VAT logic.
-  * `HR`: Organizational management, employee directory, shift configurations, daily attendance tracking, and grace period execution.
-* **Tenant Isolation:** Row-Level Security (RLS) policies are active at the PostgreSQL database level for isolation.
-* **Role Requirements:** To utilize RLS, connect to the database via the `app_user` role, which should be configured with `NOBYPASSRLS` and `NOSUPERUSER` flags.
+## Overview
 
-## Local Environment Setup
+RAAX ERP is an enterprise-grade resource planning system architected as a Domain-Driven Modular Monolith. It guarantees mathematical precision through integer-based financial calculations and enforces strict multi-tenant data isolation directly at the PostgreSQL connection layer using Row-Level Security (RLS).
 
-If you are cloning this repository for the first time, take the following steps to configure your environment for tests and local development:
+## Core Principles
 
-1. Copy `.env.example` to `.env` and generate an app key:
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-2. Configure your database connections. For production/staging, PostgreSQL must be used to enforce RLS properly. Set up the `app_user` role using the script found in `database/scripts/rls_setup.sql`.
-   *Note: For simple testing, SQLite is supported but automatically bypasses the RLS commands in the codebase.*
-3. Install dependencies:
-   ```bash
-   composer install
-   npm install && npm run build
-   ```
-4. Run migrations:
-   ```bash
-   php artisan migrate
-   ```
+- **Zero Floating-Point Drift:** All money, tax rates, inventory values, and basis points are strictly calculated using integer arithmetic.
+- **Deep Tenant Isolation:** Bypassing standard ORM global scopes, tenant security is enforced at the database level using session variables tied to the `app_user` role.
+- **Strict Decoupling:** Cross-module boundaries communicate through registered interfaces and asynchronous Redis events (e.g., `SalaryPaymentApproved`, `IntercompanyTransferCompleted`).
 
-## Development Commands
-- Code Formatting: `vendor/bin/pint`
-- Static Analysis: `vendor/bin/phpstan analyse --level=8`
-- Testing: `php artisan test` or `vendor/bin/phpunit`
+---
+
+## Local Setup & Installation
+
+Follow these explicit steps to spin up the local development environment securely:
+
+### 1. Install Dependencies
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+### 2. Configure PostgreSQL App Role
+To enforce RLS, you must create a restricted database role that Laravel will use to connect. Do **not** run the application as the Postgres superuser.
+```sql
+-- Connect as superuser (postgres)
+CREATE ROLE app_user WITH LOGIN NOBYPASSRLS NOSUPERUSER PASSWORD 'your_secure_password';
+GRANT ALL PRIVILEGES ON DATABASE your_database_name TO app_user;
+```
+
+Update your `.env`:
+```env
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=your_database_name
+DB_USERNAME=app_user
+DB_PASSWORD=your_secure_password
+```
+
+### 3. Run Migrations & Setup Horizon
+```bash
+php artisan migrate
+php artisan horizon:install
+```
+
+### 4. Execute Isolated Test Suite
+```bash
+vendor/bin/pint --test
+vendor/bin/phpstan analyse --level=8
+vendor/bin/phpunit
+```
+
+---
+
+## Milestone Tracking Matrix
+
+| Phase | Milestone | Domain | Status | Description |
+|---|---|---|---|---|
+| **Phase 1** | 1-5 | Core & HR | ✅ Completed | Tenant Context Middleware, Chart of Accounts, Double-Entry Posting, Shift Registries, and Grace Period Attendance. |
+| **Phase 1** | 6 | Security | ✅ Completed | OIDC Authentication & Role-Based Access Control (RBAC) Engine. |
+| **Phase 1** | 7 | Events | ✅ Completed | Redis-Backed Queue & Laravel Horizon Notification Dispatcher. |
+| **Phase 1** | 8 | Finance | ✅ Completed | AP/AR Invoice Aging Analytics and Cash Flow Projection. |
+| **Phase 1** | 9 | HR/Finance | ✅ Completed | NBR Withholding Tax (AY 2026-27 Slabs) & Automated Payslip Journals. |
+| **Phase 2** | 10 | Procurement | ✅ Completed | Vendor Registries & Multi-Tier Purchase Order Approval Limits. |
+| **Phase 2** | 11 | Inventory | ✅ Completed | Multi-Warehouse Bins, Goods Received Notes, & FIFO Costing Depletion. |
+| **Phase 2** | 12 | Sales | ✅ Completed | Order Confirmations, Credit Blockers, & NBR Mushak 6.3 Challans. |
+| **Phase 3** | 13 | Manufacturing | ✅ Completed | BOMs, Work Orders, Wastage Formulas, & NBR Mushak 4.3 Declarations. |
+| **Phase 3** | 14 | Assets | ✅ Completed | Fixed Asset Registries & Monthly Depreciation Posting Engine. |
+| **Phase 3** | 15 | Banking | ✅ Completed | SWIFT MT940 Parser & Automated Bank Reconciliation Adjustments. |
+| **Phase 3** | 16 | Finance | ✅ Completed | Multi-Branch Consolidation & Fiscal Year-End Retained Earnings Closing. |
+| **Phase 3** | 17 | Logistics | ✅ Completed | Global Intercompany Stock Transfers & Dual-Ledger Automated Clearing. |
+| **Phase 3** | 18 | Compliance | ✅ Completed | Monthly NBR Mushak 9.1 Return Aggregator & TR-6 Treasury Deposits. |
+| **Phase 3** | 19 | Adjustments | ✅ Completed | NBR VDS (Mushak 6.6) & Debit/Credit Note Processing (Mushak 6.7/6.8). |
+| **Phase 3** | 20 | Multi-Currency | ✅ Completed | Exchange Rate Basis Registries & Month-End Unrealized Forex Revaluations. |
