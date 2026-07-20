@@ -13,10 +13,12 @@ use Illuminate\Support\Carbon;
 class PostingEngine
 {
     protected TenantContextManager $tenantManager;
+    protected LedgerChainEngine $chainEngine;
 
-    public function __construct(TenantContextManager $tenantManager)
+    public function __construct(TenantContextManager $tenantManager, LedgerChainEngine $chainEngine)
     {
         $this->tenantManager = $tenantManager;
+        $this->chainEngine = $chainEngine;
     }
 
     /**

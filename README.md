@@ -97,3 +97,21 @@ vendor/bin/phpunit
 | **Phase 3** | 18 | Compliance | ✅ Completed | Monthly NBR Mushak 9.1 Return Aggregator & TR-6 Treasury Deposits. |
 | **Phase 3** | 19 | Adjustments | ✅ Completed | NBR VDS (Mushak 6.6) & Debit/Credit Note Processing (Mushak 6.7/6.8). |
 | **Phase 3** | 20 | Multi-Currency | ✅ Completed | Exchange Rate Basis Registries & Month-End Unrealized Forex Revaluations. |
+
+## 🔐 Tamper-Evident Cryptographic Ledger
+
+RAAX protects financial history from administrative tampering or unauthorized direct database modifications using SHA-256 cryptographic hash-chaining.
+
+### Chronological Hash-Chaining
+
+Every journal posting is structurally linked to the state of the ledger preceding it:
+
+$$H_n = \text{SHA-256}(H_{n-1} \mathbin{\Vert} \text{Payload\_Hash}_n)$$
+
+### Integrity Auditing
+
+Run the verification engine locally or in your CI/CD pipelines to validate general ledger integrity:
+
+```bash
+php artisan raax:ledger:verify {tenant_id}
+```
