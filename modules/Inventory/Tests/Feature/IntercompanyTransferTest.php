@@ -37,16 +37,16 @@ class IntercompanyTransferTest extends TestCase
 
         // Setup Tenant A stock
         $this->tenantManager->setTenantId($this->tenantA);
-        $whA = Warehouse::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Main', 'code' => 'WH1']);
-        $this->binA = WarehouseBin::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'warehouse_id' => $whA->id, 'bin_label' => 'A1']);
-        InventoryBatch::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'warehouse_bin_id' => $this->binA->id, 'item_sku' => 'SKU-TRANS', 'original_qty' => 50, 'remaining_qty' => 50, 'unit_cost_cents' => 1000]); // $10 per unit
+        $whA = Warehouse::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'name' => 'Main', 'code' => 'WH1']);
+        $this->binA = WarehouseBin::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'warehouse_id' => $whA->id, 'bin_label' => 'A1']);
+        InventoryBatch::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'warehouse_bin_id' => $this->binA->id, 'item_sku' => 'SKU-TRANS', 'original_qty' => 50, 'remaining_qty' => 50, 'unit_cost_cents' => 1000]); // $10 per unit
 
         $this->tenantManager->clearTenantId();
 
         // Setup Tenant B bin
         $this->tenantManager->setTenantId($this->tenantB);
-        $whB = Warehouse::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantB, 'name' => 'Branch B', 'code' => 'WH2']);
-        $this->binB = WarehouseBin::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantB, 'warehouse_id' => $whB->id, 'bin_label' => 'B1']);
+        $whB = Warehouse::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantB, 'name' => 'Branch B', 'code' => 'WH2']);
+        $this->binB = WarehouseBin::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantB, 'warehouse_id' => $whB->id, 'bin_label' => 'B1']);
 
         $this->tenantManager->clearTenantId();
     }
@@ -56,12 +56,12 @@ class IntercompanyTransferTest extends TestCase
         $this->tenantManager->setTenantId($this->tenantA);
 
         $transfer = IntercompanyTransfer::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'destination_tenant_id' => $this->tenantB,
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'destination_tenant_id' => $this->tenantB,
             'transfer_number' => 'TRF-001', 'status' => 'draft'
         ]);
 
         IntercompanyTransferLine::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'intercompany_transfer_id' => $transfer->id,
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'intercompany_transfer_id' => $transfer->id,
             'item_sku' => 'SKU-TRANS', 'qty' => 10
         ]);
 
@@ -88,16 +88,16 @@ class IntercompanyTransferTest extends TestCase
 
     public function test_receiving_transfer_seeds_fifo_and_dispatches_reconciliation_event(): void
     {
-        Event::fake();
+        Event::fake([IntercompanyTransferCompleted::class]);
 
         // 1. Ship from A
         $this->tenantManager->setTenantId($this->tenantA);
         $transfer = IntercompanyTransfer::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'destination_tenant_id' => $this->tenantB,
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'destination_tenant_id' => $this->tenantB,
             'transfer_number' => 'TRF-002', 'status' => 'draft'
         ]);
         IntercompanyTransferLine::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'intercompany_transfer_id' => $transfer->id,
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'intercompany_transfer_id' => $transfer->id,
             'item_sku' => 'SKU-TRANS', 'qty' => 5
         ]);
         $this->actingAs($this->user)->postJson("/api/v1/inventory/transfers/{$transfer->id}/ship", [
@@ -139,7 +139,7 @@ class IntercompanyTransferTest extends TestCase
 
         $this->tenantManager->setTenantId($this->tenantA);
         $transfer = IntercompanyTransfer::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'destination_tenant_id' => $this->tenantB,
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'destination_tenant_id' => $this->tenantB,
             'transfer_number' => 'TRF-003', 'status' => 'in_transit'
         ]);
         $this->tenantManager->clearTenantId();
@@ -148,7 +148,7 @@ class IntercompanyTransferTest extends TestCase
         $this->tenantManager->setTenantId($tenantC);
 
         $response = $this->actingAs($this->user)->postJson("/api/v1/inventory/transfers/{$transfer->id}/receive", [
-            'warehouse_bin_id' => Str::uuid()
+            'warehouse_bin_id' => Str::uuid()->toString()
         ], ['X-Tenant-ID' => $tenantC]);
 
         // Fails because Tenant C cannot see the transfer where destination_tenant_id is Tenant B

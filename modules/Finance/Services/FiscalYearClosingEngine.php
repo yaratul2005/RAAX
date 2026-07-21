@@ -39,12 +39,13 @@ class FiscalYearClosingEngine
             }
 
             $retainedEarningsAccount = LedgerAccount::where('tenant_id', $tenantId)->find($retainedEarningsAccountId);
-            if (!$retainedEarningsAccount || $retainedEarningsAccount->type !== 'equity') {
+            $reType = $retainedEarningsAccount->account_type ?? $retainedEarningsAccount->type;
+            if (!$retainedEarningsAccount || $reType !== 'equity') {
                 throw new InvalidArgumentException("Invalid retained earnings account. Must be of type 'equity'.");
             }
 
-            $revenueAccounts = LedgerAccount::where('tenant_id', $tenantId)->where('type', 'revenue')->get();
-            $expenseAccounts = LedgerAccount::where('tenant_id', $tenantId)->where('type', 'expense')->get();
+            $revenueAccounts = LedgerAccount::where('tenant_id', $tenantId)->where(function($q){ $q->where('account_type', 'revenue')->orWhere('type', 'revenue'); })->get();
+            $expenseAccounts = LedgerAccount::where('tenant_id', $tenantId)->where(function($q){ $q->where('account_type', 'expense')->orWhere('type', 'expense'); })->get();
 
             $totalRevenueCents = 0;
             $totalExpenseCents = 0;
@@ -53,6 +54,7 @@ class FiscalYearClosingEngine
 
             // Sum up revenues (Credit balance normally)
             foreach ($revenueAccounts as $account) {
+                $code = $account->account_code ?? $account->code;
                 $lines = DB::table('journal_entry_lines')
                     ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
                     ->where('journal_entries.tenant_id', $tenantId)
@@ -68,15 +70,16 @@ class FiscalYearClosingEngine
 
                 if ($balance > 0) {
                     $totalRevenueCents += $balance;
-                    $journalLines[] = ['account_code' => $account->code, 'debit_cents' => $balance, 'credit_cents' => 0]; // Debit to close
+                    $journalLines[] = ['account_code' => $code, 'debit_cents' => $balance, 'credit_cents' => 0]; // Debit to close
                 } elseif ($balance < 0) {
                     $totalRevenueCents += $balance;
-                    $journalLines[] = ['account_code' => $account->code, 'debit_cents' => 0, 'credit_cents' => abs($balance)]; // Credit to close abnormal
+                    $journalLines[] = ['account_code' => $code, 'debit_cents' => 0, 'credit_cents' => abs($balance)]; // Credit to close abnormal
                 }
             }
 
             // Sum up expenses (Debit balance normally)
             foreach ($expenseAccounts as $account) {
+                $code = $account->account_code ?? $account->code;
                 $lines = DB::table('journal_entry_lines')
                     ->join('journal_entries', 'journal_entry_lines.journal_entry_id', '=', 'journal_entries.id')
                     ->where('journal_entries.tenant_id', $tenantId)
@@ -92,22 +95,23 @@ class FiscalYearClosingEngine
 
                 if ($balance > 0) {
                     $totalExpenseCents += $balance;
-                    $journalLines[] = ['account_code' => $account->code, 'debit_cents' => 0, 'credit_cents' => $balance]; // Credit to close
+                    $journalLines[] = ['account_code' => $code, 'debit_cents' => 0, 'credit_cents' => $balance]; // Credit to close
                 } elseif ($balance < 0) {
                     $totalExpenseCents += $balance;
-                    $journalLines[] = ['account_code' => $account->code, 'debit_cents' => abs($balance), 'credit_cents' => 0]; // Debit to close abnormal
+                    $journalLines[] = ['account_code' => $code, 'debit_cents' => abs($balance), 'credit_cents' => 0]; // Debit to close abnormal
                 }
             }
 
             $netIncomeCents = $totalRevenueCents - $totalExpenseCents;
+            $reCode = $retainedEarningsAccount->account_code ?? $retainedEarningsAccount->code;
 
             // Post Net Income to Retained Earnings
             if ($netIncomeCents > 0) {
                 // Profit -> Credit RE
-                $journalLines[] = ['account_code' => $retainedEarningsAccount->code, 'debit_cents' => 0, 'credit_cents' => $netIncomeCents];
+                $journalLines[] = ['account_code' => $reCode, 'debit_cents' => 0, 'credit_cents' => $netIncomeCents];
             } elseif ($netIncomeCents < 0) {
                 // Loss -> Debit RE
-                $journalLines[] = ['account_code' => $retainedEarningsAccount->code, 'debit_cents' => abs($netIncomeCents), 'credit_cents' => 0];
+                $journalLines[] = ['account_code' => $reCode, 'debit_cents' => abs($netIncomeCents), 'credit_cents' => 0];
             }
 
             // Update fiscal year status before posting so the validation doesn't block the closing entry itself (or we bypass it)

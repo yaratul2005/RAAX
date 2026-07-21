@@ -42,7 +42,7 @@ class AssetDepreciationTest extends TestCase
         $asset = FixedAsset::create([
             'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'asset_tag' => 'AST-SL', 'name' => 'Laptop',
             'acquisition_date' => '2024-01-01', 'acquisition_cost_cents' => 120000, 'salvage_value_cents' => 20000,
-            'lifespan_months' => 10, 'depreciation_method' => 'straight_line'
+            'lifespan_months' => 10, 'depreciation_method' => 'straight_line', 'status' => 'active'
         ]);
 
         $response = $this->actingAs($this->user)->postJson('/api/v1/assets/depreciate', ['target_month' => '2024-01'], [
@@ -72,7 +72,8 @@ class AssetDepreciationTest extends TestCase
         $asset = FixedAsset::create([
             'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'asset_tag' => 'AST-RB', 'name' => 'Server',
             'acquisition_date' => '2024-01-01', 'acquisition_cost_cents' => 100000, 'salvage_value_cents' => 80000,
-            'lifespan_months' => 5, 'depreciation_method' => 'reducing_balance', 'depreciation_rate_basis_cents' => 5000
+            'lifespan_months' => 5, 'depreciation_method' => 'reducing_balance', 'depreciation_rate_basis_cents' => 5000,
+            'status' => 'active'
         ]);
 
         $this->actingAs($this->user)->postJson('/api/v1/assets/depreciate', ['target_month' => '2024-01'], [

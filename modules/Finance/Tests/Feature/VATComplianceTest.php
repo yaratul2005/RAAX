@@ -35,16 +35,20 @@ class VATComplianceTest extends TestCase
         // Sales (Output VAT)
         // Subtotal = 10,000, VAT = 1,500
         Mushak63Invoice::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'challan_number' => 'CH-1',
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'challan_number' => 'CH-1', 'buyer_name' => 'Buyer A',
             'issue_date' => '2024-05-15', 'subtotal_cents' => 1000000, 'vat_cents' => 150000, 'total_payable_cents' => 1150000,
         ]);
 
         // Purchases (Input VAT)
         // Subtotal = 5,000, VAT = 750
-        PurchaseOrder::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'vendor_id' => Str::uuid()->toString(),
-            'po_number' => 'PO-1', 'total_amount_cents' => 500000, 'status' => 'completed', 'updated_at' => '2024-05-20 10:00:00'
+        $vendor = \Modules\Procurement\Models\Vendor::create([
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'name' => 'Test Vendor', 'status' => 'active'
         ]);
+        $po = PurchaseOrder::create([
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'vendor_id' => $vendor->id,
+            'po_number' => 'PO-1', 'total_amount_cents' => 500000, 'status' => 'completed'
+        ]);
+        \Illuminate\Support\Facades\DB::table('purchase_orders')->where('id', $po->id)->update(['updated_at' => '2024-05-20 10:00:00']);
 
         $this->tenantManager->clearTenantId();
     }

@@ -10,6 +10,8 @@ class Mushak65Challan extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'mushak_6_5_challans';
+
     protected $keyType = 'string';
     public $incrementing = false;
 

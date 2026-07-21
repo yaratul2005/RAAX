@@ -25,6 +25,7 @@ class SendNotificationJob implements ShouldQueue
 
     public function handle(TenantContextManager $tenantManager): void
     {
+        $previousTenantId = $tenantManager->getTenantId();
         // Re-establish tenant context for background job
         $tenantManager->setTenantId($this->tenantId);
 
@@ -36,6 +37,10 @@ class SendNotificationJob implements ShouldQueue
             'sent_at' => now(),
         ]);
 
-        $tenantManager->clearTenantId();
+        if ($previousTenantId) {
+            $tenantManager->setTenantId($previousTenantId);
+        } else {
+            $tenantManager->clearTenantId();
+        }
     }
 }

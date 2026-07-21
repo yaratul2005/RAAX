@@ -14,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(\App\Http\Middleware\TraceIncomingRequest::class);
         $middleware->alias([
-            'tenant' => \App\Http\Middleware\TenantMiddleware::class,
+            'tenant' => \App\Http\Middleware\ResolveTenantContext::class,
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'edi.auth' => \App\Http\Middleware\AuthenticateEdiPartner::class,
         ]);

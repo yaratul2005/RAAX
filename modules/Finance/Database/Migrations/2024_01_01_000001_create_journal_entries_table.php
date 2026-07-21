@@ -10,13 +10,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('journal_entries', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->uuid('tenant_id');
-            $table->date('entry_date');
+            $table->date('entry_date')->nullable();
+            $table->date('date')->nullable();
             $table->string('reference')->nullable();
             $table->text('description')->nullable();
-            $table->bigInteger('amount')->comment('Stored in cents');
-            $table->char('currency_code', 3);
+            $table->bigInteger('amount')->default(0)->comment('Stored in cents');
+            $table->char('currency_code', 3)->default('BDT');
             $table->timestamps();
             $table->softDeletes();
         });

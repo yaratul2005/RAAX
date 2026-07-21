@@ -19,7 +19,7 @@ class JournalController extends Controller
     public function post(PostJournalRequest $request): JsonResponse
     {
         try {
-            $journalEntry = $this->postingEngine->post($request->validated());
+            $journalEntry = $this->postingEngine->postJournal($request->all());
 
             return response()->json([
                 'success' => true,

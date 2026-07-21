@@ -40,44 +40,36 @@ class MT940Parser
                     $statementDate = Carbon::createFromFormat('ymd', $dateStr)->toDateString();
                 }
 
-                $amountStr = substr($val, 10);
-                $amountStr = str_replace(',', '.', $amountStr); // some MT940 use comma for decimal
-                $cents = (int) round((float) $amountStr * 100);
-
-                $openingBalance = ($dc === 'C') ? $cents : -$cents;
+                if (preg_match('/[A-Z]{3}([0-9,.]+)/', $val, $m)) {
+                    $amountStr = str_replace(',', '.', $m[1]);
+                    $cents = (int) round((float) $amountStr * 100);
+                    $openingBalance = ($dc === 'C') ? $cents : -$cents;
+                }
             } elseif (str_starts_with($line, ':61:')) {
                 // :61:2401050105CR150,00NMSCNONREF
-                // Format: ValDate (6), EntryDate (4 or missing), D/C (1 or 2), Amount, TransType (4), Ref
                 $valDateStr = substr($line, 4, 6);
 
-                // Find D/C and extract
-                // Can be C, D, RC, RD
-                preg_match('/(C|D|RC|RD)([0-9,.]+)/', substr($line, 10), $matches);
-                if (count($matches) >= 3) {
-                    $dc = $matches[1];
-                    $amountStr = str_replace(',', '.', $matches[2]);
+                if (preg_match('/(?P<dc>CR|DR|RC|RD|C|D)(?P<amount>[0-9]+(?:,[0-9]+)?)(?P<rest>.*)/', $line, $m)) {
+                    $dc = $m['dc'];
+                    $amountStr = str_replace(',', '.', $m['amount']);
                     $cents = (int) round((float) $amountStr * 100);
                     $amountCents = (str_starts_with($dc, 'C')) ? $cents : -$cents;
-
-                    // Extract reference roughly after amount
-                    $remaining = substr($line, strpos($line, $matches[2]) + strlen($matches[2]));
-                    $reference = trim($remaining);
 
                     $transactions[] = [
                         'transaction_date' => Carbon::createFromFormat('ymd', $valDateStr)->toDateString(),
                         'amount_cents' => $amountCents,
-                        'reference' => $reference,
+                        'reference' => trim($m['rest']),
                     ];
                 }
             } elseif (str_starts_with($line, ':62F:')) {
                 // Similar to 60F
                 $val = substr($line, 5);
                 $dc = substr($val, 0, 1);
-                $amountStr = substr($val, 10);
-                $amountStr = str_replace(',', '.', $amountStr);
-                $cents = (int) round((float) $amountStr * 100);
-
-                $closingBalance = ($dc === 'C') ? $cents : -$cents;
+                if (preg_match('/[A-Z]{3}([0-9,.]+)/', $val, $m)) {
+                    $amountStr = str_replace(',', '.', $m[1]);
+                    $cents = (int) round((float) $amountStr * 100);
+                    $closingBalance = ($dc === 'C') ? $cents : -$cents;
+                }
             }
         }
 

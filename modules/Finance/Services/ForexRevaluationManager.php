@@ -43,7 +43,7 @@ class ForexRevaluationManager
 
             $monthEndRate = CurrencyExchangeRate::where('tenant_id', $tenantId)
                 ->where('from_currency', $targetCurrency)
-                ->where('effective_date', '<=', $endOfMonth)
+                ->where('effective_date', '<=', $endOfMonth . ' 23:59:59')
                 ->orderBy('effective_date', 'desc')
                 ->first();
 
@@ -55,15 +55,17 @@ class ForexRevaluationManager
             $invoices = FinanceInvoice::where('tenant_id', $tenantId)
                 ->where('currency_code', $targetCurrency)
                 ->where('status', '!=', 'paid')
-                ->where('issue_date', '<=', $endOfMonth)
+                ->where('issue_date', '<=', $endOfMonth . ' 23:59:59')
                 ->get();
 
             $totalUnrealizedGainLossCents = 0;
 
             foreach ($invoices as $invoice) {
+                $issueDate = is_string($invoice->issue_date) ? $invoice->issue_date : $invoice->issue_date->toDateString();
+
                 $rateInvoice = CurrencyExchangeRate::where('tenant_id', $tenantId)
                     ->where('from_currency', $targetCurrency)
-                    ->where('effective_date', '<=', $invoice->issue_date)
+                    ->where('effective_date', '<=', $issueDate . ' 23:59:59')
                     ->orderBy('effective_date', 'desc')
                     ->first();
 
@@ -71,8 +73,8 @@ class ForexRevaluationManager
 
                 $outstandingForeign = $invoice->outstanding_balance;
 
-                $baseValueInvoice = (int) round(($outstandingForeign * $rateInvoice->rate_basis_points) / 10000);
-                $baseValueMonthEnd = (int) round(($outstandingForeign * $monthEndRate->rate_basis_points) / 10000);
+                $baseValueInvoice = (int) round(($outstandingForeign * $rateInvoice->rate_basis_points) / 100);
+                $baseValueMonthEnd = (int) round(($outstandingForeign * $monthEndRate->rate_basis_points) / 100);
 
                 // Variance
                 $variance = $baseValueMonthEnd - $baseValueInvoice;

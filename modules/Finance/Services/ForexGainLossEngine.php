@@ -34,10 +34,12 @@ class ForexGainLossEngine
         return DB::transaction(function () use ($tenantId, $invoice, $paymentAmountCents, $paymentDate) {
             $currency = $invoice->currency_code;
 
+            $issueDate = is_string($invoice->issue_date) ? $invoice->issue_date : $invoice->issue_date->toDateString();
+
             // R_invoice
             $rateInvoice = CurrencyExchangeRate::where('tenant_id', $tenantId)
                 ->where('from_currency', $currency)
-                ->where('effective_date', '<=', $invoice->issue_date)
+                ->where('effective_date', '<=', $issueDate . ' 23:59:59')
                 ->orderBy('effective_date', 'desc')
                 ->first();
 
@@ -48,7 +50,7 @@ class ForexGainLossEngine
             // R_payment
             $ratePayment = CurrencyExchangeRate::where('tenant_id', $tenantId)
                 ->where('from_currency', $currency)
-                ->where('effective_date', '<=', $paymentDate)
+                ->where('effective_date', '<=', $paymentDate . ' 23:59:59')
                 ->orderBy('effective_date', 'desc')
                 ->first();
 
@@ -57,11 +59,11 @@ class ForexGainLossEngine
             }
 
             // Calculations
-            // Base Value_invoice = (Payment Amount Cents * R_invoice) / 10000
-            $baseValueInvoice = (int) round(($paymentAmountCents * $rateInvoice->rate_basis_points) / 10000);
+            // Base Value_invoice = (Payment Amount Cents * R_invoice) / 100
+            $baseValueInvoice = (int) round(($paymentAmountCents * $rateInvoice->rate_basis_points) / 100);
 
-            // Base Value_payment = (Payment Amount Cents * R_payment) / 10000
-            $baseValuePayment = (int) round(($paymentAmountCents * $ratePayment->rate_basis_points) / 10000);
+            // Base Value_payment = (Payment Amount Cents * R_payment) / 100
+            $baseValuePayment = (int) round(($paymentAmountCents * $ratePayment->rate_basis_points) / 100);
 
             // Realized Gain/Loss Cents
             $realizedGainLossCents = $baseValuePayment - $baseValueInvoice;

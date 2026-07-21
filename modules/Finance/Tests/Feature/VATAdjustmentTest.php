@@ -107,8 +107,12 @@ class VATAdjustmentTest extends TestCase
     {
         $this->tenantManager->setTenantId($this->tenantA);
 
+        $vendor = \Modules\Procurement\Models\Vendor::create([
+            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Test Vendor', 'status' => 'active'
+        ]);
+
         $order = PurchaseOrder::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'vendor_id' => Str::uuid(),
+            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'vendor_id' => $vendor->id,
             'po_number' => 'PO-1', 'total_amount_cents' => 115000
         ]);
 

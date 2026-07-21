@@ -4,6 +4,7 @@ namespace Modules\Finance\Services;
 
 use App\Services\Tenant\TenantContextManager;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Modules\Finance\Models\Mushak91Return;
@@ -51,10 +52,10 @@ class Mushak91Engine
             $outputData = DB::table('mushak_6_3_invoices')
                 ->where('tenant_id', $tenantId)
                 ->whereNull('deleted_at')
-                ->whereBetween('issue_date', [$startDate, $endDate])
+                ->whereBetween('issue_date', [$startDate, $endDate . ' 23:59:59'])
                 ->select(
-                    DB::raw('SUM(subtotal_cents) as total_sales'),
-                    DB::raw('SUM(vat_cents) as total_tax')
+                    DB::raw('COALESCE(SUM(subtotal_cents), 0) as total_sales'),
+                    DB::raw('COALESCE(SUM(vat_cents), 0) as total_tax')
                 )->first();
 
             $totalSalesCents = (int) $outputData->total_sales;

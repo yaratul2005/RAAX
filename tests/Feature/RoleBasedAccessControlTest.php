@@ -35,7 +35,7 @@ class RoleBasedAccessControlTest extends TestCase
         $this->userB = User::factory()->create();
 
         // Register dummy routes for testing middleware
-        Route::middleware(['auth:sanctum', 'tenant', 'permission:post-journal'])->group(function () {
+        Route::middleware(['auth', 'tenant', 'permission:post-journal'])->group(function () {
             Route::post('/api/test-journal', function () {
                 return response()->json(['success' => true]);
             });
@@ -43,7 +43,7 @@ class RoleBasedAccessControlTest extends TestCase
 
         // Setup global permission
         $this->postJournalPermission = Permission::create([
-            'id' => Str::uuid(),
+            'id' => Str::uuid()->toString(),
             'name' => 'Post Journal Entry',
             'slug' => 'post-journal',
         ]);
@@ -53,7 +53,7 @@ class RoleBasedAccessControlTest extends TestCase
     {
         // Give User A the role with permission in Tenant A
         $roleA = Role::create([
-            'id' => Str::uuid(),
+            'id' => Str::uuid()->toString(),
             'tenant_id' => $this->tenantA,
             'name' => 'Finance Manager',
             'slug' => 'finance-manager',
@@ -73,7 +73,7 @@ class RoleBasedAccessControlTest extends TestCase
     {
         // Give User B a different role in Tenant A that lacks permission
         $roleB = Role::create([
-            'id' => Str::uuid(),
+            'id' => Str::uuid()->toString(),
             'tenant_id' => $this->tenantA,
             'name' => 'Operator',
             'slug' => 'operator',

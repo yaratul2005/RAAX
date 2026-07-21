@@ -42,24 +42,24 @@ class AttendanceLoggingTest extends TestCase
 
         // Setup Tenant A
         $this->tenantManager->setTenantId($this->tenantA);
-        $dept = Department::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'IT', 'code' => 'IT-1']);
-        $desig = Designation::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'title' => 'Dev', 'grade' => 1]);
+        $dept = Department::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'name' => 'IT', 'code' => 'IT-1']);
+        $desig = Designation::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'title' => 'Dev', 'grade' => 1]);
         $this->employeeA = Employee::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'first_name' => 'John', 'last_name' => 'Doe',
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'first_name' => 'John', 'last_name' => 'Doe',
             'email' => 'a@t.com', 'department_id' => $dept->id, 'designation_id' => $desig->id, 'joining_date' => '2020-01-01',
         ]);
         $this->shiftA = Shift::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Morning',
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'name' => 'Morning',
             'start_time' => '09:00:00', 'end_time' => '17:00:00', 'grace_period_minutes' => 15,
         ]);
         $this->tenantManager->clearTenantId();
 
         // Setup Tenant B
         $this->tenantManager->setTenantId($this->tenantB);
-        $deptB = Department::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantB, 'name' => 'IT', 'code' => 'IT-1']);
-        $desigB = Designation::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantB, 'title' => 'Dev', 'grade' => 1]);
+        $deptB = Department::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantB, 'name' => 'IT', 'code' => 'IT-1']);
+        $desigB = Designation::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantB, 'title' => 'Dev', 'grade' => 1]);
         $this->employeeB = Employee::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantB, 'first_name' => 'Bob', 'last_name' => 'Smith',
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantB, 'first_name' => 'Bob', 'last_name' => 'Smith',
             'email' => 'b@t.com', 'department_id' => $deptB->id, 'designation_id' => $desigB->id, 'joining_date' => '2020-01-01',
         ]);
         $this->tenantManager->clearTenantId();

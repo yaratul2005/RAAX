@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Modules\HR\Events\AttendanceLogged;
 use Modules\Notifications\Listeners\SendCheckInNotification;
 
-class NotificationServiceProvider extends ServiceProvider
+class NotificationsServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {

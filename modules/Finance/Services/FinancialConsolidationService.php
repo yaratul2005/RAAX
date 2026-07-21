@@ -40,16 +40,14 @@ class FinancialConsolidationService
 
             foreach ($branchUuids as $tenantId) {
                 // Switch tenant context dynamically
-                $this->tenantManager->setTenantId($this->tenantId); // Wait, this actually just updates memory or config, but we need the actual query to reflect it.
-                // In our setup, TenantContextManager handles switching the DB session if configured, or the queries explicitly use the new tenantId.
-                // Let's just explicitly query by each tenantId.
+                $this->tenantManager->setTenantId($tenantId);
 
                 $accounts = LedgerAccount::where('tenant_id', $tenantId)->get();
 
                 foreach ($accounts as $account) {
-                    $code = $account->code;
-                    $name = $account->name;
-                    $type = $account->type;
+                    $code = $account->account_code ?? $account->code;
+                    $name = $account->account_name ?? $account->name;
+                    $type = $account->account_type ?? $account->type;
 
                     if (!isset($consolidatedBalances[$code])) {
                         $consolidatedBalances[$code] = [

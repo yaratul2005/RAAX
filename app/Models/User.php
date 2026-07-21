@@ -13,12 +13,11 @@ use Illuminate\Notifications\Notifiable;
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
+{
     public function roles()
     {
         return $this->belongsToMany(\App\Models\Role::class, 'role_user')->withPivot('tenant_id');
     }
-
-{
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 

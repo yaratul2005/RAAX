@@ -24,7 +24,7 @@ class IndiaGstDriver implements TaxEngineInterface
         }
 
         // Intra-state split 50/50
-        $halfTax = (int) round($totalTaxCents / 2);
+        $halfTax = (int) floor($totalTaxCents / 2);
 
         // Handle odd cents to ensure total matches exactly
         $remainder = $totalTaxCents - ($halfTax * 2);

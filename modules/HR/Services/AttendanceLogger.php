@@ -74,6 +74,8 @@ class AttendanceLogger
             'date' => $date,
             'check_in' => $checkInTime,
             'late_minutes' => $lateMinutes,
+            'status' => $status,
+        ]);
 
         event(new AttendanceLogged($log));
 
@@ -110,6 +112,7 @@ class AttendanceLogger
         $log->update([
             'check_out' => $checkOutTime,
             'worked_minutes' => $workedMinutes,
+        ]);
 
         return $log;
     }

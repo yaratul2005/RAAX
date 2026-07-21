@@ -37,20 +37,20 @@ class ProcurementEngineTest extends TestCase
         $this->userL3 = User::factory()->create();
 
         // Setup permissions
-        $p1 = Permission::create(['id' => Str::uuid(), 'name' => 'L1', 'slug' => 'approve-po-l1']);
-        $p2 = Permission::create(['id' => Str::uuid(), 'name' => 'L2', 'slug' => 'approve-po-l2']);
-        $p3 = Permission::create(['id' => Str::uuid(), 'name' => 'L3', 'slug' => 'approve-po-l3']);
+        $p1 = Permission::create(['id' => Str::uuid()->toString(), 'name' => 'L1', 'slug' => 'approve-po-l1']);
+        $p2 = Permission::create(['id' => Str::uuid()->toString(), 'name' => 'L2', 'slug' => 'approve-po-l2']);
+        $p3 = Permission::create(['id' => Str::uuid()->toString(), 'name' => 'L3', 'slug' => 'approve-po-l3']);
 
         // Setup roles
-        $role1 = Role::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Manager', 'slug' => 'mgr']);
+        $role1 = Role::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'name' => 'Manager', 'slug' => 'mgr']);
         $role1->permissions()->attach($p1->id, ['tenant_id' => $this->tenantA]);
         $this->userL1->roles()->attach($role1->id, ['tenant_id' => $this->tenantA]);
 
-        $role2 = Role::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Director', 'slug' => 'dir']);
+        $role2 = Role::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'name' => 'Director', 'slug' => 'dir']);
         $role2->permissions()->attach($p2->id, ['tenant_id' => $this->tenantA]);
         $this->userL2->roles()->attach($role2->id, ['tenant_id' => $this->tenantA]);
 
-        $role3 = Role::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'CFO', 'slug' => 'cfo']);
+        $role3 = Role::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'name' => 'CFO', 'slug' => 'cfo']);
         $role3->permissions()->attach($p3->id, ['tenant_id' => $this->tenantA]);
         $this->userL3->roles()->attach($role3->id, ['tenant_id' => $this->tenantA]);
 

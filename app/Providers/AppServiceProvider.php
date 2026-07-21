@@ -11,10 +11,11 @@ class AppServiceProvider extends ServiceProvider
      * Register any application services.
      */
     public function register(): void
+    {
         $this->app->bind(\Modules\Sales\Contracts\SalesOrderManagerInterface::class, \Modules\Sales\Services\SalesOrderManager::class);
         $this->app->bind(\Modules\Inventory\Contracts\FIFOValuationEngineInterface::class, \Modules\Inventory\Services\FIFOValuationEngine::class);
         $this->app->bind(\Modules\Inventory\Contracts\PurchaseOrderFetcherInterface::class, \App\Services\Integrations\ProcurementToInventoryFetcher::class);
-    {
+
         $this->app->singleton(TenantContextManager::class, function ($app) {
             return new TenantContextManager;
         });

@@ -32,8 +32,8 @@ class LedgerChainVerificationTest extends TestCase
         $this->user = User::factory()->create();
 
         $this->tenantManager->setTenantId($this->tenantA);
-        LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Cash', 'code' => '1001', 'type' => 'asset']);
-        LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Sales', 'code' => '4001', 'type' => 'revenue']);
+        LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'account_name' => 'Cash', 'account_code' => '1001', 'account_type' => 'asset', 'currency_code' => 'BDT']);
+        LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'account_name' => 'Sales', 'account_code' => '4001', 'account_type' => 'revenue', 'currency_code' => 'BDT']);
         $this->tenantManager->clearTenantId();
     }
 

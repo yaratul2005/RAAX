@@ -43,7 +43,7 @@ class BudgetaryControlTest extends TestCase
         $this->tenantManager->setTenantId($this->tenantA);
 
         $this->fy = FiscalYear::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'FY-24', 'start_date' => '2024-01-01', 'end_date' => '2024-12-31']);
-        $this->account = LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Procurement', 'code' => '5001', 'type' => 'expense']);
+        $this->account = LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'account_name' => 'Procurement', 'account_code' => '5001', 'account_type' => 'expense', 'currency_code' => 'BDT']);
 
         $this->budget = Budget::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'fiscal_year_id' => $this->fy->id, 'name' => 'IT Budget', 'is_active' => true]);
 

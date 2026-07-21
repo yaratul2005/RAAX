@@ -5,7 +5,7 @@ use Modules\HR\Http\Controllers\AttendanceController;
 use Modules\HR\Http\Controllers\EmployeeController;
 use Modules\HR\Http\Controllers\ShiftController;
 
-Route::middleware('tenant')->group(function () {
+Route::middleware(['api', 'tenant'])->prefix('api/v1')->group(function () {
     Route::post('/hr/employees', [EmployeeController::class, 'store']);
     Route::get('/hr/employees', [EmployeeController::class, 'index']);
     Route::delete('/hr/employees/{id}', [EmployeeController::class, 'destroy']);

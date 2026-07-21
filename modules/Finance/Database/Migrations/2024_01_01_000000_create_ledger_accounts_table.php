@@ -10,7 +10,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ledger_accounts', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->uuid('tenant_id');
             $table->string('account_code');
             $table->string('account_name');

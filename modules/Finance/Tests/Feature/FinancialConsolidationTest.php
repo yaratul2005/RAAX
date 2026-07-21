@@ -40,33 +40,34 @@ class FinancialConsolidationTest extends TestCase
         $this->normalUser = User::factory()->create();
 
         // Setup RBAC
-        $permission = Permission::create(['id' => Str::uuid(), 'name' => 'Consolidated', 'slug' => 'consolidated-reporting']);
-        $role = Role::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'CFO', 'slug' => 'cfo']);
+        $permission = Permission::create(['id' => Str::uuid()->toString(), 'name' => 'Consolidated', 'slug' => 'consolidated-reporting']);
+        $role = Role::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'name' => 'CFO', 'slug' => 'cfo']);
         $role->permissions()->attach($permission->id, ['tenant_id' => $this->tenantA]);
         $this->adminUser->roles()->attach($role->id, ['tenant_id' => $this->tenantA]);
 
         // Setup Tenant A Accounts & Journals
+        // Setup Tenant A Accounts & Journals
         $this->tenantManager->setTenantId($this->tenantA);
-        $this->revAccountA = LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Sales', 'code' => '4001', 'type' => 'revenue']);
-        $this->expAccountA = LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Rent', 'code' => '5001', 'type' => 'expense']);
-        $this->reAccountA = LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'Retained Earnings', 'code' => '3001', 'type' => 'equity']);
+        $this->revAccountA = LedgerAccount::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'account_name' => 'Sales', 'account_code' => '4001', 'account_type' => 'revenue', 'currency_code' => 'BDT']);
+        $this->expAccountA = LedgerAccount::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'account_name' => 'Rent', 'account_code' => '5001', 'account_type' => 'expense', 'currency_code' => 'BDT']);
+        $this->reAccountA = LedgerAccount::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'account_name' => 'Retained Earnings', 'account_code' => '3001', 'account_type' => 'equity', 'currency_code' => 'BDT']);
 
         // $1000 revenue
-        $je1 = JournalEntry::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'date' => '2024-06-15', 'reference' => 'REV-1', 'description' => 'Test']);
-        JournalEntryLine::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'journal_entry_id' => $je1->id, 'account_id' => $this->revAccountA->id, 'debit_cents' => 0, 'credit_cents' => 100000]);
+        $je1 = JournalEntry::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'date' => '2024-06-15', 'reference' => 'REV-1', 'description' => 'Test']);
+        JournalEntryLine::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'journal_entry_id' => $je1->id, 'account_id' => $this->revAccountA->id, 'debit_cents' => 0, 'credit_cents' => 100000]);
         // $400 expense
-        $je2 = JournalEntry::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'date' => '2024-06-20', 'reference' => 'EXP-1', 'description' => 'Test']);
-        JournalEntryLine::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'journal_entry_id' => $je2->id, 'account_id' => $this->expAccountA->id, 'debit_cents' => 40000, 'credit_cents' => 0]);
+        $je2 = JournalEntry::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'date' => '2024-06-20', 'reference' => 'EXP-1', 'description' => 'Test']);
+        JournalEntryLine::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'journal_entry_id' => $je2->id, 'account_id' => $this->expAccountA->id, 'debit_cents' => 40000, 'credit_cents' => 0]);
         $this->tenantManager->clearTenantId();
 
         // Setup Tenant B Accounts & Journals
         $this->tenantManager->setTenantId($this->tenantB);
         // Shared Code
-        $this->revAccountB = LedgerAccount::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantB, 'name' => 'Sales', 'code' => '4001', 'type' => 'revenue']);
+        $this->revAccountB = LedgerAccount::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantB, 'account_name' => 'Sales', 'account_code' => '4001', 'account_type' => 'revenue', 'currency_code' => 'BDT']);
 
         // $500 revenue
-        $je3 = JournalEntry::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantB, 'date' => '2024-06-25', 'reference' => 'REV-B', 'description' => 'Test']);
-        JournalEntryLine::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantB, 'journal_entry_id' => $je3->id, 'account_id' => $this->revAccountB->id, 'debit_cents' => 0, 'credit_cents' => 50000]);
+        $je3 = JournalEntry::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantB, 'date' => '2024-06-25', 'reference' => 'REV-B', 'description' => 'Test']);
+        JournalEntryLine::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantB, 'journal_entry_id' => $je3->id, 'account_id' => $this->revAccountB->id, 'debit_cents' => 0, 'credit_cents' => 50000]);
         $this->tenantManager->clearTenantId();
     }
 
@@ -95,7 +96,7 @@ class FinancialConsolidationTest extends TestCase
         $this->tenantManager->setTenantId($this->tenantA);
 
         $fy = FiscalYear::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'name' => 'FY-24',
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'name' => 'FY-24',
             'start_date' => '2024-01-01', 'end_date' => '2024-12-31'
         ]);
 

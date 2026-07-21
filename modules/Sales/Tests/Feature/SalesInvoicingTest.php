@@ -20,6 +20,16 @@ class MockFIFOEngine implements FIFOValuationEngineInterface
         // Mock returning a standard cost of 500 cents per unit
         return $qtyToReduce * 500;
     }
+
+    public function addInboundStock(string $sku, int $qty, int $unitCostCents, string $warehouseBinId, string $reason = 'Inbound Stock'): void
+    {
+        // Mock implementation
+    }
+
+    public function getAverageUnitCost(string $sku): int
+    {
+        return 500;
+    }
 }
 
 class SalesInvoicingTest extends TestCase

@@ -46,9 +46,12 @@ class LedgerChainEngine
             ];
         })->toArray();
 
+        $dateVal = $entry->date ?? $entry->entry_date;
+        $dateStr = is_string($dateVal) ? $dateVal : ($dateVal ? $dateVal->toDateString() : date('Y-m-d'));
+
         $payload = json_encode([
             'journal_id' => $entry->id,
-            'date' => $entry->date->toDateString(),
+            'date' => $dateStr,
             'lines' => $lines
         ]);
 
@@ -63,5 +66,10 @@ class LedgerChainEngine
             'payload_hash' => $payloadHash,
             'chain_hash' => $chainHash,
         ]);
+    }
+
+    public function appendEntry(JournalEntry $entry): LedgerChain
+    {
+        return $this->hashAndChainEntry($entry);
     }
 }

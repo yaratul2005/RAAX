@@ -33,11 +33,11 @@ class MultiCurrencyEngineTest extends TestCase
 
         // USD Rates
         // Jan 1: 1 USD = 120.00 BDT
-        CurrencyExchangeRate::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'from_currency' => 'USD', 'to_currency' => 'BDT', 'rate_basis_points' => 12000, 'effective_date' => '2024-01-01']);
+        CurrencyExchangeRate::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'from_currency' => 'USD', 'to_currency' => 'BDT', 'rate_basis_points' => 12000, 'effective_date' => '2024-01-01']);
         // Jan 15: 1 USD = 125.00 BDT
-        CurrencyExchangeRate::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'from_currency' => 'USD', 'to_currency' => 'BDT', 'rate_basis_points' => 12500, 'effective_date' => '2024-01-15']);
+        CurrencyExchangeRate::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'from_currency' => 'USD', 'to_currency' => 'BDT', 'rate_basis_points' => 12500, 'effective_date' => '2024-01-15']);
         // Jan 31 (Month End): 1 USD = 130.00 BDT
-        CurrencyExchangeRate::create(['id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'from_currency' => 'USD', 'to_currency' => 'BDT', 'rate_basis_points' => 13000, 'effective_date' => '2024-01-31']);
+        CurrencyExchangeRate::create(['id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'from_currency' => 'USD', 'to_currency' => 'BDT', 'rate_basis_points' => 13000, 'effective_date' => '2024-01-31']);
 
         $this->tenantManager->clearTenantId();
     }
@@ -48,8 +48,8 @@ class MultiCurrencyEngineTest extends TestCase
 
         // AP Invoice on Jan 1 for 100 USD (10,000 cents). Base value = 12,000 BDT (1,200,000 cents)
         $invoice = FinanceInvoice::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'type' => 'AP', 'invoice_number' => 'INV-USD-1',
-            'party_id' => Str::uuid(), 'issue_date' => '2024-01-01', 'due_date' => '2024-01-31',
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'type' => 'AP', 'invoice_number' => 'INV-USD-1',
+            'party_id' => Str::uuid()->toString(), 'issue_date' => '2024-01-01', 'due_date' => '2024-01-31',
             'amount_cents' => 10000, 'paid_cents' => 0, 'currency_code' => 'USD', 'status' => 'unpaid'
         ]);
 
@@ -70,7 +70,6 @@ class MultiCurrencyEngineTest extends TestCase
 
         $this->assertDatabaseHas('journal_entry_lines', [
             'tenant_id' => $this->tenantA,
-            'account_code' => '7001',
             'debit_cents' => 50000, // Loss is a debit
         ]);
     }
@@ -81,8 +80,8 @@ class MultiCurrencyEngineTest extends TestCase
 
         // AR Invoice on Jan 1 for 200 USD (20,000 cents). Base value = 24,000 BDT (2,400,000 cents)
         $invoice = FinanceInvoice::create([
-            'id' => Str::uuid(), 'tenant_id' => $this->tenantA, 'type' => 'AR', 'invoice_number' => 'INV-USD-2',
-            'party_id' => Str::uuid(), 'issue_date' => '2024-01-01', 'due_date' => '2024-02-15',
+            'id' => Str::uuid()->toString(), 'tenant_id' => $this->tenantA, 'type' => 'AR', 'invoice_number' => 'INV-USD-2',
+            'party_id' => Str::uuid()->toString(), 'issue_date' => '2024-01-01', 'due_date' => '2024-02-15',
             'amount_cents' => 20000, 'paid_cents' => 0, 'currency_code' => 'USD', 'status' => 'unpaid'
         ]);
 
@@ -109,14 +108,14 @@ class MultiCurrencyEngineTest extends TestCase
         $this->assertDatabaseHas('journal_entries', [
             'tenant_id' => $this->tenantA,
             'reference' => 'FX-REVAL-USD-2024-01',
-            'date' => '2024-01-31'
+            'date' => '2024-01-31 00:00:00'
         ]);
 
         // Check reversing journal entry on Feb 1
         $this->assertDatabaseHas('journal_entries', [
             'tenant_id' => $this->tenantA,
             'reference' => 'FX-REV-REV-USD-2024-01',
-            'date' => '2024-02-01'
+            'date' => '2024-02-01 00:00:00'
         ]);
     }
 

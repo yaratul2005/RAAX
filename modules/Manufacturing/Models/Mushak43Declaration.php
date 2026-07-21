@@ -10,6 +10,8 @@ class Mushak43Declaration extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'mushak_4_3_declarations';
+
     protected $keyType = 'string';
     public $incrementing = false;
 

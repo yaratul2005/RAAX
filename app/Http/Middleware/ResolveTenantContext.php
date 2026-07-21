@@ -24,14 +24,12 @@ class ResolveTenantContext
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check()) {
-            $user = Auth::user();
+        $tenantId = $request->header('X-Tenant-ID') ?? (Auth::check() ? Auth::user()->tenant_id : null);
 
-            if (isset($user->tenant_id) && ! empty($user->tenant_id)) {
-                $this->tenantManager->setTenantId((string) $user->tenant_id);
-            } else {
-                return response()->json(['error' => 'Tenant context missing.'], 403);
-            }
+        if ($tenantId) {
+            $this->tenantManager->setTenantId((string) $tenantId);
+        } elseif (Auth::check()) {
+            return response()->json(['error' => 'Tenant context missing.'], 403);
         } else {
             return response()->json(['error' => 'Unauthorized.'], 401);
         }

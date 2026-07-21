@@ -10,10 +10,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('journal_entry_lines', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->uuid('tenant_id');
-            $table->foreignId('journal_entry_id')->constrained('journal_entries')->onDelete('cascade');
-            $table->foreignId('ledger_account_id')->constrained('ledger_accounts')->onDelete('restrict');
+            $table->uuid('journal_entry_id');
+            $table->uuid('account_id')->nullable();
+            $table->uuid('ledger_account_id')->nullable();
+            $table->bigInteger('debit_cents')->default(0)->comment('Stored in cents');
+            $table->bigInteger('credit_cents')->default(0)->comment('Stored in cents');
             $table->bigInteger('debit_amount')->default(0)->comment('Stored in cents');
             $table->bigInteger('credit_amount')->default(0)->comment('Stored in cents');
             $table->timestamps();

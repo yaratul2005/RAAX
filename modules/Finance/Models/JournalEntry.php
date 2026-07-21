@@ -25,6 +25,9 @@ class JournalEntry extends Model
 {
     use SoftDeletes;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     /**
      * @return HasMany<JournalEntryLine, $this>
      */
@@ -34,11 +37,23 @@ class JournalEntry extends Model
     }
 
     protected $fillable = [
+        'id',
         'tenant_id',
         'entry_date',
+        'date',
         'reference',
         'description',
         'amount',
+        'total_debit_cents',
         'currency_code',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'date' => 'date',
+            'entry_date' => 'date',
+            'amount' => 'integer',
+        ];
+    }
 }

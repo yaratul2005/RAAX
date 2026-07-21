@@ -52,7 +52,6 @@ class AgingAnalysisTest extends TestCase
             'tenant_id' => $this->tenantA,
             'invoice_number' => 'INV-001',
             'amount_cents' => 15000,
-            'outstanding_balance' => null, // Dynamic attribute
         ]);
     }
 

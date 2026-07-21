@@ -21,7 +21,20 @@ class LedgerAccount extends Model
 {
     use SoftDeletes;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
+
     protected $fillable = [
+        'id',
         'tenant_id',
         'account_code',
         'account_name',

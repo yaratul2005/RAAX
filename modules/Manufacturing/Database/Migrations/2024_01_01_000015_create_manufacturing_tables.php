@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('bills_of_materials', function (Blueprint $table) {
+        Schema::create('bill_of_materials', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('tenant_id');
             $table->string('finished_item_sku');
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('bill_of_materials_id')->references('id')->on('bills_of_materials')->onDelete('cascade');
+            $table->foreign('bill_of_materials_id')->references('id')->on('bill_of_materials')->onDelete('cascade');
         });
 
         Schema::create('production_work_orders', function (Blueprint $table) {
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->unique(['tenant_id', 'work_order_number']);
-            $table->foreign('bill_of_materials_id')->references('id')->on('bills_of_materials')->onDelete('restrict');
+            $table->foreign('bill_of_materials_id')->references('id')->on('bill_of_materials')->onDelete('restrict');
         });
 
         Schema::create('mushak_4_3_declarations', function (Blueprint $table) {
@@ -62,11 +62,11 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->unique(['tenant_id', 'declaration_number']);
-            $table->foreign('bill_of_materials_id')->references('id')->on('bills_of_materials')->onDelete('cascade');
+            $table->foreign('bill_of_materials_id')->references('id')->on('bill_of_materials')->onDelete('cascade');
         });
 
         if (config('database.default') !== 'sqlite') {
-            $tables = ['bills_of_materials', 'bom_items', 'production_work_orders', 'mushak_4_3_declarations'];
+            $tables = ['bill_of_materials', 'bom_items', 'production_work_orders', 'mushak_4_3_declarations'];
             foreach ($tables as $table) {
                 DB::statement("ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY;");
                 DB::statement("ALTER TABLE {$table} FORCE ROW LEVEL SECURITY;");
@@ -85,6 +85,6 @@ return new class extends Migration
         Schema::dropIfExists('mushak_4_3_declarations');
         Schema::dropIfExists('production_work_orders');
         Schema::dropIfExists('bom_items');
-        Schema::dropIfExists('bills_of_materials');
+        Schema::dropIfExists('bill_of_materials');
     }
 };

@@ -24,10 +24,17 @@ class JournalEntryLine extends Model
 {
     use SoftDeletes;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
+        'id',
         'tenant_id',
         'journal_entry_id',
+        'account_id',
         'ledger_account_id',
+        'debit_cents',
+        'credit_cents',
         'debit_amount',
         'credit_amount',
     ];
