@@ -140,3 +140,17 @@ $$\text{Funds Available} = \text{Budget} - \text{Actual Expenditures} - \text{En
 
 * **Encumbrances:** Funds earmarked at the approval stage of Purchase Orders to prevent budget overruns.
 * **Relief:** Earmarked funds are atomically relieved and transferred to actual expenditures once goods receipts (GRNs) are completed.
+
+## ⚙️ Just-In-Time (JIT) Material Requirements Planning (MRP)
+
+RAAX manages production demand and inventory optimization using a programmatic, lead-time-aware JIT MRP engine.
+
+### Net Requirements Formula
+
+Net component deficiencies are computed dynamically during active processing sweeps:
+
+$$\text{Net Requirement Qty} = \max\left(0, \text{Gross Demand} + \text{Safety Stock} - \text{On-Hand Stock} - \text{In-Transit Stock}\right)$$
+
+* **Lead-Time Offsetting:** Order recommended release dates are automatically back-calculated based on configured vendor delivery lead times:
+
+$$\text{Planned Order Date} = \text{Planned Delivery Date} - \text{Lead Time Days}$$
