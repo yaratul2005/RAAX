@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'tenant' => \App\Http\Middleware\TenantMiddleware::class,
             'permission' => \App\Http\Middleware\CheckPermission::class,
+            'edi.auth' => \App\Http\Middleware\AuthenticateEdiPartner::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

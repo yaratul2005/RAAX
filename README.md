@@ -154,3 +154,20 @@ $$\text{Net Requirement Qty} = \max\left(0, \text{Gross Demand} + \text{Safety S
 * **Lead-Time Offsetting:** Order recommended release dates are automatically back-calculated based on configured vendor delivery lead times:
 
 $$\text{Planned Order Date} = \text{Planned Delivery Date} - \text{Lead Time Days}$$
+
+## 🔌 B2B Electronic Data Interchange (EDI) Gateway
+
+RAAX supports secure, automated Business-to-Business (B2B) document transfers through its API-first EDI gateway.
+
+### Supported ANSI X12 Documents
+
+* **850 Purchase Order (Inbound):** Automatically parsed and written to the Sales module as draft sales orders.
+* **810 Invoice (Outbound):** Generates standardized tax-itemized invoices computed strictly in BDT integer cents.
+
+### API Authentication & Security
+
+Connections are secured using double-hashed SHA-256 API tokens parsed via custom headers:
+
+```http
+X-EDI-Partner-Key: raax_edi_live_token_string
+```
