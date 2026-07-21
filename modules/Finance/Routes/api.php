@@ -28,4 +28,7 @@ Route::middleware('tenant')->group(function () {
     Route::post('/finance/forex/rates', [\Modules\Finance\Http\Controllers\MultiCurrencyController::class, 'storeRate']);
     Route::post('/finance/forex/revalue', [\Modules\Finance\Http\Controllers\MultiCurrencyController::class, 'revalue']);
     Route::get('/finance/forex/analysis', [\Modules\Finance\Http\Controllers\MultiCurrencyController::class, 'analysis']);
+    Route::post('/finance/tax/jurisdictions', [\Modules\Finance\Http\Controllers\TaxJurisdictionController::class, 'storeJurisdiction']);
+    Route::post('/finance/tax/rules', [\Modules\Finance\Http\Controllers\TaxJurisdictionController::class, 'storeRule']);
+    Route::get('/finance/tax/calculate', [\Modules\Finance\Http\Controllers\TaxJurisdictionController::class, 'calculate']);
 });

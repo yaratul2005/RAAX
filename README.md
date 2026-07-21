@@ -115,3 +115,15 @@ Run the verification engine locally or in your CI/CD pipelines to validate gener
 ```bash
 php artisan raax:ledger:verify {tenant_id}
 ```
+
+## 🌍 Multi-Jurisdictional Tax Localization
+
+RAAX features a dynamic, decoupled tax strategy architecture designed to support parallel tax ledgers and localization rules across international branches within a single database.
+
+### Dynamic Tax Driver Resolution
+
+Calculation logic is delegated to localized tax drivers via an extensible factory registry:
+
+* **Bangladesh VAT Driver:** Generates NBR-compliant Mushak outputs.
+* **India GST Driver:** Evaluates shipping states to automatically split transactions into CGST/SGST (intra-state) or IGST (inter-state) ledgers.
+* **Europe VAT Driver:** Enforces destination-based European VAT rules.
