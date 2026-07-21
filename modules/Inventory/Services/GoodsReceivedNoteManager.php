@@ -14,16 +14,19 @@ use InvalidArgumentException;
 // Note: Strict modular decoupling rules from Prompt 11 state: "Do not directly import models or execute cross-queries into Finance or Procurement. Use event-driven hooks or registered service interfaces."
 // We will create a quick interface to represent the fetcher.
 use Modules\Inventory\Contracts\PurchaseOrderFetcherInterface;
+use Modules\Finance\Contracts\BudgetManagerInterface;
 
 class GoodsReceivedNoteManager
 {
     protected TenantContextManager $tenantManager;
     protected PurchaseOrderFetcherInterface $poFetcher;
+    protected BudgetManagerInterface $budgetManager;
 
-    public function __construct(TenantContextManager $tenantManager, PurchaseOrderFetcherInterface $poFetcher)
+    public function __construct(TenantContextManager $tenantManager, PurchaseOrderFetcherInterface $poFetcher, BudgetManagerInterface $budgetManager)
     {
         $this->tenantManager = $tenantManager;
         $this->poFetcher = $poFetcher;
+        $this->budgetManager = $budgetManager;
     }
 
     public function receiveGoods(array $payload): GoodsReceivedNote
@@ -108,6 +111,15 @@ class GoodsReceivedNoteManager
                     'reason' => "GRN Receipt {$grn->grn_number}",
                 ]);
             }
+
+                        // Relieve Encumbrance
+            // We'll calculate the total receipt value and relieve
+            $totalReceiptValue = 0;
+            foreach ($payload['lines'] as $line) {
+                $poLine = collect($poData['lines'])->firstWhere('item_sku', $line['item_sku']);
+                $totalReceiptValue += ($line['qty'] * $poLine['unit_price_cents']);
+            }
+            $this->budgetManager->relieveFunds('purchase_order', $payload['purchase_order_id'], $totalReceiptValue);
 
             return $grn;
         });

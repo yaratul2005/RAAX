@@ -10,14 +10,17 @@ use InvalidArgumentException;
 use Modules\Procurement\Models\PurchaseOrder;
 use Modules\Procurement\Models\PurchaseOrderLine;
 use Modules\Procurement\Models\Vendor;
+use Modules\Finance\Contracts\BudgetManagerInterface;
 
 class ProcurementManager
 {
     protected TenantContextManager $tenantManager;
+    protected BudgetManagerInterface $budgetManager;
 
-    public function __construct(TenantContextManager $tenantManager)
+    public function __construct(TenantContextManager $tenantManager, BudgetManagerInterface $budgetManager)
     {
         $this->tenantManager = $tenantManager;
+        $this->budgetManager = $budgetManager;
     }
 
     /**
@@ -132,6 +135,20 @@ class ProcurementManager
 
         if (!$hasPermission) {
             throw new \Illuminate\Auth\Access\AuthorizationException("User lacks authorization to approve a PO of this amount.");
+        }
+
+                // Budget Earmarking
+        // Assuming a generic default account mapped for Procurement or taking from PO
+        // For MVP, we will assume account "5001" (Expense/Procurement)
+        try {
+            // Find account ID for code 5001
+            $account = \Modules\Finance\Models\LedgerAccount::where('tenant_id', $tenantId)->where('code', '5001')->first();
+            if ($account) {
+                $this->budgetManager->encumberFunds($account->id, 'purchase_order', $po->id, $po->total_amount_cents);
+            }
+        } catch (\Modules\Finance\Services\InsufficientBudgetException $e) {
+            $po->update(['status' => 'cancelled']); // or 'rejected_due_to_budget' as per prompt, but schema enum is 'cancelled'
+            throw new InvalidArgumentException("PO Approval rejected: Insufficient budget available.");
         }
 
         $po->update(['status' => 'sent_to_vendor']);

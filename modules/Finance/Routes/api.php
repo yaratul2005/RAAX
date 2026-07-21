@@ -31,4 +31,7 @@ Route::middleware('tenant')->group(function () {
     Route::post('/finance/tax/jurisdictions', [\Modules\Finance\Http\Controllers\TaxJurisdictionController::class, 'storeJurisdiction']);
     Route::post('/finance/tax/rules', [\Modules\Finance\Http\Controllers\TaxJurisdictionController::class, 'storeRule']);
     Route::get('/finance/tax/calculate', [\Modules\Finance\Http\Controllers\TaxJurisdictionController::class, 'calculate']);
+    Route::post('/finance/budgets', [\Modules\Finance\Http\Controllers\BudgetController::class, 'store']);
+    Route::post('/finance/budgets/lines', [\Modules\Finance\Http\Controllers\BudgetController::class, 'storeLine']);
+    Route::get('/finance/budgets/available/{accountId}', [\Modules\Finance\Http\Controllers\BudgetController::class, 'available']);
 });

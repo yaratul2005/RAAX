@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 class FinanceServiceProvider extends ServiceProvider
 {
     public function register(): void
+        $this->app->bind(\Modules\Finance\Contracts\BudgetManagerInterface::class, \Modules\Finance\Services\BudgetManager::class);
     {
         // Register Finance module services
     }

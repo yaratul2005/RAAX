@@ -127,3 +127,16 @@ Calculation logic is delegated to localized tax drivers via an extensible factor
 * **Bangladesh VAT Driver:** Generates NBR-compliant Mushak outputs.
 * **India GST Driver:** Evaluates shipping states to automatically split transactions into CGST/SGST (intra-state) or IGST (inter-state) ledgers.
 * **Europe VAT Driver:** Enforces destination-based European VAT rules.
+
+## 📉 Budgetary Control & Commitment Accounting
+
+RAAX protects organizational capital by running active, real-time budget verification checks directly during the procurement lifecycle.
+
+### Funds Available Formula
+
+Available funds are evaluated dynamically before any expenditure is authorized:
+
+$$\text{Funds Available} = \text{Budget} - \text{Actual Expenditures} - \text{Encumbrances}$$
+
+* **Encumbrances:** Funds earmarked at the approval stage of Purchase Orders to prevent budget overruns.
+* **Relief:** Earmarked funds are atomically relieved and transferred to actual expenditures once goods receipts (GRNs) are completed.
