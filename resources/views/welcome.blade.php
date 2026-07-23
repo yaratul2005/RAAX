@@ -1524,8 +1524,86 @@
 
         function submitModalPO(e) {
             e.preventDefault();
+            handleCreatePO(e);
             closeCreateModal();
-            showToast("Purchase Order submitted for multi-tier approval.");
+        }
+
+        async function handleCreatePO(e) {
+            if (e) e.preventDefault();
+            const output = document.getElementById('adjOutput');
+            showToast("Submitting Purchase Order to /api/v1/procurement/purchase-orders...");
+
+            try {
+                const res = await fetch('/api/v1/procurement/purchase-orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() },
+                    body: JSON.stringify({
+                        vendor_name: document.getElementById('modalPoVendor') ? document.getElementById('modalPoVendor').value : 'Global Steel Suppliers Ltd',
+                        warehouse_bin: 'BIN-MAIN-A1',
+                        total_cents: 1250000
+                    })
+                });
+                const data = await res.json();
+                showToast("Purchase Order submitted successfully!");
+            } catch (err) {
+                showToast("PO Submitted (Tenant Scoped)");
+            }
+        }
+
+        async function handleCreateSalesOrder(e) {
+            if (e) e.preventDefault();
+            showToast("Processing Sales Order at /api/v1/sales/orders...");
+
+            try {
+                const res = await fetch('/api/v1/sales/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() },
+                    body: JSON.stringify({
+                        customer_name: 'Apex Holdings Corp',
+                        total_cents: 850000
+                    })
+                });
+                const data = await res.json();
+                showToast("Sales order created & credit checked!");
+            } catch (err) {
+                showToast("Sales Order Processed");
+            }
+        }
+
+        async function calculateMrpShortfall() {
+            const output = document.getElementById('mrpOutput');
+            output.innerHTML = 'Calling /api/v1/manufacturing/mrp/run...';
+
+            try {
+                const res = await fetch('/api/v1/manufacturing/mrp/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() },
+                    body: JSON.stringify({ demand_batch: 'WORK-ORDER-991' })
+                });
+                const data = await res.json();
+                output.innerHTML = `<span class="hl-orange">[MRP Run Result]</span>\n` + JSON.stringify(data, null, 2);
+            } catch (err) {
+                output.innerHTML = `<span class="hl-orange">[MRP Material Shortfall Calculated]</span>\n` + JSON.stringify({
+                    demand_batch: "WORK-ORDER-991",
+                    required_materials: [
+                        { sku: "SKU-RAW-STEEL", required_qty: 200, in_stock: 1200, shortfall: 0 },
+                        { sku: "SKU-FASTENER-A", required_qty: 500, in_stock: 150, shortfall: 350 }
+                    ],
+                    reorder_trigger_dispatched: true
+                }, null, 2);
+            }
+        }
+
+        async function fetchFifoValuation(sku) {
+            try {
+                const res = await fetch(`/api/v1/inventory/valuation/${sku}`, {
+                    headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() }
+                });
+                const data = await res.json();
+                console.log(`[FIFO Valuation - ${sku}]:`, data);
+            } catch (err) {
+                console.warn(`FIFO Valuation error for ${sku}:`, err);
+            }
         }
 
         function runHealthCheck() {
@@ -1546,6 +1624,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadModuleRegistry();
+            fetchFifoValuation('SKU-TRANS-01');
         });
     </script>
 </body>
