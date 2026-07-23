@@ -1531,6 +1531,22 @@
         function runHealthCheck() {
             showToast("System health diagnostic clean!");
         }
+
+        async function loadModuleRegistry() {
+            try {
+                const res = await fetch('/api/v1/system/modules', {
+                    headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() }
+                });
+                const data = await res.json();
+                console.log("[Layered Core Backend] Registered Modules & Config:", data);
+            } catch (err) {
+                console.warn("Module registry fetch warning:", err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadModuleRegistry();
+        });
     </script>
 </body>
 </html>
