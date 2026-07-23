@@ -31,8 +31,8 @@
             --status-amber: #f59e0b;
             --status-red: #ef4444;
             --status-blue: #3b82f6;
-            --drawer-width: 440px;
-            --sidebar-width: 240px;
+            --drawer-width: 480px;
+            --sidebar-width: 250px;
         }
 
         * {
@@ -590,10 +590,6 @@
             cursor: pointer;
         }
 
-        .data-table tr.selected td {
-            background: rgba(255, 94, 0, 0.06);
-        }
-
         /* Status Chips */
         .status-chip {
             font-size: 11px;
@@ -704,26 +700,6 @@
             box-shadow: 0 0 0 1px var(--orange-brand);
         }
 
-        /* Line Item Form Grid */
-        .line-item-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1rem;
-        }
-
-        .line-item-table th {
-            text-align: left;
-            font-size: 11px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            padding: 6px;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .line-item-table td {
-            padding: 6px;
-        }
-
         /* Persistent Right Detail Drawer */
         #detail-drawer {
             position: fixed;
@@ -782,43 +758,19 @@
             color: var(--text-pure);
         }
 
-        /* Activity Log Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 20px;
-            margin-top: 1rem;
+        /* Before/After Audit Diff Box */
+        .diff-box {
+            background: #09090b;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            margin-top: 8px;
         }
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 6px;
-            top: 4px;
-            bottom: 4px;
-            width: 2px;
-            background: var(--border-subtle);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 1rem;
-            font-size: 12px;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: -20px;
-            top: 2px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--orange-brand);
-        }
-
-        .timeline-time {
-            font-size: 10px;
-            color: var(--text-dim);
-        }
+        .diff-old { color: var(--status-red); text-decoration: line-through; }
+        .diff-new { color: var(--status-green); }
 
         /* Terminal Console Output */
         .terminal-box {
@@ -838,7 +790,7 @@
         .terminal-box .hl-orange { color: var(--orange-brand); }
         .terminal-box .hl-green { color: var(--status-green); }
 
-        /* Floating Toast Container */
+        /* Toast Container */
         #toast-container {
             position: fixed;
             bottom: 20px;
@@ -913,16 +865,6 @@
             overflow-y: auto;
         }
 
-        .modal-footer {
-            padding: 1rem 1.25rem;
-            border-top: 1px solid var(--border-subtle);
-            background: var(--card-header-bg);
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-
         /* Footer */
         footer {
             border-top: 1px solid var(--border-subtle);
@@ -945,7 +887,7 @@
                 <div class="brand-icon">R</div>
                 <div>
                     <div class="brand-title">RAAX <span>ERP</span></div>
-                    <div class="brand-sub">Enterprise Monolith</div>
+                    <div class="brand-sub">Enterprise Core</div>
                 </div>
             </div>
 
@@ -959,9 +901,9 @@
                     <span class="nav-badge" id="nav-approval-count">3</span>
                 </a>
 
-                <div class="menu-category">Core ERP Modules</div>
+                <div class="menu-category">Mandatory Core Modules</div>
                 <a class="nav-item" onclick="navigateTo('sales', this)">
-                    <span><i class="fa-solid fa-receipt nav-icon"></i> Sales & Orders</span>
+                    <span><i class="fa-solid fa-receipt nav-icon"></i> Sales & Billing</span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('procurement', this)">
                     <span><i class="fa-solid fa-cart-shopping nav-icon"></i> Procurement (POs)</span>
@@ -969,8 +911,11 @@
                 <a class="nav-item" onclick="navigateTo('inventory', this)">
                     <span><i class="fa-solid fa-boxes-packing nav-icon"></i> Inventory & FIFO</span>
                 </a>
+                <a class="nav-item" onclick="navigateTo('stock-adjust', this)">
+                    <span><i class="fa-solid fa-sliders nav-icon"></i> Stock Adjustments</span>
+                </a>
                 <a class="nav-item" onclick="navigateTo('finance', this)">
-                    <span><i class="fa-solid fa-book nav-icon"></i> General Ledger & FX</span>
+                    <span><i class="fa-solid fa-book nav-icon"></i> Finance & GL</span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('vat', this)">
                     <span><i class="fa-solid fa-file-contract nav-icon"></i> NBR Statutory VAT</span>
@@ -982,12 +927,15 @@
                     <span><i class="fa-solid fa-industry nav-icon"></i> Manufacturing MRP</span>
                 </a>
 
-                <div class="menu-category">Governance</div>
+                <div class="menu-category">Governance & Controls</div>
+                <a class="nav-item" onclick="navigateTo('audit', this)">
+                    <span><i class="fa-solid fa-history nav-icon"></i> Before/After Audit</span>
+                </a>
+                <a class="nav-item" onclick="navigateTo('sod', this)">
+                    <span><i class="fa-solid fa-user-lock nav-icon"></i> Segregation of Duties</span>
+                </a>
                 <a class="nav-item" onclick="navigateTo('telemetry', this)">
                     <span><i class="fa-solid fa-terminal nav-icon"></i> System Telemetry</span>
-                </a>
-                <a class="nav-item" onclick="navigateTo('settings', this)">
-                    <span><i class="fa-solid fa-gear nav-icon"></i> Settings & RLS</span>
                 </a>
             </div>
         </aside>
@@ -1001,7 +949,7 @@
                     <button class="toggle-sidebar-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
                     <div class="global-search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" class="global-search-input" placeholder="Global Search (Orders, Invoices, Employees, SKUs, Hash)..." onkeyup="handleGlobalSearch(this.value)">
+                        <input type="text" class="global-search-input" placeholder="Global Search (POs, Invoices, Stock, Audit Hashes)..." onkeyup="handleGlobalSearch(this.value)">
                     </div>
                 </div>
 
@@ -1029,22 +977,22 @@
 
                     <div class="status-badge">
                         <div class="status-dot"></div>
-                        RLS Active
+                        RLS Sealed
                     </div>
                 </div>
             </header>
 
-            <!-- Page Breadcrumb & Header -->
+            <!-- Page Header / Breadcrumbs -->
             <div class="page-header">
                 <div>
                     <div class="breadcrumbs">
-                        <a href="#">RAAX Monolith</a> / <span id="crumb-current">Executive Manager Dashboard</span>
+                        <a href="#">RAAX Monolith</a> / <span id="crumb-current">Role Dashboard</span>
                     </div>
                     <div class="page-title" id="page-title-text">Role Dashboard</div>
                 </div>
-                <div class="page-actions" id="page-actions-container">
+                <div class="page-actions">
                     <button class="btn btn-outline btn-sm" onclick="exportCurrentView()"><i class="fa-solid fa-download"></i> Export CSV</button>
-                    <button class="btn btn-sm" onclick="runHealthCheck()"><i class="fa-solid fa-rotate"></i> Sync Diagnostics</button>
+                    <button class="btn btn-sm" onclick="runHealthCheck()"><i class="fa-solid fa-rotate"></i> Sync Health</button>
                 </div>
             </div>
 
@@ -1053,8 +1001,6 @@
 
                 <!-- PANEL 1: ROLE DASHBOARDS -->
                 <div id="view-dashboard" class="view-panel active">
-                    
-                    <!-- Manager Dashboard View -->
                     <div id="role-dashboard-manager">
                         <div class="kpi-grid">
                             <div class="kpi-card featured">
@@ -1081,21 +1027,16 @@
 
                         <div class="grid-2">
                             <div class="card">
-                                <div class="card-header">
-                                    <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity & Audit Trail</div>
-                                </div>
+                                <div class="card-header"><div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Audit Trail Activity</div></div>
                                 <div class="card-body" style="padding:0;">
                                     <table class="data-table">
-                                        <thead><tr><th>Timestamp</th><th>User</th><th>Module</th><th>Action</th></tr></thead>
+                                        <thead><tr><th>Timestamp</th><th>User</th><th>Module</th><th>Action & Before/After Value</th></tr></thead>
                                         <tbody>
-                                            <tr onclick="openDrawer('PO-2026-8819', 'Purchase Order', 'Submitted', 'Vendor: Steel Corp | Total: BDT 12,500')">
-                                                <td class="mono">22:41:05</td><td>A. Rahman</td><td>Procurement</td><td>Submitted PO #PO-8819</td>
+                                            <tr onclick="openDrawer('ADJ-9912', 'Stock Adjustment', 'Approved', 'SKU-FASTENER-A: 500 -> 150 (Shrinkage)')">
+                                                <td class="mono">22:41:05</td><td>A. Rahman</td><td>Inventory</td><td>Stock Adjust: 500 &rarr; 150 units</td>
                                             </tr>
-                                            <tr onclick="openDrawer('JE-2026-001', 'Journal Entry', 'Posted', 'Rent Expense | BDT 450.00')">
+                                            <tr onclick="openDrawer('JE-2026-001', 'Journal Entry', 'Posted', 'Rent Expense: BDT 450.00')">
                                                 <td class="mono">22:15:30</td><td>S. Khan</td><td>Finance</td><td>Posted Journal Entry #JE-001</td>
-                                            </tr>
-                                            <tr onclick="openDrawer('EMP-1001', 'Attendance Check-in', 'Approved', 'Check-in: 09:10 AM')">
-                                                <td class="mono">21:50:12</td><td>M. Haque</td><td>HR</td><td>Log Attendance Check-in</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -1103,47 +1044,33 @@
                             </div>
 
                             <div class="card">
-                                <div class="card-header">
-                                    <div class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> System Risk & Exceptions</div>
-                                </div>
+                                <div class="card-header"><div class="card-title"><i class="fa-solid fa-user-lock"></i> Segregation of Duties (SoD) Compliance</div></div>
                                 <div class="card-body">
                                     <ul style="list-style:none; font-size:13px; line-height:2;">
-                                        <li><span class="status-chip rejected">Overdue</span> Customer Apex Corp balance exceeds credit limit by BDT 150,000</li>
-                                        <li><span class="status-chip posted">Alert</span> Stock SKU-FASTENER-A below reorder point (150 units left)</li>
-                                        <li><span class="status-chip approved">Complete</span> NBR Mushak 9.1 Return draft calculated cleanly for 2026-07</li>
+                                        <li><span class="status-chip approved">Enforced</span> Maker/Checker rule active for Purchase Orders & Payment Vouchers</li>
+                                        <li><span class="status-chip approved">Enforced</span> Creator cannot approve their own Stock Adjustment</li>
+                                        <li><span class="status-chip approved">Enforced</span> RLS Session boundary locked to active tenant context</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Finance Dashboard View -->
                     <div id="role-dashboard-finance" style="display:none;">
                         <div class="kpi-grid">
                             <div class="kpi-card featured">
-                                <div class="kpi-header"><div class="kpi-title">Accounts Receivable (AR)</div><i class="fa-solid fa-file-invoice-dollar kpi-icon"></i></div>
+                                <div class="kpi-header"><div class="kpi-title">Accounts Receivable</div><i class="fa-solid fa-file-invoice-dollar kpi-icon"></i></div>
                                 <div class="kpi-value">BDT 18.4M</div>
                                 <div class="kpi-subtitle positive">Aging: 85% Current</div>
                             </div>
                             <div class="kpi-card">
-                                <div class="kpi-header"><div class="kpi-title">Accounts Payable (AP)</div><i class="fa-solid fa-receipt kpi-icon"></i></div>
+                                <div class="kpi-header"><div class="kpi-title">Accounts Payable</div><i class="fa-solid fa-receipt kpi-icon"></i></div>
                                 <div class="kpi-value">BDT 12.1M</div>
-                                <div class="kpi-subtitle">Due within 30 days</div>
-                            </div>
-                            <div class="kpi-card">
-                                <div class="kpi-header"><div class="kpi-title">Period Close Status</div><i class="fa-solid fa-lock kpi-icon"></i></div>
-                                <div class="kpi-value">FY-2026 Open</div>
-                                <div class="kpi-subtitle orange">Closing target: July 31</div>
-                            </div>
-                            <div class="kpi-card">
-                                <div class="kpi-header"><div class="kpi-title">MT940 Recon Queue</div><i class="fa-solid fa-building-columns kpi-icon"></i></div>
-                                <div class="kpi-value">14 Entries</div>
-                                <div class="kpi-subtitle positive">Auto-Matched 92%</div>
+                                <div class="kpi-subtitle">Due in 30 days</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Warehouse Dashboard View -->
                     <div id="role-dashboard-warehouse" style="display:none;">
                         <div class="kpi-grid">
                             <div class="kpi-card featured">
@@ -1152,41 +1079,30 @@
                                 <div class="kpi-subtitle positive">4 Approved POs</div>
                             </div>
                             <div class="kpi-card">
-                                <div class="kpi-header"><div class="kpi-title">Pick & Pack Dispatch</div><i class="fa-solid fa-dolly kpi-icon"></i></div>
-                                <div class="kpi-value">18 Orders</div>
-                                <div class="kpi-subtitle orange">12 Dispatched today</div>
-                            </div>
-                            <div class="kpi-card">
-                                <div class="kpi-header"><div class="kpi-title">Low Stock Reorders</div><i class="fa-solid fa-boxes-stacked kpi-icon"></i></div>
-                                <div class="kpi-value">2 SKUs</div>
-                                <div class="kpi-subtitle danger">Reorder triggered</div>
-                            </div>
-                            <div class="kpi-card">
                                 <div class="kpi-header"><div class="kpi-title">Barcode Scan Speed</div><i class="fa-solid fa-barcode kpi-icon"></i></div>
                                 <div class="kpi-value">1.2s / item</div>
                                 <div class="kpi-subtitle positive">Optimal Queue</div>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- PANEL 2: APPROVAL QUEUE -->
+                <!-- PANEL 2: APPROVAL QUEUE (MANDATORY CONTROL) -->
                 <div id="view-approvals" class="view-panel">
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title"><i class="fa-solid fa-stamp"></i> Pending Workflow Approval Requests</div>
-                            <span class="badge-tag orange">3 Action Items</span>
+                            <span class="badge-tag orange">Mandatory Governance</span>
                         </div>
                         <div class="card-body" style="padding:0;">
                             <table class="data-table" id="approvalTable">
                                 <thead>
                                     <tr>
                                         <th>Request #</th>
-                                        <th>Workflow Subject</th>
+                                        <th>Workflow Type</th>
                                         <th>Requester</th>
-                                        <th>Impact / Amount</th>
-                                        <th>Status</th>
+                                        <th>Impact Value</th>
+                                        <th>SoD Validation</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -1196,21 +1112,21 @@
                                         <td>Purchase Order Price Tolerance Exceeded</td>
                                         <td>A. Rahman (Procurement)</td>
                                         <td class="mono">BDT 1,250,000</td>
-                                        <td><span class="status-chip submitted" id="app-status-1">Submitted</span></td>
+                                        <td><span class="badge-tag green">SoD Pass (Different User)</span></td>
                                         <td>
                                             <button class="btn btn-success btn-sm" onclick="processApproval('1024', 'approve')"><i class="fa-solid fa-check"></i> Approve</button>
                                             <button class="btn btn-danger btn-sm" onclick="processApproval('1024', 'reject')"><i class="fa-solid fa-xmark"></i> Reject</button>
                                         </td>
                                     </tr>
                                     <tr id="approval-row-2">
-                                        <td class="mono">REQ-1025</td>
-                                        <td>Customer Credit Limit Override Request</td>
-                                        <td>K. Ahmed (Sales)</td>
-                                        <td class="mono">BDT 850,000</td>
-                                        <td><span class="status-chip submitted" id="app-status-2">Submitted</span></td>
+                                        <td class="mono">ADJ-9912</td>
+                                        <td>Stock Adjustment Request (Shrinkage)</td>
+                                        <td>W. Floor Clerk</td>
+                                        <td class="mono">350 units (BDT 15,750)</td>
+                                        <td><span class="badge-tag green">SoD Pass</span></td>
                                         <td>
-                                            <button class="btn btn-success btn-sm" onclick="processApproval('1025', 'approve')"><i class="fa-solid fa-check"></i> Approve</button>
-                                            <button class="btn btn-danger btn-sm" onclick="processApproval('1025', 'reject')"><i class="fa-solid fa-xmark"></i> Reject</button>
+                                            <button class="btn btn-success btn-sm" onclick="processApproval('9912', 'approve')"><i class="fa-solid fa-check"></i> Approve Adjustment</button>
+                                            <button class="btn btn-danger btn-sm" onclick="processApproval('9912', 'reject')"><i class="fa-solid fa-xmark"></i> Reject</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -1219,132 +1135,91 @@
                     </div>
                 </div>
 
-                <!-- PANEL 3: SALES & ORDERS MASTER LIST -->
-                <div id="view-sales" class="view-panel">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title"><i class="fa-solid fa-receipt"></i> Sales Orders & Customer Billing</div>
-                            <button class="btn btn-sm" onclick="openCreateModal('so')"><i class="fa-solid fa-plus"></i> + New Sales Order</button>
-                        </div>
-                        <div class="list-controls-bar">
-                            <div class="controls-left">
-                                <span class="filter-chip active" onclick="filterMasterList('salesTable', 'all', this)">All Orders</span>
-                                <span class="filter-chip" onclick="filterMasterList('salesTable', 'posted', this)">Posted</span>
-                                <span class="filter-chip" onclick="filterMasterList('salesTable', 'draft', this)">Draft</span>
+                <!-- PANEL 3: MANDATORY STOCK ADJUSTMENTS -->
+                <div id="view-stock-adjust" class="view-panel">
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fa-solid fa-sliders"></i> Request Mandatory Stock Adjustment</div>
                             </div>
-                            <div class="controls-right">
-                                <input type="text" class="search-input" placeholder="Filter orders..." onkeyup="filterMasterListQuery('salesTable', this.value)">
+                            <div class="card-body">
+                                <form onsubmit="handleStockAdjustment(event)">
+                                    <div class="form-group">
+                                        <label class="form-label">SKU Item Reference</label>
+                                        <select id="adjSku" class="form-select">
+                                            <option value="SKU-FASTENER-A">SKU-FASTENER-A (Current: 500 units)</option>
+                                            <option value="SKU-RAW-STEEL">SKU-RAW-STEEL (Current: 1,200 units)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">New Physical Quantity</label>
+                                        <input type="number" id="adjNewQty" class="form-input" value="150" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Adjustment Reason Code</label>
+                                        <select id="adjReason" class="form-select">
+                                            <option value="shrinkage">Shrinkage / Physical Count Discrepancy</option>
+                                            <option value="damage">Damaged Stock Write-off</option>
+                                            <option value="audit">Audit Variance Re-alignment</option>
+                                        </select>
+                                    </div>
+
+                                    <button type="submit" class="btn"><i class="fa-solid fa-paper-plane"></i> Submit Stock Adjustment for Approval</button>
+                                </form>
                             </div>
                         </div>
-                        <div class="data-table-container">
-                            <table class="data-table" id="salesTable">
-                                <thead>
-                                    <tr>
-                                        <th><input type="checkbox"></th>
-                                        <th>Order ID</th>
-                                        <th>Customer</th>
-                                        <th>Total Amount</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr onclick="openDrawer('SO-2026-4412', 'Sales Order', 'Posted', 'Customer: Apex Corp | Total: BDT 850,000')">
-                                        <td><input type="checkbox" onclick="event.stopPropagation()"></td>
-                                        <td class="mono">SO-2026-4412</td>
-                                        <td>Apex Holdings Corp</td>
-                                        <td class="mono">BDT 850,000</td>
-                                        <td><span class="status-chip posted">Posted</span></td>
-                                        <td>2026-07-21</td>
-                                        <td><button class="btn btn-outline btn-sm">View</button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+
+                        <div class="card">
+                            <div class="card-header"><div class="card-title"><i class="fa-solid fa-terminal"></i> Adjustment Audit Log Output</div></div>
+                            <div class="card-body"><div id="adjOutput" class="terminal-box">Ready to submit stock adjustments...</div></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- PANEL 4: PROCUREMENT & PO MASTER LIST -->
-                <div id="view-procurement" class="view-panel">
+                <!-- PANEL 4: BEFORE / AFTER AUDIT TRAIL (MANDATORY CONTROL) -->
+                <div id="view-audit" class="view-panel">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title"><i class="fa-solid fa-cart-shopping"></i> Purchase Orders & Supplier Register</div>
-                            <button class="btn btn-sm" onclick="openCreateModal('po')"><i class="fa-solid fa-plus"></i> + Create Purchase Order</button>
+                            <div class="card-title"><i class="fa-solid fa-history"></i> Complete System Audit Trail with Before/After Diff Values</div>
+                            <span class="badge-tag orange">Immutable Audit Log</span>
                         </div>
-                        <div class="list-controls-bar">
-                            <div class="controls-left">
-                                <span class="filter-chip active" onclick="filterMasterList('poTable', 'all', this)">All POs</span>
-                                <span class="filter-chip" onclick="filterMasterList('poTable', 'approved', this)">Approved</span>
-                                <span class="filter-chip" onclick="filterMasterList('poTable', 'submitted', this)">Pending Approval</span>
-                            </div>
-                            <div class="controls-right">
-                                <input type="text" class="search-input" placeholder="Search POs..." onkeyup="filterMasterListQuery('poTable', this.value)">
-                            </div>
-                        </div>
-                        <div class="data-table-container">
-                            <table class="data-table" id="poTable">
-                                <thead>
-                                    <tr>
-                                        <th><input type="checkbox"></th>
-                                        <th>PO Number</th>
-                                        <th>Vendor Supplier</th>
-                                        <th>Total (Cents)</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr onclick="openDrawer('PO-2026-8819', 'Purchase Order', 'Submitted', 'Vendor: Global Steel | Total: BDT 12,500')">
-                                        <td><input type="checkbox" onclick="event.stopPropagation()"></td>
-                                        <td class="mono">PO-2026-8819</td>
-                                        <td>Global Steel Suppliers Ltd</td>
-                                        <td class="mono">1,250,000 cents</td>
-                                        <td><span class="status-chip submitted">Submitted</span></td>
-                                        <td>2026-07-21</td>
-                                        <td><button class="btn btn-outline btn-sm">Inspect</button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PANEL 5: INVENTORY & FIFO -->
-                <div id="view-inventory" class="view-panel">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title"><i class="fa-solid fa-boxes-packing"></i> FIFO Stock Valuation & Bin Location Matrix</div>
-                        </div>
-                        <div class="data-table-container">
+                        <div class="card-body" style="padding:0;">
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>SKU Reference</th>
-                                        <th>Warehouse Bin</th>
-                                        <th>Initial Qty</th>
-                                        <th>Remaining Qty</th>
-                                        <th>Unit Cost</th>
-                                        <th>Valuation</th>
+                                        <th>Log ID</th>
+                                        <th>Timestamp</th>
+                                        <th>User & IP</th>
+                                        <th>Entity</th>
+                                        <th>Action</th>
+                                        <th>Before / After Values</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr onclick="openDrawer('SKU-TRANS-01', 'Stock Item', 'Active', 'Bin: BIN-MAIN-A1 | Remaining: 420 units')">
-                                        <td class="mono">SKU-TRANS-01</td>
-                                        <td class="mono">BIN-MAIN-A1</td>
-                                        <td>500</td>
-                                        <td>420</td>
-                                        <td>1,000 cents (BDT 10.00)</td>
-                                        <td><span class="badge-tag orange">FIFO Batch</span></td>
+                                    <tr>
+                                        <td class="mono">AUD-8821</td>
+                                        <td class="mono">2026-07-23 22:41</td>
+                                        <td>A. Rahman (192.168.1.45)</td>
+                                        <td>stock_items</td>
+                                        <td>UPDATE</td>
+                                        <td>
+                                            <div class="diff-box">
+                                                <span class="diff-old">- "qty": 500</span><br>
+                                                <span class="diff-new">+ "qty": 150 (Reason: Shrinkage)</span>
+                                            </div>
+                                        </td>
                                     </tr>
-                                    <tr onclick="openDrawer('SKU-RAW-STEEL', 'Stock Item', 'Active', 'Bin: BIN-WH2-B4 | Remaining: 1200 units')">
-                                        <td class="mono">SKU-RAW-STEEL</td>
-                                        <td class="mono">BIN-WH2-B4</td>
-                                        <td>1,200</td>
-                                        <td>1,200</td>
-                                        <td>4,500 cents (BDT 45.00)</td>
-                                        <td><span class="badge-tag orange">FIFO Batch</span></td>
+                                    <tr>
+                                        <td class="mono">AUD-8820</td>
+                                        <td class="mono">2026-07-23 22:15</td>
+                                        <td>S. Khan (192.168.1.12)</td>
+                                        <td>journal_entries</td>
+                                        <td>INSERT</td>
+                                        <td>
+                                            <div class="diff-box">
+                                                <span class="diff-new">+ "reference": "JE-INV-2026-001", "debit_cents": 45000</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1352,161 +1227,112 @@
                     </div>
                 </div>
 
-                <!-- PANEL 6: FINANCE & GENERAL LEDGER -->
-                <div id="view-finance" class="view-panel">
-                    <div class="grid-2">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title"><i class="fa-solid fa-pen-to-square"></i> Post Double-Entry Journal Entry</div>
-                            </div>
-                            <div class="card-body">
-                                <form id="journalForm" onsubmit="handlePostJournal(event)">
-                                    <div class="form-group">
-                                        <label class="form-label">Journal Date</label>
-                                        <input type="date" id="jeDate" class="form-input" value="2026-07-21" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Reference Number</label>
-                                        <input type="text" id="jeRef" class="form-input" value="JE-INV-2026-001" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Description</label>
-                                        <input type="text" id="jeDesc" class="form-input" value="Office Rent & Supplies Expenses" required>
-                                    </div>
-
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="form-group">
-                                        <div>
-                                            <label class="form-label">Debit Amount (Cents)</label>
-                                            <input type="number" id="jeDebit" class="form-input" value="45000" required>
-                                        </div>
-                                        <div>
-                                            <label class="form-label">Credit Amount (Cents)</label>
-                                            <input type="number" id="jeCredit" class="form-input" value="45000" required>
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" class="btn">
-                                        <i class="fa-solid fa-paper-plane"></i> Post Journal Entry
-                                    </button>
-                                </form>
-                            </div>
+                <!-- PANEL 5: SEGREGATION OF DUTIES MATRIX -->
+                <div id="view-sod" class="view-panel">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><i class="fa-solid fa-user-lock"></i> Segregation of Duties (SoD) Enforcement Matrix</div>
                         </div>
-
-                        <div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-title"><i class="fa-solid fa-calculator"></i> Finance Quick Actions</div>
-                                </div>
-                                <div class="card-body" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                    <button onclick="fetchConsolidatedTB()" class="btn btn-outline btn-sm"><i class="fa-solid fa-scale-balanced"></i> Consolidated Trial Balance</button>
-                                    <button onclick="triggerForexRevaluation()" class="btn btn-outline btn-sm"><i class="fa-solid fa-globe"></i> Month-End Forex Revaluation</button>
-                                </div>
-                            </div>
-
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-title"><i class="fa-solid fa-code"></i> API Execution Console</div>
-                                </div>
-                                <div class="card-body">
-                                    <div id="financeOutput" class="terminal-box">Ready to execute financial actions...</div>
-                                </div>
-                            </div>
+                        <div class="card-body" style="padding:0;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Workflow Path</th>
+                                        <th>Initiator Role</th>
+                                        <th>Approver / Checker Role</th>
+                                        <th>SoD Conflict Check</th>
+                                        <th>Rule Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Purchase Order Approval</td>
+                                        <td>Procurement Officer</td>
+                                        <td>CFO / Finance Admin</td>
+                                        <td>Creator $\neq$ Approver</td>
+                                        <td><span class="badge-tag green">Strictly Enforced</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Stock Adjustment Write-off</td>
+                                        <td>Warehouse Clerk</td>
+                                        <td>Warehouse Manager</td>
+                                        <td>Clerk $\neq$ Approver</td>
+                                        <td><span class="badge-tag green">Strictly Enforced</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Payment Voucher Disbursement</td>
+                                        <td>AP Specialist</td>
+                                        <td>Treasury Officer</td>
+                                        <td>Disburser $\neq$ Approver</td>
+                                        <td><span class="badge-tag green">Strictly Enforced</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- PANEL 7: NBR STATUTORY VAT -->
+                <!-- OTHER PANELS (SALES, PROCUREMENT, INVENTORY, FINANCE, VAT, HR, MRP, TELEMETRY, SETTINGS) -->
+                <div id="view-sales" class="view-panel">
+                    <div class="card">
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-receipt"></i> Sales Orders & Customer Records</div></div>
+                        <div class="card-body"><p style="font-size:13px; color:var(--text-muted);">Sales Order management with automatic customer credit limit checks and discount approval thresholds.</p></div>
+                    </div>
+                </div>
+
+                <div id="view-procurement" class="view-panel">
+                    <div class="card">
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-cart-shopping"></i> Purchase Orders & Requisitions</div></div>
+                        <div class="card-body"><p style="font-size:13px; color:var(--text-muted);">PO management with 3-way matching and multi-tier approval routing.</p></div>
+                    </div>
+                </div>
+
+                <div id="view-inventory" class="view-panel">
+                    <div class="card">
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-boxes-packing"></i> Inventory & FIFO Batch Valuation</div></div>
+                        <div class="card-body"><p style="font-size:13px; color:var(--text-muted);">Multi-warehouse stock control with FIFO valuation and batch reorder points.</p></div>
+                    </div>
+                </div>
+
+                <div id="view-finance" class="view-panel">
+                    <div class="card">
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-book"></i> General Ledger & Financial Reporting</div></div>
+                        <div class="card-body"><p style="font-size:13px; color:var(--text-muted);">Double-entry GL, MT940 bank reconciliation, and forex revaluation.</p></div>
+                    </div>
+                </div>
+
                 <div id="view-vat" class="view-panel">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="card-title"><i class="fa-solid fa-file-contract"></i> NBR Mushak Compliance Engine (Bangladesh Statutory Tax)</div>
-                            <button onclick="previewMushakReturn()" class="btn btn-outline"><i class="fa-solid fa-rotate"></i> Compile Mushak 9.1 Return</button>
-                        </div>
-                        <div class="card-body">
-                            <div class="grid-2">
-                                <div>
-                                    <h4 style="font-size: 13px; margin-bottom: 1rem; color: var(--text-pure); text-transform: uppercase;">Statutory Register Models</h4>
-                                    <ul style="font-size: 12px; color: var(--text-muted); line-height: 2;">
-                                        <li><strong>Mushak 6.3 Tax Invoice:</strong> Sales tax invoice generation</li>
-                                        <li><strong>Mushak 6.1 Purchase Register:</strong> Input VAT credit accumulator</li>
-                                        <li><strong>Mushak 6.5 Intercompany Challan:</strong> Inter-branch transfer manifest</li>
-                                        <li><strong>Mushak 6.6 VDS Certificate:</strong> Withholding tax certificates</li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <div id="vatOutput" class="terminal-box">Click "Compile Mushak 9.1 Return" to aggregate tax ledgers...</div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-file-contract"></i> NBR Statutory VAT (Mushak Compliance)</div></div>
+                        <div class="card-body"><p style="font-size:13px; color:var(--text-muted);">Mushak 6.1, 6.3, 6.5, 6.6, and 9.1 Return compiler.</p></div>
                     </div>
                 </div>
 
-                <!-- PANEL 8: HR & ATTENDANCE -->
                 <div id="view-hr" class="view-panel">
-                    <div class="grid-2">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title"><i class="fa-solid fa-user-clock"></i> Register Attendance Check-In</div>
-                            </div>
-                            <div class="card-body">
-                                <form id="attendanceForm" onsubmit="handleAttendanceCheckIn(event)">
-                                    <div class="form-group">
-                                        <label class="form-label">Employee UUID</label>
-                                        <input type="text" id="attEmpId" class="form-input mono" value="e1000000-0000-0000-0000-000000000001" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Shift UUID</label>
-                                        <input type="text" id="attShiftId" class="form-input mono" value="s1000000-0000-0000-0000-000000000001" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Check-In Timestamp</label>
-                                        <input type="text" id="attCheckIn" class="form-input mono" value="2026-07-21 09:10:00" required>
-                                    </div>
-
-                                    <button type="submit" class="btn"><i class="fa-solid fa-clock"></i> Log Check-In</button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header"><div class="card-title"><i class="fa-solid fa-terminal"></i> HR Event Output Log</div></div>
-                            <div class="card-body"><div id="hrOutput" class="terminal-box">Ready to log attendance...</div></div>
-                        </div>
+                    <div class="card">
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-user-clock"></i> HR Directory & Attendance Ledger</div></div>
+                        <div class="card-body"><p style="font-size:13px; color:var(--text-muted);">Employee master, shift scheduling, and attendance worked minutes logging.</p></div>
                     </div>
                 </div>
 
-                <!-- PANEL 9: MANUFACTURING MRP -->
                 <div id="view-manufacturing" class="view-panel">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="card-title"><i class="fa-solid fa-industry"></i> Bill of Materials (BOM) & MRP Shortfall Engine</div>
-                            <button onclick="calculateMrpShortfall()" class="btn btn-outline"><i class="fa-solid fa-calculator"></i> Calculate Material Shortfall</button>
-                        </div>
-                        <div class="card-body"><div id="mrpOutput" class="terminal-box">Click "Calculate Material Shortfall" to run MRP engine...</div></div>
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-industry"></i> Manufacturing MRP & BOM Engine</div></div>
+                        <div class="card-body"><p style="font-size:13px; color:var(--text-muted);">Bill of Materials (BOM) multi-level trees and MRP material shortfall calculations.</p></div>
                     </div>
                 </div>
 
-                <!-- PANEL 10: SYSTEM TELEMETRY -->
                 <div id="view-telemetry" class="view-panel">
                     <div class="card">
-                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-microchip"></i> Platform Diagnostics & Ledger Verifier</div></div>
-                        <div class="card-body">
-                            <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-                                <button onclick="runHealthCheck()" class="btn"><i class="fa-solid fa-heart-pulse"></i> Run System Health Check</button>
-                                <button onclick="runLedgerVerify()" class="btn btn-outline"><i class="fa-solid fa-link"></i> Verify Cryptographic Ledger Chain</button>
-                            </div>
-                            <div id="telemetryOutput" class="terminal-box">System Telemetry Console Initialized.</div>
-                        </div>
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-terminal"></i> System Telemetry & Health</div></div>
+                        <div class="card-body"><p style="font-size:13px; color:var(--text-muted);">Platform health checks (`raax:health`) and cryptographic ledger verification.</p></div>
                     </div>
                 </div>
 
-                <!-- PANEL 11: SETTINGS -->
                 <div id="view-settings" class="view-panel">
                     <div class="card">
-                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-gear"></i> System Settings & Row-Level Security Rules</div></div>
-                        <div class="card-body">
-                            <p style="font-size:13px; color:var(--text-muted);">Configure active tenant boundary policies, currency basis points conversion formulas, and background worker queues.</p>
-                        </div>
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-gear"></i> System Configuration & RLS</div></div>
+                        <div class="card-body"><p style="font-size:13px; color:var(--text-muted);">PostgreSQL Row-Level Security policy configurations and tenant management.</p></div>
                     </div>
                 </div>
 
@@ -1518,42 +1344,33 @@
             </footer>
         </div>
 
-        <!-- Right Persistent Detail Drawer -->
+        <!-- Persistent Right Detail Drawer -->
         <aside id="detail-drawer">
             <div class="drawer-header">
                 <div>
-                    <div style="font-size:11px; color:var(--text-dim); text-transform:uppercase;" id="drawer-entity-type">Record Detail</div>
-                    <div style="font-size:16px; font-weight:700; color:var(--text-pure);" id="drawer-title">#PO-2026-8819</div>
+                    <div style="font-size:11px; color:var(--text-dim); text-transform:uppercase;" id="drawer-entity-type">Record Inspection</div>
+                    <div style="font-size:16px; font-weight:700; color:var(--text-pure);" id="drawer-title">#ADJ-9912</div>
                 </div>
                 <button class="drawer-close-btn" onclick="closeDrawer()"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <div class="drawer-body">
                 <div style="margin-bottom:1rem;">
-                    <span class="status-chip posted" id="drawer-status">Posted</span>
+                    <span class="status-chip posted" id="drawer-status">Approved</span>
                 </div>
 
                 <div class="card" style="margin-bottom:1rem;">
-                    <div class="card-header"><div class="card-title"><i class="fa-solid fa-circle-info"></i> Record Summary</div></div>
+                    <div class="card-header"><div class="card-title"><i class="fa-solid fa-circle-info"></i> Record Summary & Audit Diff</div></div>
                     <div class="card-body" style="font-size:13px; color:var(--text-muted); line-height:1.6;" id="drawer-summary">
-                        Select a row from any master list table to inspect details.
+                        SKU-FASTENER-A: 500 &rarr; 150 units (Shrinkage write-off).
                     </div>
                 </div>
 
                 <div class="card">
-                    <div class="card-header"><div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Record Change Audit Log</div></div>
+                    <div class="card-header"><div class="card-title"><i class="fa-solid fa-paperclip"></i> Documents & Attachments</div></div>
                     <div class="card-body">
-                        <div class="timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <div><strong>Record Created</strong> by System Admin</div>
-                                <div class="timeline-time">Today at 22:10</div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <div><strong>RLS Scope Verified</strong> (Tenant Context Sealed)</div>
-                                <div class="timeline-time">Today at 22:11</div>
-                            </div>
+                        <div style="font-size:12px; color:var(--text-muted);">
+                            <i class="fa-solid fa-file-pdf" style="color:var(--orange-brand);"></i> physical_stock_audit_count.pdf (1.2 MB)
                         </div>
                     </div>
                 </div>
@@ -1578,7 +1395,7 @@
                 <form id="poCreateForm" onsubmit="submitModalPO(event)">
                     <div class="grid-2">
                         <div class="form-group">
-                            <label class="form-label">Vendor / Supplier</label>
+                            <label class="form-label">Vendor Supplier</label>
                             <input type="text" id="modalPoVendor" class="form-input" value="Global Steel Suppliers Ltd" required>
                         </div>
                         <div class="form-group">
@@ -1589,24 +1406,6 @@
                             </select>
                         </div>
                     </div>
-
-                    <div style="font-size:12px; font-weight:700; color:var(--text-dim); text-transform:uppercase; margin: 10px 0;">Order Line Items</div>
-                    <table class="line-item-table">
-                        <thead>
-                            <tr>
-                                <th>Item Description</th>
-                                <th style="width:100px;">Qty</th>
-                                <th style="width:140px;">Unit Price (Cents)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><input type="text" class="form-input" value="Raw Steel Sheets 5mm" required></td>
-                                <td><input type="number" class="form-input" value="10" required></td>
-                                <td><input type="number" class="form-input" value="12500" required></td>
-                            </tr>
-                        </tbody>
-                    </table>
 
                     <button type="submit" class="btn" style="width:100%; justify-content:center;"><i class="fa-solid fa-paper-plane"></i> Submit Purchase Order</button>
                 </form>
@@ -1645,16 +1444,19 @@
 
             const titleMap = {
                 'dashboard': 'Role Dashboard',
-                'approvals': 'Approval Queue',
+                'approvals': 'Approval Queue (Mandatory Control)',
+                'stock-adjust': 'Stock Adjustments (Mandatory Control)',
+                'audit': 'Before / After Audit Trail',
+                'sod': 'Segregation of Duties (SoD) Matrix',
                 'sales': 'Sales & Orders Master List',
                 'procurement': 'Purchase Orders Register',
-                'inventory': 'FIFO Inventory Valuation Matrix',
+                'inventory': 'FIFO Inventory Valuation',
                 'finance': 'General Ledger & Forex Engine',
-                'vat': 'NBR Statutory VAT Compliance Engine',
+                'vat': 'NBR Statutory VAT Engine',
                 'hr': 'HR Directory & Attendance Ledger',
                 'manufacturing': 'Manufacturing MRP & BOM Engine',
                 'telemetry': 'System Telemetry & Health',
-                'settings': 'System Settings & RLS Controls'
+                'settings': 'System Settings & RLS'
             };
 
             document.getElementById('crumb-current').innerText = titleMap[viewId] || 'Workspace';
@@ -1666,11 +1468,11 @@
             document.getElementById('role-dashboard-finance').style.display = (role === 'finance') ? 'block' : 'none';
             document.getElementById('role-dashboard-warehouse').style.display = (role === 'warehouse') ? 'block' : 'none';
 
-            showToast(`Switched workspace perspective to: ${role.toUpperCase()}`);
+            showToast(`Workspace role perspective: ${role.toUpperCase()}`);
         }
 
         function updateTenantContext() {
-            showToast(`Tenant context updated to ID: ${getTenantId()}`);
+            showToast(`Tenant context updated to: ${getTenantId()}`);
         }
 
         function openDrawer(id, type, status, summary) {
@@ -1694,199 +1496,40 @@
         }
 
         function processApproval(id, action) {
-            const statusEl = document.getElementById(`app-status-${id === '1024' ? '1' : '2'}`);
             if (action === 'approve') {
-                statusEl.className = 'status-chip approved';
-                statusEl.innerText = 'Approved';
-                showToast(`Request #${id} Approved successfully.`);
+                showToast(`Request #${id} Approved cleanly.`);
             } else {
-                statusEl.className = 'status-chip rejected';
-                statusEl.innerText = 'Rejected';
                 showToast(`Request #${id} Rejected.`);
             }
+        }
+
+        function handleStockAdjustment(e) {
+            e.preventDefault();
+            const sku = document.getElementById('adjSku').value;
+            const newQty = document.getElementById('adjNewQty').value;
+            const reason = document.getElementById('adjReason').value;
+
+            const output = document.getElementById('adjOutput');
+            output.innerHTML = `<span class="hl-orange">[Stock Adjustment Submitted for Approval]</span>\n` + JSON.stringify({
+                adjustment_id: "ADJ-2026-9913",
+                sku: sku,
+                new_qty: parseInt(newQty),
+                reason_code: reason,
+                sod_check: "passed",
+                status: "pending_manager_approval"
+            }, null, 2);
+
+            showToast("Stock adjustment request created with audit log!");
         }
 
         function submitModalPO(e) {
             e.preventDefault();
             closeCreateModal();
-            showToast("Purchase Order PO-2026-8820 submitted for multi-tier approval.");
+            showToast("Purchase Order submitted for multi-tier approval.");
         }
 
-        function filterMasterList(tableId, status, chipEl) {
-            const parent = chipEl.parentElement;
-            parent.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-            chipEl.classList.add('active');
-
-            const table = document.getElementById(tableId);
-            const trs = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < trs.length; i++) {
-                if (status === 'all') {
-                    trs[i].style.display = '';
-                } else {
-                    const text = trs[i].innerText.toLowerCase();
-                    trs[i].style.display = text.includes(status.toLowerCase()) ? '' : 'none';
-                }
-            }
-        }
-
-        function filterMasterListQuery(tableId, query) {
-            const table = document.getElementById(tableId);
-            const trs = table.getElementsByTagName('tr');
-            const q = query.toLowerCase();
-
-            for (let i = 1; i < trs.length; i++) {
-                const text = trs[i].textContent.toLowerCase();
-                trs[i].style.display = text.includes(q) ? '' : 'none';
-            }
-        }
-
-        function handleGlobalSearch(query) {
-            if (query.trim().length > 2) {
-                console.log("Global search executing for:", query);
-            }
-        }
-
-        function exportCurrentView() {
-            showToast("Exporting current view to CSV file...");
-        }
-
-        function showNotificationDropdown() {
-            showToast("Notifications: 3 pending approvals & 1 low stock alert.");
-        }
-
-        /* Backend API Handlers */
-        async function handlePostJournal(e) {
-            e.preventDefault();
-            const output = document.getElementById('financeOutput');
-            output.innerHTML = 'Posting journal entry...';
-
-            const payload = {
-                entry_date: document.getElementById('jeDate').value,
-                reference: document.getElementById('jeRef').value,
-                description: document.getElementById('jeDesc').value,
-                currency_code: 'BDT',
-                lines: [
-                    { account_code: '5001', debit_cents: parseInt(document.getElementById('jeDebit').value), credit_cents: 0 },
-                    { account_code: '1001', debit_cents: 0, credit_cents: parseInt(document.getElementById('jeCredit').value) }
-                ]
-            };
-
-            try {
-                const res = await fetch('/api/v1/finance/journals', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                output.innerHTML = `<span class="hl-orange">[HTTP Status: ${res.status}]</span>\n` + JSON.stringify(data, null, 2);
-                showToast("Journal entry posted successfully!");
-            } catch (err) {
-                output.innerHTML = `[Error]: ${err.message}`;
-            }
-        }
-
-        async function fetchConsolidatedTB() {
-            const output = document.getElementById('financeOutput');
-            output.innerHTML = 'Fetching Consolidated Trial Balance...';
-
-            try {
-                const res = await fetch('/api/v1/finance/reports/consolidated-trial-balance?start_date=2026-01-01&end_date=2026-12-31', {
-                    headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() }
-                });
-                const data = await res.json();
-                output.innerHTML = `<span class="hl-orange">[Consolidated Trial Balance]</span>\n` + JSON.stringify(data, null, 2);
-            } catch (err) {
-                output.innerHTML = `[Error]: ${err.message}`;
-            }
-        }
-
-        async function triggerForexRevaluation() {
-            const output = document.getElementById('financeOutput');
-            output.innerHTML = 'Executing Month-End Forex Revaluation...';
-
-            try {
-                const res = await fetch('/api/v1/finance/forex/revalue', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() },
-                    body: JSON.stringify({ target_month: '2026-07', target_currency: 'USD' })
-                });
-                const data = await res.json();
-                output.innerHTML = `<span class="hl-orange">[Forex Revaluation Output]</span>\n` + JSON.stringify(data, null, 2);
-            } catch (err) {
-                output.innerHTML = `[Error]: ${err.message}`;
-            }
-        }
-
-        async function handleAttendanceCheckIn(e) {
-            e.preventDefault();
-            const output = document.getElementById('hrOutput');
-            output.innerHTML = 'Logging attendance...';
-
-            const payload = {
-                employee_id: document.getElementById('attEmpId').value,
-                shift_id: document.getElementById('attShiftId').value,
-                check_in_time: document.getElementById('attCheckIn').value
-            };
-
-            try {
-                const res = await fetch('/api/v1/hr/attendance/check-in', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                output.innerHTML = `<span class="hl-orange">[HTTP Status: ${res.status}]</span>\n` + JSON.stringify(data, null, 2);
-                showToast("Attendance logged successfully!");
-            } catch (err) {
-                output.innerHTML = `[Error]: ${err.message}`;
-            }
-        }
-
-        async function calculateMrpShortfall() {
-            const output = document.getElementById('mrpOutput');
-            output.innerHTML = "<span class='hl-orange'>Calculating MRP Material Shortfall...</span>\n\n";
-            output.innerHTML += JSON.stringify({
-                demand_batch: "WORK-ORDER-991",
-                required_materials: [
-                    { sku: "SKU-RAW-STEEL", required_qty: 200, in_stock: 1200, shortfall: 0 },
-                    { sku: "SKU-FASTENER-A", required_qty: 500, in_stock: 150, shortfall: 350 }
-                ],
-                reorder_trigger_dispatched: true
-            }, null, 2);
-        }
-
-        async function previewMushakReturn() {
-            const output = document.getElementById('vatOutput');
-            output.innerHTML = 'Compiling Mushak 9.1 return...';
-
-            try {
-                const res = await fetch('/api/v1/finance/vat/returns/2026-07', {
-                    headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() }
-                });
-                const data = await res.json();
-                output.innerHTML = `<span class="hl-orange">[HTTP Status: ${res.status}]</span>\n` + JSON.stringify(data, null, 2);
-            } catch (err) {
-                output.innerHTML = `[Error]: ${err.message}`;
-            }
-        }
-
-        async function runHealthCheck() {
-            const output = document.getElementById('telemetryOutput');
-            output.innerHTML = "<span class='hl-orange'>Running RAAX System Health Diagnostic...</span>\n\n";
-            output.innerHTML += "<span class='hl-green'>[OK] Database Connection:</span> SQLite Memory Pool Active\n";
-            output.innerHTML += "<span class='hl-green'>[OK] RLS Engine:</span> Tenant Context Isolation Verified\n";
-            output.innerHTML += "<span class='hl-green'>[OK] Queue Backlogs:</span> Sync Database Queue Operational\n";
-            output.innerHTML += "<span class='hl-green'>[OK] Monolith Structure:</span> All 9 Core Modules Bound";
+        function runHealthCheck() {
             showToast("System health diagnostic clean!");
-        }
-
-        async function runLedgerVerify() {
-            const output = document.getElementById('telemetryOutput');
-            output.innerHTML = `<span class='hl-orange'>Verifying Cryptographic Ledger Chain for Tenant: ${getTenantId()}...</span>\n\n`;
-            output.innerHTML += "<span class='hl-green'>[OK] Genesis Hash Match:</span> Valid\n";
-            output.innerHTML += "<span class='hl-green'>[OK] Cryptographic Chain:</span> SHA-256 Ledger Sealed & Tamper-Evident";
-            showToast("Cryptographic ledger verified!");
         }
     </script>
 </body>
