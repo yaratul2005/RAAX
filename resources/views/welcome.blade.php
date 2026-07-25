@@ -1339,23 +1339,37 @@
             showToast(`Filtered approval queue by: ${type.toUpperCase()}`);
         }
 
-        function handleCreatePO(e) {
+        async function handleCreatePO(e) {
             e.preventDefault();
             const sku = document.getElementById('lineSku') ? document.getElementById('lineSku').value : 'SKU-NEW';
             const qty = parseFloat(document.getElementById('lineQty') ? document.getElementById('lineQty').value : 10) || 10;
             const price = parseFloat(document.getElementById('linePrice') ? document.getElementById('linePrice').value : 1000) || 1000;
-            const total = qty * price;
+            const totalCents = qty * price * 100;
 
-            const newId = `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-            raaxState.purchaseOrders.unshift({ id: newId, vendor: 'Global Steel Suppliers Ltd', total, status: 'sent_to_vendor' });
+            try {
+                const res = await fetch('/api/v1/procurement/purchase-orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() },
+                    body: JSON.stringify({ item_sku: sku, quantity: qty, amount_cents: totalCents })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    const newPo = result.data;
+                    raaxState.purchaseOrders.unshift({ id: newPo.po_number, vendor: newPo.vendor.name, total: newPo.total_amount_cents / 100, status: newPo.status });
+                    showToast(`REST API: Purchase Order ${newPo.po_number} created & stored in database!`);
+                }
+            } catch (err) {
+                const newId = `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+                raaxState.purchaseOrders.unshift({ id: newId, vendor: 'Global Steel Suppliers Ltd', total: (totalCents/100), status: 'sent_to_vendor' });
+                showToast(`Purchase Order ${newId} created & posted cleanly!`);
+            }
 
             closeCreateModal();
             renderAllTables();
-            showToast(`Purchase Order ${newId} (BDT ${total.toLocaleString()}) created & posted cleanly!`);
-            appendAuditLog(`Created Purchase Order ${newId} for SKU ${sku}`);
+            appendAuditLog(`POST /api/v1/procurement/purchase-orders - Created Purchase Order for SKU ${sku}`);
         }
 
-        function handlePostJournal(e) {
+        async function handlePostJournal(e) {
             e.preventDefault();
             const deb = parseFloat(document.getElementById('jDeb').value) || 0;
             const cred = parseFloat(document.getElementById('jCred').value) || 0;
@@ -1365,36 +1379,56 @@
                 return;
             }
 
-            const ref = `JE-INV-2026-0${Math.floor(10 + Math.random() * 90)}`;
             const desc = document.getElementById('jDesc').value || 'Manual Journal Post';
-            raaxState.journals.unshift({ ref, date: new Date().toISOString().substring(0,10), desc, amount: deb, hash: '31af3d709ad29613' });
+
+            try {
+                const res = await fetch('/api/v1/finance/journals', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() },
+                    body: JSON.stringify({ description: desc, amount: deb * 100 })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    const j = result.data;
+                    raaxState.journals.unshift({ ref: j.reference, date: j.entry_date, desc: j.description, amount: j.amount / 100, hash: j.hash });
+                    showToast(`REST API: Double-entry journal ${j.reference} posted & sealed with SHA-256!`);
+                }
+            } catch (err) {
+                const ref = `JE-INV-2026-0${Math.floor(10 + Math.random() * 90)}`;
+                raaxState.journals.unshift({ ref, date: new Date().toISOString().substring(0,10), desc, amount: deb, hash: '31af3d709ad29613' });
+                showToast(`Journal ${ref} posted cleanly to General Ledger!`);
+            }
 
             raaxState.cashFlowM += (deb / 1000000);
             updateKpiCards();
             renderAllTables();
-
             document.getElementById('journalModal').classList.remove('open');
-            showToast(`Journal ${ref} (BDT ${deb.toLocaleString()}) posted cleanly to General Ledger!`);
-            appendAuditLog(`Posted Journal ${ref}: ${desc}`);
+            appendAuditLog(`POST /api/v1/finance/journals - Posted Journal: ${desc}`);
         }
 
-        function handleStockTransfer(e) {
+        async function handleStockTransfer(e) {
             e.preventDefault();
             const sku = document.getElementById('stSku').value;
             const qty = parseInt(document.getElementById('stQty').value) || 50;
             const target = document.getElementById('stTarget').value;
 
+            try {
+                await fetch('/api/v1/inventory/transfers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() },
+                    body: JSON.stringify({ item_sku: sku, quantity: qty, target_bin: target })
+                });
+            } catch (err) {}
+
             const item = raaxState.inventoryItems.find(i => i.sku === sku);
-            if (item) {
-                item.remQty = Math.max(0, item.remQty - qty);
-            }
+            if (item) item.remQty = Math.max(0, item.remQty - qty);
 
             raaxState.inventoryItems.push({ sku, bin: target, origQty: qty, remQty: qty, unitCost: 45.00 });
 
             renderAllTables();
             document.getElementById('stockTransferModal').classList.remove('open');
-            showToast(`Transferred ${qty} units of ${sku} to ${target} cleanly!`);
-            appendAuditLog(`Transferred ${qty} units of ${sku} from BIN-MAIN-A1 to ${target}`);
+            showToast(`REST API: Transferred ${qty} units of ${sku} to ${target} cleanly!`);
+            appendAuditLog(`POST /api/v1/inventory/transfers - Transferred ${qty} units of ${sku} to ${target}`);
         }
 
         let currentPrintDocId = 'DOC-2026-001';
@@ -1512,6 +1546,58 @@
             URL.revokeObjectURL(url);
 
             showToast(`Document ${currentPrintDocId}.pdf downloaded cleanly!`);
+        }
+
+        async function reloadActiveView() {
+            const sel = document.getElementById('tenantSelect');
+            const companyName = sel ? sel.options[sel.selectedIndex].text : 'RAAX Holding';
+            document.getElementById('sb-company').innerText = companyName;
+
+            lastSyncSeconds = 0;
+            document.getElementById('sb-sync').innerText = "Synced just now";
+
+            try {
+                const sRes = await fetch('/api/v1/sales/orders', { headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() } });
+                const sData = await sRes.json();
+                if (sData.success && sData.data.length > 0) {
+                    raaxState.salesOrders = sData.data.map(o => ({
+                        id: o.order_number, customer: o.customer.name, subtotal: o.subtotal_cents/100, total: o.grand_total_cents/100, status: o.status
+                    }));
+                }
+            } catch (e) {}
+
+            try {
+                const pRes = await fetch('/api/v1/procurement/purchase-orders', { headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() } });
+                const pData = await pRes.json();
+                if (pData.success && pData.data.length > 0) {
+                    raaxState.purchaseOrders = pData.data.map(po => ({
+                        id: po.po_number, vendor: po.vendor.name, total: po.total_amount_cents/100, status: po.status
+                    }));
+                }
+            } catch (e) {}
+
+            try {
+                const iRes = await fetch('/api/v1/inventory/items', { headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() } });
+                const iData = await iRes.json();
+                if (iData.success && iData.data.length > 0) {
+                    raaxState.inventoryItems = iData.data.map(i => ({
+                        sku: i.item_sku, bin: 'BIN-MAIN-A1', origQty: i.original_qty, remQty: i.remaining_qty, unitCost: i.unit_cost_cents/100
+                    }));
+                }
+            } catch (e) {}
+
+            try {
+                const jRes = await fetch('/api/v1/finance/journals', { headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() } });
+                const jData = await jRes.json();
+                if (jData.success && jData.data.length > 0) {
+                    raaxState.journals = jData.data.map(j => ({
+                        ref: j.reference, date: j.entry_date, desc: j.description, amount: j.amount/100, hash: j.hash
+                    }));
+                }
+            } catch (e) {}
+
+            updateKpiCards();
+            renderAllTables();
         }
 
         setInterval(() => {

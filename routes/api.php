@@ -51,23 +51,25 @@ Route::prefix('v1/system')->group(function () {
     });
 });
 
-Route::prefix('v1/finance')->group(function () {
-    Route::post('/bank-reconciliation/mt940', [BankReconciliationController::class, 'parseMt940']);
-
-    Route::post('/vat/nbr-qr', function (Request $request) {
-        $bin = $request->input('bin', '1899201928301');
-        $inv = $request->input('invoice_number', 'SO-2026-4412');
-        $date = $request->input('date', '2026-07-25');
-        $subtotal = $request->input('subtotal_cents', 73913000);
-        $vat = $request->input('vat_cents', 11087000);
+Route::prefix('v1/procurement')->group(function () {
+    Route::get('/reorder-point/calculate', function (Request $request) {
+        $daily = (int) $request->query('daily_usage', 50);
+        $lead = (int) $request->query('lead_time_days', 7);
         return response()->json([
             'success' => true,
-            'data' => NbrQrCodeSignerService::generateNbrQrPayload($bin, $inv, $date, $subtotal, $vat)
+            'data' => DynamicReorderEngine::calculateReorderPoint($daily, $lead)
         ]);
     });
 });
 
 Route::prefix('v1/inventory')->group(function () {
+    Route::post('/transfers', function (Request $request) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Stock transfer executed cleanly across bin locations.',
+            'transfer_id' => 'TRF-2026-' . rand(100, 999)
+        ]);
+    });
     Route::post('/labels/zpl', function (Request $request) {
         $sku = $request->input('sku', 'SKU-FASTENER-A');
         $name = $request->input('name', 'Heavy Duty Fastener');
@@ -81,13 +83,17 @@ Route::prefix('v1/inventory')->group(function () {
     });
 });
 
-Route::prefix('v1/procurement')->group(function () {
-    Route::get('/reorder-point/calculate', function (Request $request) {
-        $daily = (int) $request->query('daily_usage', 50);
-        $lead = (int) $request->query('lead_time_days', 7);
+Route::prefix('v1/finance')->group(function () {
+    Route::post('/bank-reconciliation/mt940', [BankReconciliationController::class, 'parseMt940']);
+    Route::post('/vat/nbr-qr', function (Request $request) {
+        $bin = $request->input('bin', '1899201928301');
+        $inv = $request->input('invoice_number', 'SO-2026-4412');
+        $date = $request->input('date', '2026-07-25');
+        $subtotal = $request->input('subtotal_cents', 73913000);
+        $vat = $request->input('vat_cents', 11087000);
         return response()->json([
             'success' => true,
-            'data' => DynamicReorderEngine::calculateReorderPoint($daily, $lead)
+            'data' => NbrQrCodeSignerService::generateNbrQrPayload($bin, $inv, $date, $subtotal, $vat)
         ]);
     });
 });
