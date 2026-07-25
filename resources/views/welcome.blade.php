@@ -470,19 +470,86 @@
         </div>
     </div>
 
-    <!-- Master Detail Drawer -->
+    <!-- Master Detail Slide-Over Drawer (Right-Scroll Sidebar) -->
     <aside id="detail-drawer">
-        <div class="drawer-header">
+        <div class="drawer-header" style="background:#16161a; border-bottom:1px solid var(--border-subtle); padding:1rem 1.25rem; display:flex; align-items:center; justify-content:space-between;">
             <div>
-                <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase;">Master Record Inspection</div>
-                <div style="font-size:15px; font-weight:700;" id="drawer-title">#RECORD-001</div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div style="font-size:16px; font-weight:700; color:var(--text-pure);" class="mono" id="drawer-title">REC-001</div>
+                    <span id="drawer-status-chip" class="status-chip active">Active</span>
+                </div>
+                <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Inspecting Entity Properties & Audit Metadata</div>
             </div>
             <button onclick="closeDrawer()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="drawer-body" id="drawer-summary">Select a record row to inspect properties.</div>
-        <div class="drawer-footer">
-            <button class="btn btn-outline btn-sm" onclick="closeDrawer()">Close (Esc)</button>
-            <button class="btn btn-sm" onclick="showToast('Record changes saved cleanly.')">Save (Ctrl+S)</button>
+
+        <!-- Drawer Tab Navigation -->
+        <div style="display:flex; background:#0d0d11; border-bottom:1px solid var(--border-subtle); padding:0 1.25rem;">
+            <button class="btn btn-outline btn-sm active" style="border:none; border-bottom:2px solid var(--orange-brand); border-radius:0; padding:8px 12px;" onclick="switchDrawerTab('overview', this)"><i class="fa-solid fa-info-circle"></i> Overview</button>
+            <button class="btn btn-outline btn-sm" style="border:none; border-radius:0; padding:8px 12px;" onclick="switchDrawerTab('audit', this)"><i class="fa-solid fa-history"></i> Audit History</button>
+            <button class="btn btn-outline btn-sm" style="border:none; border-radius:0; padding:8px 12px;" onclick="switchDrawerTab('docs', this)"><i class="fa-solid fa-paperclip"></i> Linked Docs</button>
+            <button class="btn btn-outline btn-sm" style="border:none; border-radius:0; padding:8px 12px;" onclick="switchDrawerTab('seal', this)"><i class="fa-solid fa-shield"></i> SHA-256 Seal</button>
+        </div>
+
+        <div class="drawer-body" style="padding:1.25rem; overflow-y:auto; flex:1;">
+            <!-- Tab 1: Overview -->
+            <div id="drawerTabOverview">
+                <div style="font-size:12px; font-weight:700; color:var(--text-pure); margin-bottom:8px;" id="drawer-summary">Record entity details summary.</div>
+                <div class="form-group">
+                    <label class="form-label">Primary Entity Identifier</label>
+                    <input type="text" class="form-input mono" id="drawerInputId" readonly style="color:var(--orange-brand); font-weight:700;">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Created Date</label>
+                        <input type="text" class="form-input mono" value="2026-07-25" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Author / User Context</label>
+                        <input type="text" class="form-input" value="adminRAAX" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Monetary Valuation</label>
+                    <input type="text" class="form-input mono" value="BDT 850,000.00" readonly style="color:var(--status-green); font-weight:700;">
+                </div>
+            </div>
+
+            <!-- Tab 2: Audit History -->
+            <div id="drawerTabAudit" style="display:none;">
+                <div style="font-size:11.5px; font-weight:700; color:var(--text-pure); margin-bottom:8px;">Immutable Change History Stream</div>
+                <div class="terminal-box" style="height:220px;"><span class="hl-orange">[2026-07-25 12:45:10 UTC]</span> USER: adminRAAX | ACTION: Record.Created
+<span class="hl-green">[2026-07-25 12:45:12 UTC]</span> SYSTEM: SHA-256 Hash Sealed Intact: 31af3d709ad29613...</div>
+            </div>
+
+            <!-- Tab 3: Linked Docs -->
+            <div id="drawerTabDocs" style="display:none;">
+                <div style="font-size:11.5px; font-weight:700; color:var(--text-pure); margin-bottom:8px;">Attached Commercial Vouchers & Certificates</div>
+                <div style="background:#09090b; border:1px solid var(--border-subtle); padding:10px; border-radius:5px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:11.5px; font-weight:700; color:var(--text-pure);">NBR Mushak 6.3 Tax Invoice</div>
+                        <div style="font-size:10px; color:var(--text-dim);">SO-2026-4412_Mushak63.pdf</div>
+                    </div>
+                    <button class="btn btn-sm" onclick="openDocumentViewer('SO-2026-4412 Mushak 6.3', 'taxInvoice')"><i class="fa-solid fa-eye"></i> View</button>
+                </div>
+            </div>
+
+            <!-- Tab 4: SHA-256 Seal -->
+            <div id="drawerTabSeal" style="display:none;">
+                <div style="font-size:11.5px; font-weight:700; color:var(--text-pure); margin-bottom:8px;">Cryptographic Ledger Integrity Seal</div>
+                <div class="terminal-box" style="height:140px; color:var(--orange-brand);">HASH ALGORITHM: SHA-256
+HMAC SECRET: RAAX-SEALED-LEDGER-KEY
+DIGITAL SEAL: 31AF3D709AD296138F9021ABCDEF991024881
+STATUS: 100% UNTAMPERED & VERIFIED</div>
+            </div>
+        </div>
+
+        <div class="drawer-footer" style="padding:0.85rem 1.25rem; border-top:1px solid var(--border-subtle); background:#16161a; display:flex; align-items:center; justify-content:space-between; gap:6px;">
+            <button class="btn btn-outline btn-sm" onclick="openRecordEditor(document.getElementById('drawerInputId').value, 'Entity Domain')"><i class="fa-solid fa-pen-to-square"></i> Edit Record</button>
+            <div style="display:flex; gap:6px;">
+                <button class="btn btn-outline btn-sm" onclick="printDocument(document.getElementById('drawerInputId').value, 'voucher')"><i class="fa-solid fa-print"></i> Print</button>
+                <button class="btn btn-sm" onclick="closeDrawer()">Close (Esc)</button>
+            </div>
         </div>
     </aside>
 
@@ -1107,10 +1174,47 @@
             reloadActiveView();
         }
 
-        function openDrawer(id, type, status, summary) {
-            document.getElementById('drawer-title').innerText = id;
-            document.getElementById('drawer-summary').innerText = summary;
+        function openDrawer(id, title, status, summary) {
+            document.getElementById('drawer-title').innerText = id || '#RECORD-001';
+            document.getElementById('drawerInputId').value = id || 'REC-001';
+            if (document.getElementById('drawer-status-chip')) {
+                document.getElementById('drawer-status-chip').innerText = status || 'Active';
+            }
+            if (document.getElementById('drawer-summary')) {
+                document.getElementById('drawer-summary').innerText = summary || `Inspecting Entity Properties for ${id}`;
+            }
+            switchDrawerTab('overview');
             document.getElementById('detail-drawer').classList.add('open');
+        }
+
+        function switchDrawerTab(tabId, btn) {
+            const tabs = ['overview', 'audit', 'docs', 'seal'];
+            tabs.forEach(t => {
+                const cap = t.charAt(0).toUpperCase() + t.slice(1);
+                const el = document.getElementById(`drawerTab${cap}`);
+                if (el) el.style.display = (t === tabId) ? 'block' : 'none';
+            });
+            if (btn) {
+                const parent = btn.parentElement;
+                parent.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.borderBottom = 'none';
+                });
+                btn.classList.add('active');
+                btn.style.borderBottom = '2px solid var(--orange-brand)';
+            }
+        }
+
+        function handleCreateUser(e) {
+            e.preventDefault();
+            const name = document.getElementById('newUserName').value;
+            const email = document.getElementById('newUserEmail').value;
+            const username = document.getElementById('newUserUsername').value;
+            const role = document.getElementById('newUserRole').value;
+
+            showToast(`User profile created for ${name} (${username}) with role [${role}]!`);
+            appendAuditLog(`Owner adminRAAX provisioned new user ${username} (${email}, Role: ${role})`);
+            document.getElementById('createUserAccountForm').reset();
         }
 
         function closeDrawer() { document.getElementById('detail-drawer').classList.remove('open'); }
