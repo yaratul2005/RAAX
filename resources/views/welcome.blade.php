@@ -1010,123 +1010,181 @@
             }
         });
 
-        async function fetchSalesOrders() {
-            const body = document.getElementById('salesTableBody');
-            if (!body) return;
-            try {
-                const res = await fetch('/api/v1/sales/orders', { headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() } });
-                const result = await res.json();
-                if (result.success && result.data.length > 0) {
-                    body.innerHTML = result.data.map(o => `
-                        <tr ondblclick="openDrawer('${o.order_number}', 'Sales Order', '${o.status}', 'Customer: ${o.customer ? o.customer.name : 'Apex Corp'}')">
-                            <td class="mono">${o.order_number}</td>
-                            <td>${o.customer ? o.customer.name : 'Apex Corp'}</td>
-                            <td class="mono">BDT ${(o.subtotal_cents/100).toLocaleString()}</td>
-                            <td class="mono">BDT ${(o.grand_total_cents/100).toLocaleString()}</td>
-                            <td><span class="status-chip ${o.status}">${o.status}</span></td>
-                            <td><button class="btn btn-outline btn-sm"><i class="fa-solid fa-print"></i> Mushak 6.3</button></td>
-                        </tr>
-                    `).join('');
-                }
-            } catch (e) {
-                body.innerHTML = `<tr ondblclick="openDrawer('SO-2026-4412', 'Sales Order', 'confirmed', 'Customer: Apex Corp')"><td class="mono">SO-2026-4412</td><td>Apex Holdings Corp</td><td class="mono">BDT 739,130</td><td class="mono">BDT 850,000</td><td><span class="status-chip confirmed">confirmed</span></td><td><button class="btn btn-outline btn-sm"><i class="fa-solid fa-print"></i> Mushak 6.3</button></td></tr>`;
+        /* Global Reactive ERP State Store */
+        const raaxState = {
+            revenueM: 142.5,
+            cashFlowM: 38.2,
+            assetsM: 84.1,
+            pendingCount: 3,
+            salesOrders: [
+                { id: 'SO-2026-4412', customer: 'Apex Holdings Corp', subtotal: 739130, total: 850000, status: 'confirmed' }
+            ],
+            purchaseOrders: [
+                { id: 'PO-2026-8819', vendor: 'Global Steel Suppliers Ltd', total: 1250000, status: 'sent_to_vendor' }
+            ],
+            inventoryItems: [
+                { sku: 'SKU-RAW-STEEL', bin: 'BIN-MAIN-A1', origQty: 1200, remQty: 1200, unitCost: 45.00 },
+                { sku: 'SKU-FASTENER-A', bin: 'BIN-MAIN-A1', origQty: 300, remQty: 150, unitCost: 12.50 },
+                { sku: 'SKU-BEARING-HD', bin: 'BIN-MAIN-B4', origQty: 50, remQty: 45, unitCost: 180.00 }
+            ],
+            journals: [
+                { ref: 'JE-INV-2026-001', date: '2026-07-25', desc: 'Office Rent & Facilities Allocation', amount: 45000, hash: '31af3d709ad29613' }
+            ],
+            approvalQueue: [
+                { id: 'REQ-1024', type: 'PO Price Tolerance', value: 1250000, impact: 'high', status: 'Pending' },
+                { id: 'REQ-1025', type: 'Credit Limit Excess', value: 850000, impact: 'high', status: 'Pending' },
+                { id: 'REQ-1026', type: 'Manual Journal Void', value: 45000, impact: 'normal', status: 'Pending' }
+            ]
+        };
+
+        function renderAllTables() {
+            // Render Sales Table
+            const sBody = document.getElementById('salesTableBody');
+            if (sBody) {
+                sBody.innerHTML = raaxState.salesOrders.map(o => `
+                    <tr ondblclick="openDrawer('${o.id}', 'Sales Order', '${o.status}', 'Customer: ${o.customer}')">
+                        <td class="mono">${o.id}</td>
+                        <td>${o.customer}</td>
+                        <td class="mono">BDT ${(o.subtotal).toLocaleString()}</td>
+                        <td class="mono">BDT ${(o.total).toLocaleString()}</td>
+                        <td><span class="status-chip ${o.status}">${o.status}</span></td>
+                        <td><button class="btn btn-outline btn-sm" onclick="document.getElementById('mushakModal').classList.add('open')"><i class="fa-solid fa-print"></i> Mushak 6.3</button></td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render PO Table
+            const pBody = document.getElementById('poTableBody');
+            if (pBody) {
+                pBody.innerHTML = raaxState.purchaseOrders.map(po => `
+                    <tr ondblclick="openDrawer('${po.id}', 'Purchase Order', '${po.status}', 'Vendor: ${po.vendor}')">
+                        <td class="mono">${po.id}</td>
+                        <td>${po.vendor}</td>
+                        <td class="mono">BDT ${(po.total).toLocaleString()}</td>
+                        <td><span class="status-chip ${po.status}">${po.status}</span></td>
+                        <td><button class="btn btn-outline btn-sm" onclick="document.getElementById('threeWayMatchModal').classList.add('open')"><i class="fa-solid fa-print"></i> Voucher</button></td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render Inventory Table
+            const iBody = document.getElementById('inventoryTableBody');
+            if (iBody) {
+                iBody.innerHTML = raaxState.inventoryItems.map(i => `
+                    <tr ondblclick="openDrawer('${i.sku}', 'Stock Item', 'Active', 'Bin: ${i.bin}')">
+                        <td class="mono">${i.sku}</td>
+                        <td class="mono">${i.bin}</td>
+                        <td>${i.origQty}</td>
+                        <td style="color:${i.remQty < 200 ? 'var(--status-red)' : 'var(--orange-brand)'};font-weight:700;">${i.remQty}</td>
+                        <td class="mono">BDT ${i.unitCost.toFixed(2)}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render Journal Table
+            const jBody = document.getElementById('journalTableBody');
+            if (jBody) {
+                jBody.innerHTML = raaxState.journals.map(j => `
+                    <tr ondblclick="openDrawer('${j.ref}', 'Journal Entry', 'Posted', '${j.desc}')">
+                        <td class="mono">${j.ref}</td>
+                        <td>${j.date}</td>
+                        <td>${j.desc}</td>
+                        <td class="mono">BDT ${(j.amount).toLocaleString()}</td>
+                        <td class="mono" style="color:var(--orange-brand);">${j.hash}...</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render Approvals Queue Table
+            const aBody = document.getElementById('approvalQueueBody');
+            if (aBody) {
+                aBody.innerHTML = raaxState.approvalQueue.map(a => `
+                    <tr>
+                        <td class="mono">${a.id}</td>
+                        <td>${a.type}</td>
+                        <td class="mono">BDT ${(a.value).toLocaleString()}</td>
+                        <td><span class="status-chip ${a.status === 'Approved' ? 'active' : 'draft'}">${a.status}</span></td>
+                        <td>
+                            ${a.status === 'Pending' ? `<button class="btn btn-sm" onclick="approveWorkflowReq('${a.id}')"><i class="fa-solid fa-check"></i> Approve</button>` : `<span style="color:var(--status-green);font-size:11px;font-weight:700;"><i class="fa-solid fa-check-double"></i> Done</span>`}
+                        </td>
+                    </tr>
+                `).join('');
             }
         }
 
-        async function fetchPurchaseOrders() {
-            const body = document.getElementById('poTableBody');
-            if (!body) return;
-            try {
-                const res = await fetch('/api/v1/procurement/purchase-orders', { headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() } });
-                const result = await res.json();
-                if (result.success && result.data.length > 0) {
-                    body.innerHTML = result.data.map(po => `
-                        <tr ondblclick="openDrawer('${po.po_number}', 'Purchase Order', '${po.status}', 'Vendor: ${po.vendor ? po.vendor.name : 'Global Steel'}')">
-                            <td class="mono">${po.po_number}</td>
-                            <td>${po.vendor ? po.vendor.name : 'Global Steel'}</td>
-                            <td class="mono">BDT ${(po.total_amount_cents/100).toLocaleString()}</td>
-                            <td><span class="status-chip ${po.status}">${po.status}</span></td>
-                            <td><button class="btn btn-outline btn-sm"><i class="fa-solid fa-print"></i> Voucher</button></td>
-                        </tr>
-                    `).join('');
-                }
-            } catch (e) {
-                body.innerHTML = `<tr ondblclick="openDrawer('PO-2026-8819', 'Purchase Order', 'sent_to_vendor', 'Vendor: Global Steel')"><td class="mono">PO-2026-8819</td><td>Global Steel Suppliers Ltd</td><td class="mono">BDT 1,250,000</td><td><span class="status-chip sent_to_vendor">sent_to_vendor</span></td><td><button class="btn btn-outline btn-sm"><i class="fa-solid fa-print"></i> Voucher</button></td></tr>`;
+        function updateKpiCards() {
+            // Update Dashboard KPI cards
+            const kpis = document.querySelectorAll('.kpi-value');
+            if (kpis.length >= 4) {
+                kpis[0].innerText = `BDT ${raaxState.revenueM.toFixed(1)}M`;
+                kpis[1].innerText = `BDT ${raaxState.cashFlowM.toFixed(1)}M`;
+                kpis[2].innerText = `BDT ${raaxState.assetsM.toFixed(1)}M`;
+                kpis[3].innerText = `${raaxState.pendingCount} Items`;
+            }
+
+            // Update Topbar & Sidebar Badges
+            const sideBadge = document.getElementById('nav-badge-approvals');
+            if (sideBadge) sideBadge.innerText = raaxState.pendingCount;
+
+            const bellBadge = document.getElementById('bell-badge-count');
+            if (bellBadge) bellBadge.innerText = raaxState.pendingCount;
+        }
+
+        function appendAuditLog(message) {
+            const time = new Date().toISOString().replace('T', ' ').substring(0, 19);
+            const box = document.getElementById('telemetryOutput') || document.querySelector('.terminal-box');
+            if (box) {
+                box.innerHTML = `<span class="hl-green">[${time} UTC]</span> ${message}\n` + box.innerHTML;
             }
         }
 
-        async function fetchInventoryItems() {
-            const body = document.getElementById('inventoryTableBody');
-            if (!body) return;
-            try {
-                const res = await fetch('/api/v1/inventory/items', { headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() } });
-                const result = await res.json();
-                if (result.success && result.data.length > 0) {
-                    body.innerHTML = result.data.map(i => `
-                        <tr ondblclick="openDrawer('${i.item_sku}', 'Stock Item', 'Active', 'Bin: BIN-MAIN-A1')">
-                            <td class="mono">${i.item_sku}</td>
-                            <td class="mono">BIN-MAIN-A1</td>
-                            <td>${i.original_qty}</td>
-                            <td style="color:var(--orange-brand);font-weight:700;">${i.remaining_qty}</td>
-                            <td class="mono">BDT ${(i.unit_cost_cents/100).toLocaleString()}</td>
-                        </tr>
-                    `).join('');
-                }
-            } catch (e) {
-                body.innerHTML = `<tr ondblclick="openDrawer('SKU-RAW-STEEL', 'Stock Item', 'Active', 'Bin: BIN-MAIN-A1')"><td class="mono">SKU-RAW-STEEL</td><td class="mono">BIN-MAIN-A1</td><td>1,200</td><td style="color:var(--orange-brand);font-weight:700;">1,200</td><td class="mono">BDT 45.00</td></tr>`;
+        function approveWorkflowReq(id) {
+            const item = raaxState.approvalQueue.find(a => a.id === id);
+            if (item && item.status === 'Pending') {
+                item.status = 'Approved';
+                raaxState.pendingCount = Math.max(0, raaxState.pendingCount - 1);
+                updateKpiCards();
+                renderAllTables();
+                showToast(`Workflow Request ${id} approved cleanly!`);
+                appendAuditLog(`User adminRAAX approved Workflow Request ${id} (${item.type})`);
             }
         }
 
-        async function fetchJournals() {
-            const body = document.getElementById('journalTableBody');
-            if (!body) return;
-            try {
-                const res = await fetch('/api/v1/finance/journals', { headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() } });
-                const result = await res.json();
-                if (result.success && result.data.length > 0) {
-                    body.innerHTML = result.data.map(j => `
-                        <tr ondblclick="openDrawer('${j.reference}', 'Journal Entry', 'Posted', '${j.description}')">
-                            <td class="mono">${j.reference}</td>
-                            <td>${j.entry_date}</td>
-                            <td>${j.description}</td>
-                            <td class="mono">BDT ${(j.amount/100).toLocaleString()}</td>
-                            <td class="mono" style="color:var(--orange-brand);">${j.hash ? j.hash.substring(0,16)+'...' : 'Sealed SHA-256'}</td>
-                        </tr>
-                    `).join('');
-                }
-            } catch (e) {
-                body.innerHTML = `<tr ondblclick="openDrawer('JE-INV-2026-001', 'Journal Entry', 'Posted', 'Office Rent')"><td class="mono">JE-INV-2026-001</td><td>2026-07-25</td><td>Office Rent & Supplies</td><td class="mono">BDT 45,000</td><td class="mono" style="color:var(--orange-brand);">31af3d709ad29613...</td></tr>`;
-            }
+        function handleBulkApprove() {
+            raaxState.approvalQueue.forEach(a => a.status = 'Approved');
+            raaxState.pendingCount = 0;
+            updateKpiCards();
+            renderAllTables();
+            showToast("All pending workflow requests approved cleanly!");
+            appendAuditLog("Bulk Approval Executed by Super Admin (adminRAAX)");
         }
 
-        async function fetchEmployees() {
-            const body = document.getElementById('employeeTableBody');
-            if (!body) return;
-            try {
-                const res = await fetch('/api/v1/hr/employees', { headers: { 'Accept': 'application/json', 'X-Tenant-ID': getTenantId() } });
-                const result = await res.json();
-                if (result.data && result.data.length > 0) {
-                    body.innerHTML = result.data.map(e => `
-                        <tr ondblclick="openDrawer('${e.email}', 'Employee', 'Active', '${e.first_name} ${e.last_name}')"><td>${e.first_name} ${e.last_name}</td><td>${e.email}</td><td>${e.phone || '+8801800000000'}</td><td><span class="status-chip active">Active</span></td></tr>
-                    `).join('');
+        function filterApprovalQueue(type) {
+            const rows = document.querySelectorAll('#approvalQueueBody tr');
+            rows.forEach(r => {
+                if (type === 'high') {
+                    r.style.display = r.innerText.includes('1,250,000') || r.innerText.includes('850,000') ? '' : 'none';
+                } else {
+                    r.style.display = '';
                 }
-            } catch (e) {
-                body.innerHTML = `<tr ondblclick="openDrawer('a.rahman@raax.com', 'Employee', 'Active', 'Abdur Rahman')"><td>Abdur Rahman</td><td>a.rahman@raax.com</td><td>+8801800000001</td><td><span class="status-chip active">Active</span></td></tr>`;
-            }
+            });
+            showToast(`Filtered approval queue by: ${type.toUpperCase()}`);
         }
 
-        function calcJournalBalance() {
-            const deb = parseFloat(document.getElementById('jDeb').value) || 0;
-            const cred = parseFloat(document.getElementById('jCred').value) || 0;
-            const status = document.getElementById('jBalanceStatus');
+        function handleCreatePO(e) {
+            e.preventDefault();
+            const sku = document.getElementById('lineSku') ? document.getElementById('lineSku').value : 'SKU-NEW';
+            const qty = parseFloat(document.getElementById('lineQty') ? document.getElementById('lineQty').value : 10) || 10;
+            const price = parseFloat(document.getElementById('linePrice') ? document.getElementById('linePrice').value : 1000) || 1000;
+            const total = qty * price;
 
-            if (deb === cred && deb > 0) {
-                status.style.color = 'var(--status-green)';
-                status.innerText = `BALANCED (Delta: BDT 0.00)`;
-            } else {
-                status.style.color = 'var(--status-red)';
-                status.innerText = `UNBALANCED (Delta: BDT ${(deb - cred).toLocaleString()})`;
-            }
+            const newId = `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+            raaxState.purchaseOrders.unshift({ id: newId, vendor: 'Global Steel Suppliers Ltd', total, status: 'sent_to_vendor' });
+
+            closeCreateModal();
+            renderAllTables();
+            showToast(`Purchase Order ${newId} (BDT ${total.toLocaleString()}) created & posted cleanly!`);
+            appendAuditLog(`Created Purchase Order ${newId} for SKU ${sku}`);
         }
 
         function handlePostJournal(e) {
@@ -1139,35 +1197,48 @@
                 return;
             }
 
+            const ref = `JE-INV-2026-0${Math.floor(10 + Math.random() * 90)}`;
+            const desc = document.getElementById('jDesc').value || 'Manual Journal Post';
+            raaxState.journals.unshift({ ref, date: new Date().toISOString().substring(0,10), desc, amount: deb, hash: '31af3d709ad29613' });
+
+            raaxState.cashFlowM += (deb / 1000000);
+            updateKpiCards();
+            renderAllTables();
+
             document.getElementById('journalModal').classList.remove('open');
-            showToast("Double-entry journal JE-INV-2026-099 posted to General Ledger cleanly!");
-            reloadActiveView();
+            showToast(`Journal ${ref} (BDT ${deb.toLocaleString()}) posted cleanly to General Ledger!`);
+            appendAuditLog(`Posted Journal ${ref}: ${desc}`);
         }
 
         function handleStockTransfer(e) {
             e.preventDefault();
             const sku = document.getElementById('stSku').value;
-            const qty = document.getElementById('stQty').value;
+            const qty = parseInt(document.getElementById('stQty').value) || 50;
             const target = document.getElementById('stTarget').value;
 
+            const item = raaxState.inventoryItems.find(i => i.sku === sku);
+            if (item) {
+                item.remQty = Math.max(0, item.remQty - qty);
+            }
+
+            raaxState.inventoryItems.push({ sku, bin: target, origQty: qty, remQty: qty, unitCost: 45.00 });
+
+            renderAllTables();
             document.getElementById('stockTransferModal').classList.remove('open');
             showToast(`Transferred ${qty} units of ${sku} to ${target} cleanly!`);
-            reloadActiveView();
+            appendAuditLog(`Transferred ${qty} units of ${sku} from BIN-MAIN-A1 to ${target}`);
         }
 
         function reloadActiveView() {
             const sel = document.getElementById('tenantSelect');
-            const companyName = sel.options[sel.selectedIndex].text;
+            const companyName = sel ? sel.options[sel.selectedIndex].text : 'RAAX Holding';
             document.getElementById('sb-company').innerText = companyName;
 
             lastSyncSeconds = 0;
             document.getElementById('sb-sync').innerText = "Synced just now";
 
-            fetchSalesOrders();
-            fetchPurchaseOrders();
-            fetchInventoryItems();
-            fetchJournals();
-            fetchEmployees();
+            updateKpiCards();
+            renderAllTables();
         }
 
         setInterval(() => {
