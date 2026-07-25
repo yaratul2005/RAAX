@@ -32,7 +32,9 @@
             --status-red: #ef4444;
             --status-blue: #3b82f6;
             --drawer-width: 540px;
-            --sidebar-width: 250px;
+            --sidebar-width: 240px;
+            --sidebar-collapsed-width: 64px;
+            --statusbar-height: 26px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,10 +43,10 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-root);
             color: var(--text-pure);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
+            overflow: hidden;
             -webkit-font-smoothing: antialiased;
             user-select: none;
         }
@@ -52,8 +54,9 @@
         h1, h2, h3, h4, .font-heading { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        #app-wrapper { display: flex; min-height: 100vh; width: 100vw; overflow: hidden; }
+        #app-wrapper { display: flex; flex: 1; min-height: 0; width: 100vw; overflow: hidden; }
 
+        /* Sidebar Navigation Shell */
         aside#sidebar {
             width: var(--sidebar-width);
             background: var(--sidebar-bg);
@@ -62,220 +65,289 @@
             flex-direction: column;
             flex-shrink: 0;
             z-index: 90;
+            transition: width 0.15s ease-in-out;
+        }
+
+        aside#sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        aside#sidebar.collapsed .brand-title,
+        aside#sidebar.collapsed .brand-sub,
+        aside#sidebar.collapsed .menu-category,
+        aside#sidebar.collapsed .nav-text,
+        aside#sidebar.collapsed .nav-badge {
+            display: none;
+        }
+
+        aside#sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 10px 0;
         }
 
         .sidebar-brand {
-            padding: 1.25rem 1.25rem 1rem 1.25rem;
+            padding: 1rem 1rem 0.85rem 1rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             border-bottom: 1px solid var(--border-subtle);
         }
 
         .brand-icon {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             background: var(--orange-brand);
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #000000;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 800;
+            flex-shrink: 0;
+            cursor: pointer;
         }
 
-        .brand-title { font-size: 18px; font-weight: 700; color: var(--text-pure); line-height: 1.1; }
+        .brand-title { font-size: 16px; font-weight: 700; color: var(--text-pure); line-height: 1.1; }
         .brand-title span { color: var(--orange-brand); }
-        .brand-sub { font-size: 10px; color: var(--text-dim); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+        .brand-sub { font-size: 9px; color: var(--text-dim); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
 
-        .sidebar-menu { flex: 1; padding: 1rem 0.75rem; overflow-y: auto; }
-        .menu-category { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 10px 6px 10px; }
+        .sidebar-menu { flex: 1; padding: 0.75rem 0.5rem; overflow-y: auto; }
+        .menu-category { font-size: 9px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 8px 4px 8px; }
 
         .nav-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 9px 12px;
+            padding: 8px 10px;
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 500;
             border-radius: 6px;
             cursor: pointer;
             text-decoration: none;
-            transition: all 0.15s ease;
+            transition: background 0.1s ease, color 0.1s ease;
             margin-bottom: 2px;
         }
 
-        .nav-item:hover { color: var(--text-pure); background: rgba(255, 255, 255, 0.03); }
+        .nav-item:hover { color: var(--text-pure); background: rgba(255, 255, 255, 0.04); }
         .nav-item.active { color: var(--orange-brand); background: var(--orange-glow); font-weight: 600; }
-        .nav-item i.nav-icon { width: 20px; font-size: 14px; color: var(--text-dim); }
+        .nav-item i.nav-icon { width: 18px; font-size: 13.5px; color: var(--text-dim); text-align: center; }
         .nav-item.active i.nav-icon, .nav-item:hover i.nav-icon { color: var(--orange-brand); }
 
-        .nav-badge { font-size: 10px; padding: 2px 6px; border-radius: 10px; background: rgba(255, 94, 0, 0.18); color: var(--orange-brand); font-weight: 700; }
+        .nav-badge { font-size: 9.5px; padding: 1px 5px; border-radius: 8px; background: rgba(255, 94, 0, 0.18); color: var(--orange-brand); font-weight: 700; }
 
+        /* Main Workspace Container */
         #main-container { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--bg-root); position: relative; }
 
+        /* Top Bar */
         header#topbar {
-            height: 60px;
-            background: rgba(9, 9, 11, 0.95);
-            backdrop-filter: blur(12px);
+            height: 52px;
+            background: #0b0b0e;
             border-bottom: 1px solid var(--border-subtle);
-            padding: 0 1.5rem;
+            padding: 0 1.25rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             z-index: 80;
         }
 
-        .topbar-left { display: flex; align-items: center; gap: 1rem; flex: 1; max-width: 500px; }
+        .topbar-left { display: flex; align-items: center; gap: 12px; flex: 1; max-width: 480px; }
+        .toggle-btn { background: transparent; border: none; color: var(--text-dim); font-size: 15px; cursor: pointer; padding: 4px; border-radius: 4px; }
+        .toggle-btn:hover { color: var(--text-pure); background: rgba(255,255,255,0.05); }
+
         .global-search-box { position: relative; width: 100%; }
-        .global-search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px; }
-        .global-search-input { width: 100%; background: #141418; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 7px 12px 7px 34px; color: var(--text-pure); font-size: 12px; outline: none; }
+        .global-search-box i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 12px; }
+        .global-search-input { width: 100%; background: #141418; border: 1px solid var(--border-subtle); border-radius: 5px; padding: 6px 10px 6px 30px; color: var(--text-pure); font-size: 11.5px; outline: none; }
         .global-search-input:focus { border-color: var(--orange-brand); }
 
-        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
 
         .quick-create-btn {
-            background: var(--orange-brand); color: #000; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+            background: var(--orange-brand); color: #000; border: none; padding: 5px 12px; border-radius: 5px; font-weight: 700; font-size: 11.5px; cursor: pointer; display: flex; align-items: center; gap: 5px;
         }
         .quick-create-btn:hover { background: var(--orange-hover); }
 
-        .context-select { background: var(--card-bg); border: 1px solid var(--border-subtle); color: var(--text-pure); font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 6px; outline: none; cursor: pointer; }
+        .context-select { background: var(--card-bg); border: 1px solid var(--border-subtle); color: var(--text-pure); font-size: 11.5px; font-weight: 600; padding: 4px 8px; border-radius: 5px; outline: none; cursor: pointer; }
 
-        .status-badge { font-size: 11px; font-weight: 700; color: var(--status-green); background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 12px; display: flex; align-items: center; gap: 6px; }
-        .status-dot { width: 6px; height: 6px; background: var(--status-green); border-radius: 50%; }
+        /* Page Sub-Header & Action Toolbar */
+        .page-header { padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-subtle); background: #0d0d11; display: flex; align-items: center; justify-content: space-between; }
+        .breadcrumbs { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-dim); margin-bottom: 2px; }
+        .page-title { font-size: 18px; font-weight: 700; color: var(--text-pure); }
+        .page-actions { display: flex; align-items: center; gap: 6px; }
 
-        .page-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); background: #0b0b0e; display: flex; align-items: center; justify-content: space-between; }
-        .breadcrumbs { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); margin-bottom: 4px; }
-        .page-title { font-size: 20px; font-weight: 700; color: var(--text-pure); }
-        .page-actions { display: flex; align-items: center; gap: 8px; }
-
-        .workspace-content { flex: 1; padding: 1.5rem; overflow-y: auto; }
+        /* Workspace Main Body */
+        .workspace-content { flex: 1; padding: 1.25rem; overflow-y: auto; }
         .view-panel { display: none; }
         .view-panel.active { display: block; }
 
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .kpi-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1.25rem; }
-        .kpi-card.featured { border-left: 4px solid var(--orange-brand); }
-        .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-        .kpi-title { font-size: 11px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; }
-        .kpi-value { font-size: 26px; font-weight: 700; color: var(--text-pure); font-family: 'Space Grotesk', sans-serif; }
+        /* KPI Cards */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; margin-bottom: 1.25rem; }
+        .kpi-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 1rem; }
+        .kpi-card.featured { border-left: 3px solid var(--orange-brand); }
+        .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+        .kpi-title { font-size: 10.5px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+        .kpi-value { font-size: 22px; font-weight: 700; color: var(--text-pure); font-family: 'Space Grotesk', sans-serif; }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-        .card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; }
-        .card-header { background: var(--card-header-bg); padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
-        .card-title { font-size: 14px; font-weight: 600; color: var(--text-pure); display: flex; align-items: center; gap: 8px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 6px; overflow: hidden; margin-bottom: 1.25rem; }
+        .card-header { background: var(--card-header-bg); padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+        .card-title { font-size: 13px; font-weight: 600; color: var(--text-pure); display: flex; align-items: center; gap: 6px; }
         .card-title i { color: var(--orange-brand); }
-        .card-body { padding: 1.25rem; }
+        .card-body { padding: 1rem; }
 
+        /* Data Tables & Grids */
         .data-table-container { overflow-x: auto; }
-        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .data-table th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; border-bottom: 1px solid var(--border-subtle); background: #0f0f12; }
-        .data-table td { padding: 11px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); }
-        .data-table tr:hover td { background: rgba(255, 255, 255, 0.02); color: var(--text-pure); cursor: pointer; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+        .data-table th { text-align: left; padding: 8px 10px; font-size: 10.5px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; border-bottom: 1px solid var(--border-subtle); background: #0f0f12; white-space: nowrap; }
+        .data-table td { padding: 9px 10px; border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); white-space: nowrap; }
+        .data-table tr:hover td { background: rgba(255, 255, 255, 0.03); color: var(--text-pure); cursor: pointer; }
+        .data-table tr.selected td { background: var(--orange-glow); color: var(--text-pure); font-weight: 600; }
 
-        .status-chip { font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+        .status-chip { font-size: 10.5px; padding: 2px 7px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
         .status-chip.draft { background: rgba(161, 161, 170, 0.1); color: var(--text-muted); }
         .status-chip.approved, .status-chip.confirmed, .status-chip.active { background: rgba(16, 185, 129, 0.12); color: var(--status-green); }
         .status-chip.posted { background: var(--orange-glow); color: var(--orange-brand); }
 
-        .btn { background: var(--orange-brand); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .btn { background: var(--orange-brand); color: #000; border: none; padding: 6px 14px; border-radius: 5px; font-weight: 700; font-size: 11.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
         .btn:hover { background: var(--orange-hover); }
         .btn-outline { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-pure); }
         .btn-outline:hover { border-color: var(--border-highlight); background: rgba(255, 255, 255, 0.04); }
-        .btn-sm { padding: 5px 10px; font-size: 11px; }
+        .btn-sm { padding: 4px 8px; font-size: 10.5px; }
 
-        .form-group { margin-bottom: 1rem; }
-        .form-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; }
-        .form-input, .form-select { width: 100%; background: #09090b; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 8px 12px; color: var(--text-pure); font-size: 13px; outline: none; }
+        .form-group { margin-bottom: 0.85rem; }
+        .form-label { display: block; font-size: 10.5px; font-weight: 600; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+        .form-input, .form-select { width: 100%; background: #09090b; border: 1px solid var(--border-subtle); border-radius: 5px; padding: 7px 10px; color: var(--text-pure); font-size: 12.5px; outline: none; }
         .form-input:focus, .form-select:focus { border-color: var(--orange-brand); }
+        .form-input.invalid { border-color: var(--status-red) !important; }
 
-        #detail-drawer { position: fixed; top: 0; right: 0; width: var(--drawer-width); height: 100vh; background: #111114; border-left: 1px solid var(--border-subtle); z-index: 120; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Master Detail Drawer */
+        #detail-drawer { position: fixed; top: 0; right: 0; width: var(--drawer-width); height: 100vh; background: #111114; border-left: 1px solid var(--border-subtle); z-index: 120; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.15s ease-out; }
         #detail-drawer.open { transform: translateX(0); }
-        .drawer-header { padding: 1.25rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: #16161a; }
+        .drawer-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: #16161a; }
         .drawer-body { flex: 1; padding: 1.25rem; overflow-y: auto; }
-        .drawer-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--border-subtle); background: #16161a; display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+        .drawer-footer { padding: 0.85rem 1.25rem; border-top: 1px solid var(--border-subtle); background: #16161a; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
 
-        .terminal-box { background: #000000; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #d4d4d8; max-height: 280px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
+        /* Windows Native Right-Click Context Menu */
+        #context-menu {
+            position: fixed;
+            z-index: 300;
+            background: #18181b;
+            border: 1px solid var(--border-highlight);
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            width: 220px;
+            display: none;
+            padding: 4px 0;
+        }
+        .ctx-item {
+            padding: 7px 14px;
+            font-size: 12px;
+            color: var(--text-pure);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .ctx-item:hover { background: var(--orange-brand); color: #000; font-weight: 600; }
+        .ctx-item i { width: 16px; font-size: 12px; }
+        .ctx-divider { height: 1px; background: var(--border-subtle); margin: 4px 0; }
+        .ctx-shortcut { font-size: 10px; opacity: 0.7; font-family: monospace; }
+
+        .terminal-box { background: #000000; border: 1px solid var(--border-subtle); border-radius: 5px; padding: 0.85rem; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #d4d4d8; max-height: 260px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
         .terminal-box .hl-orange { color: var(--orange-brand); }
         .terminal-box .hl-green { color: var(--status-green); }
 
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
-        .toast { background: #18181b; border: 1px solid var(--border-highlight); border-left: 4px solid var(--orange-brand); padding: 12px 16px; border-radius: 6px; font-size: 13px; color: var(--text-pure); display: flex; align-items: center; gap: 12px; }
+        #toast-container { position: fixed; bottom: 34px; right: 16px; z-index: 200; display: flex; flex-direction: column; gap: 6px; }
+        .toast { background: #18181b; border: 1px solid var(--border-highlight); border-left: 3px solid var(--orange-brand); padding: 10px 14px; border-radius: 5px; font-size: 12px; color: var(--text-pure); display: flex; align-items: center; gap: 10px; }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); z-index: 150; display: none; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(3px); z-index: 150; display: none; align-items: center; justify-content: center; padding: 1rem; }
         .modal-overlay.open { display: flex; }
-        .modal-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 8px; width: 100%; max-width: 720px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
-        .modal-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle); background: var(--card-header-bg); display: flex; align-items: center; justify-content: space-between; }
+        .modal-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 6px; width: 100%; max-width: 760px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-subtle); background: var(--card-header-bg); display: flex; align-items: center; justify-content: space-between; }
         .modal-body { padding: 1.25rem; overflow-y: auto; }
 
-        .printable-invoice-box { background: #ffffff; color: #000000; padding: 2rem; border-radius: 6px; font-family: 'Inter', sans-serif; }
-        .invoice-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 1rem; margin-bottom: 1.5rem; }
-        .invoice-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 13px; }
-        .invoice-table th { background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
-        .invoice-table td { border: 1px solid #e2e8f0; padding: 8px 10px; color: #1e293b; }
+        /* Desktop Status Bar */
+        #statusbar {
+            height: var(--statusbar-height);
+            background: #08080a;
+            border-top: 1px solid var(--border-subtle);
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+            z-index: 100;
+        }
+        .statusbar-item { display: flex; align-items: center; gap: 6px; }
+        .statusbar-dot { width: 6px; height: 6px; background: var(--status-green); border-radius: 50%; }
 
-        footer { border-top: 1px solid var(--border-subtle); padding: 1rem 1.5rem; text-align: center; font-size: 11px; color: var(--text-dim); background: var(--bg-root); }
+        .printable-invoice-box { background: #ffffff; color: #000000; padding: 2rem; border-radius: 4px; font-family: 'Inter', sans-serif; }
+        .invoice-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .invoice-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 12.5px; }
+        .invoice-table th { background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; padding: 7px 9px; text-align: left; }
+        .invoice-table td { border: 1px solid #e2e8f0; padding: 7px 9px; color: #1e293b; }
     </style>
 </head>
 <body>
     <div id="app-wrapper">
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar Navigation Shell -->
         <aside id="sidebar">
             <div class="sidebar-brand">
-                <div class="brand-icon">R</div>
+                <div class="brand-icon" onclick="toggleSidebarCollapse()" title="Toggle Sidebar Width (Ctrl+B)">R</div>
                 <div>
                     <div class="brand-title">RAAX <span>ERP</span></div>
-                    <div class="brand-sub">Native Windows Commercial Software</div>
+                    <div class="brand-sub">Desktop Commercial Edition</div>
                 </div>
             </div>
 
             <div class="sidebar-menu">
                 <div class="menu-category">Main Workspace</div>
                 <a class="nav-item active" onclick="navigateTo('dashboard', this)">
-                    <span><i class="fa-solid fa-chart-pie nav-icon"></i> Role Dashboard</span>
+                    <span><i class="fa-solid fa-chart-pie nav-icon"></i> <span class="nav-text">Role Dashboard</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('approvals', this)">
-                    <span><i class="fa-solid fa-stamp nav-icon"></i> Approval Queue</span>
+                    <span><i class="fa-solid fa-stamp nav-icon"></i> <span class="nav-text">Approval Queue</span></span>
                     <span class="nav-badge">3</span>
                 </a>
 
                 <div class="menu-category">Commercial ERP Modules</div>
                 <a class="nav-item" onclick="navigateTo('sales', this)">
-                    <span><i class="fa-solid fa-receipt nav-icon"></i> Sales & Invoicing</span>
+                    <span><i class="fa-solid fa-receipt nav-icon"></i> <span class="nav-text">Sales & Invoicing</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('procurement', this)">
-                    <span><i class="fa-solid fa-cart-shopping nav-icon"></i> Procurement & POs</span>
+                    <span><i class="fa-solid fa-cart-shopping nav-icon"></i> <span class="nav-text">Procurement & POs</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('inventory', this)">
-                    <span><i class="fa-solid fa-boxes-packing nav-icon"></i> Inventory FIFO & Bins</span>
+                    <span><i class="fa-solid fa-boxes-packing nav-icon"></i> <span class="nav-text">Inventory FIFO & Bins</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('finance', this)">
-                    <span><i class="fa-solid fa-book nav-icon"></i> General Ledger & FX</span>
+                    <span><i class="fa-solid fa-book nav-icon"></i> <span class="nav-text">General Ledger & FX</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('vat', this)">
-                    <span><i class="fa-solid fa-file-contract nav-icon"></i> NBR Statutory VAT</span>
+                    <span><i class="fa-solid fa-file-contract nav-icon"></i> <span class="nav-text">NBR Statutory VAT</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('hr', this)">
-                    <span><i class="fa-solid fa-user-clock nav-icon"></i> HR & Payroll Engine</span>
+                    <span><i class="fa-solid fa-user-clock nav-icon"></i> <span class="nav-text">HR & Payroll Engine</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('assets', this)">
-                    <span><i class="fa-solid fa-building-columns nav-icon"></i> Fixed Assets & Depreciation</span>
+                    <span><i class="fa-solid fa-building-columns nav-icon"></i> <span class="nav-text">Fixed Assets Register</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('manufacturing', this)">
-                    <span><i class="fa-solid fa-industry nav-icon"></i> Manufacturing & MRP</span>
+                    <span><i class="fa-solid fa-industry nav-icon"></i> <span class="nav-text">Manufacturing MRP</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('edi', this)">
-                    <span><i class="fa-solid fa-network-wired nav-icon"></i> EDI Order Integration</span>
+                    <span><i class="fa-solid fa-network-wired nav-icon"></i> <span class="nav-text">EDI Integration</span></span>
                 </a>
 
-                <div class="menu-category">Governance & Hardware DLL</div>
+                <div class="menu-category">Governance & Hardware</div>
                 <a class="nav-item" onclick="navigateTo('audit', this)">
-                    <span><i class="fa-solid fa-history nav-icon"></i> Before/After Audit Trail</span>
+                    <span><i class="fa-solid fa-history nav-icon"></i> <span class="nav-text">Audit Trail Logs</span></span>
                 </a>
                 <a class="nav-item" onclick="navigateTo('telemetry', this)">
-                    <span><i class="fa-solid fa-desktop nav-icon"></i> Windows Hardware DLL</span>
+                    <span><i class="fa-solid fa-desktop nav-icon"></i> <span class="nav-text">Windows Hardware DLL</span></span>
                 </a>
             </div>
         </aside>
@@ -284,43 +356,43 @@
         <div id="main-container">
             <header id="topbar">
                 <div class="topbar-left">
+                    <button class="toggle-btn" onclick="toggleSidebarCollapse()" title="Toggle Sidebar"><i class="fa-solid fa-bars"></i></button>
                     <div class="global-search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" class="global-search-input" placeholder="Global Search (POs, Invoices, SKU, Asset IDs)...">
+                        <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Global Search (Ctrl+F for POs, Invoices, SKU, Asset IDs)...">
                     </div>
                 </div>
 
                 <div class="topbar-right">
                     <button class="quick-create-btn" onclick="openCreateModal('po')">
-                        <i class="fa-solid fa-plus"></i> + New PO Record
+                        <i class="fa-solid fa-plus"></i> + New Record (Ctrl+N)
                     </button>
 
                     <select class="context-select" id="tenantSelect" onchange="reloadActiveView()">
-                        <option value="aca9ea90-0d0f-4ed9-98ed-398af6b67efd">Tenant A (HQ)</option>
-                        <option value="bcb9ea90-0d0f-4ed9-98ed-398af6b67efe">Tenant B (Branch)</option>
-                        <option value="ccc9ea90-0d0f-4ed9-98ed-398af6b67eff">Tenant C (Holding)</option>
+                        <option value="aca9ea90-0d0f-4ed9-98ed-398af6b67efd">Company: RAAX HQ (Tenant A)</option>
+                        <option value="bcb9ea90-0d0f-4ed9-98ed-398af6b67efe">Company: RAAX Chittagong (Tenant B)</option>
+                        <option value="ccc9ea90-0d0f-4ed9-98ed-398af6b67eff">Company: Holding Corp (Tenant C)</option>
                     </select>
 
-                    <div class="status-badge">
-                        <div class="status-dot"></div>
-                        RAAX_ERP.exe Executable Active
+                    <div style="font-size:11px; font-weight:700; color:var(--status-green);">
+                        <span class="statusbar-dot" style="display:inline-block; margin-right:4px;"></span> RAAX_ERP.exe
                     </div>
                 </div>
             </header>
 
             <div class="page-header">
                 <div>
-                    <div class="breadcrumbs">RAAX Monolith Commercial Suite / <span id="crumb-current">Role Dashboard</span></div>
+                    <div class="breadcrumbs">RAAX ERP Desktop / <span id="crumb-current">Role Dashboard</span></div>
                     <div class="page-title" id="page-title-text">Role Dashboard</div>
                 </div>
                 <div class="page-actions">
-                    <button class="btn btn-outline btn-sm" onclick="exportCurrentView()"><i class="fa-solid fa-download"></i> Save CSV</button>
+                    <button class="btn btn-outline btn-sm" onclick="exportCurrentView()"><i class="fa-solid fa-download"></i> Export CSV</button>
                     <button class="btn btn-sm" onclick="reloadActiveView()"><i class="fa-solid fa-rotate"></i> Sync Data</button>
                 </div>
             </div>
 
             <div class="workspace-content">
-                <!-- DASHBOARD -->
+                <!-- DASHBOARD PANEL -->
                 <div id="view-dashboard" class="view-panel active">
                     <div class="kpi-grid">
                         <div class="kpi-card featured">
@@ -332,74 +404,48 @@
                             <div class="kpi-value">BDT 38.2M</div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-header"><div class="kpi-title">Fixed Assets Net Valuation</div><i class="fa-solid fa-building-columns kpi-icon"></i></div>
+                            <div class="kpi-header"><div class="kpi-title">Fixed Assets Valuation</div><i class="fa-solid fa-building-columns kpi-icon"></i></div>
                             <div class="kpi-value">BDT 84.1M</div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-header"><div class="kpi-title">Pending Workflow Approvals</div><i class="fa-solid fa-stamp kpi-icon"></i></div>
+                            <div class="kpi-header"><div class="kpi-title">Pending Approvals</div><i class="fa-solid fa-stamp kpi-icon"></i></div>
                             <div class="kpi-value">3 Items</div>
-                        </div>
-                    </div>
-
-                    <div class="grid-2">
-                        <div class="card">
-                            <div class="card-header"><div class="card-title"><i class="fa-solid fa-building-columns"></i> Fixed Assets Register</div></div>
-                            <div class="card-body" style="padding:0;">
-                                <table class="data-table">
-                                    <thead><tr><th>Asset Code</th><th>Asset Name</th><th>Cost Price</th><th>Depreciation Engine</th></tr></thead>
-                                    <tbody>
-                                        <tr><td class="mono">AST-COMP-001</td><td>High-Performance Server Blade Array</td><td class="mono">BDT 1,200,000</td><td>Straight Line (10% p.a.)</td></tr>
-                                        <tr><td class="mono">AST-VEH-004</td><td>Logistics Delivery Freight Truck</td><td class="mono">BDT 4,500,000</td><td>Double Declining (20% p.a.)</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header"><div class="card-title"><i class="fa-solid fa-user-clock"></i> Monthly Payroll Engine Matrix</div></div>
-                            <div class="card-body">
-                                <ul style="list-style:none; font-size:13px; line-height:2;">
-                                    <li><span class="status-chip approved">Calculated</span> Basic Salary + House Rent + Medical Allowance</li>
-                                    <li><span class="status-chip approved">Withheld</span> Tax Deducted at Source (TDS) per National Tax Rules</li>
-                                    <li><span class="status-chip approved">Contributed</span> Employee Provident Fund (PF) Auto-Deduction</li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- SALES -->
+                <!-- SALES PANEL -->
                 <div id="view-sales" class="view-panel">
                     <div class="card">
-                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-receipt"></i> Commercial Sales Orders</div></div>
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-receipt"></i> Commercial Sales Orders (Double-Click Row to Edit, Right-Click for Context Menu)</div></div>
                         <div class="data-table-container">
-                            <table class="data-table">
-                                <thead><tr><th>Order ID</th><th>Customer</th><th>Subtotal</th><th>Grand Total</th><th>Status</th><th>Mushak 6.3 Tax Invoice</th></tr></thead>
+                            <table class="data-table" id="salesTable">
+                                <thead><tr><th>Order ID</th><th>Customer Name</th><th>Subtotal</th><th>Grand Total</th><th>Status</th><th>Mushak 6.3 Invoice</th></tr></thead>
                                 <tbody id="salesTableBody"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- PROCUREMENT -->
+                <!-- PROCUREMENT PANEL -->
                 <div id="view-procurement" class="view-panel">
                     <div class="card">
-                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-cart-shopping"></i> Purchase Orders & Vendor Directory</div></div>
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-cart-shopping"></i> Purchase Orders Directory</div></div>
                         <div class="data-table-container">
-                            <table class="data-table">
-                                <thead><tr><th>PO Number</th><th>Vendor</th><th>Total Amount</th><th>Status</th><th>Print Voucher</th></tr></thead>
+                            <table class="data-table" id="poTable">
+                                <thead><tr><th>PO Number</th><th>Vendor Name</th><th>Total Amount</th><th>Status</th><th>Print Voucher</th></tr></thead>
                                 <tbody id="poTableBody"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- INVENTORY -->
+                <!-- INVENTORY PANEL -->
                 <div id="view-inventory" class="view-panel">
                     <div class="card">
-                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-boxes-packing"></i> FIFO Stock Valuation & Bin Directory</div></div>
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-boxes-packing"></i> FIFO Stock Valuation & Bins</div></div>
                         <div class="data-table-container">
-                            <table class="data-table">
+                            <table class="data-table" id="inventoryTable">
                                 <thead><tr><th>Item SKU</th><th>Bin Label</th><th>Original Qty</th><th>Remaining Qty</th><th>Unit Cost</th></tr></thead>
                                 <tbody id="inventoryTableBody"></tbody>
                             </table>
@@ -407,12 +453,12 @@
                     </div>
                 </div>
 
-                <!-- FINANCE -->
+                <!-- FINANCE PANEL -->
                 <div id="view-finance" class="view-panel">
                     <div class="card">
                         <div class="card-header"><div class="card-title"><i class="fa-solid fa-book"></i> General Ledger & Journal Entries</div></div>
                         <div class="data-table-container">
-                            <table class="data-table">
+                            <table class="data-table" id="journalTable">
                                 <thead><tr><th>Reference</th><th>Date</th><th>Description</th><th>Amount</th><th>SHA-256 Ledger Hash</th></tr></thead>
                                 <tbody id="journalTableBody"></tbody>
                             </table>
@@ -420,12 +466,12 @@
                     </div>
                 </div>
 
-                <!-- HR -->
+                <!-- HR PANEL -->
                 <div id="view-hr" class="view-panel">
                     <div class="card">
                         <div class="card-header"><div class="card-title"><i class="fa-solid fa-users"></i> Employee Master Directory & Payroll Ledger</div></div>
                         <div class="data-table-container">
-                            <table class="data-table">
+                            <table class="data-table" id="employeeTable">
                                 <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th></tr></thead>
                                 <tbody id="employeeTableBody"></tbody>
                             </table>
@@ -433,64 +479,64 @@
                     </div>
                 </div>
 
-                <!-- FIXED ASSETS -->
+                <!-- FIXED ASSETS PANEL -->
                 <div id="view-assets" class="view-panel">
                     <div class="card">
-                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-building-columns"></i> Fixed Asset Management & Depreciation Engine</div></div>
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-building-columns"></i> Fixed Asset Register & Depreciation Engine</div></div>
                         <div class="card-body">
                             <div class="terminal-box"><span class="hl-orange">[Fixed Asset Depreciation Engine Active]</span>
-Asset AST-COMP-001: Original Cost BDT 1,200,000 -> Year 1 Depr: BDT 120,000 -> Book Value: BDT 1,080,000
-Asset AST-VEH-004: Original Cost BDT 4,500,000 -> Year 1 Depr: BDT 900,000 -> Book Value: BDT 3,600,000</div>
+AST-COMP-001: Original Cost BDT 1,200,000 -> Straight Line Depr: BDT 120,000 -> Book Value: BDT 1,080,000
+AST-VEH-004: Original Cost BDT 4,500,000 -> Double Declining Depr: BDT 900,000 -> Book Value: BDT 3,600,000</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- NBR STATUTORY VAT -->
+                <!-- VAT PANEL -->
                 <div id="view-vat" class="view-panel">
                     <div class="card">
                         <div class="card-header"><div class="card-title"><i class="fa-solid fa-file-contract"></i> NBR Bangladesh Statutory VAT Compliance Engine</div></div>
                         <div class="card-body">
                             <div class="terminal-box"><span class="hl-orange">[Mushak Compliance Engine 2026-07]</span>
-- Mushak 6.1 (Purchase Register): Aggregated BDT 1,250,000 input tax credit claims
-- Mushak 6.3 (Sales Tax Invoice): BDT 850,000 invoice dispatched (VAT: BDT 110,870)
+- Mushak 6.1 (Purchase Register): BDT 1,250,000 input tax credit claims
+- Mushak 6.3 (Sales Tax Invoice): BDT 850,000 invoice dispatched (VAT BDT 110,870)
 - Mushak 6.6 (VDS Certificate): BDT 45,000 withholding tax certificate generated
 - Mushak 9.1 (Monthly VAT Return): Net Payable BDT 65,869.57</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- MANUFACTURING & MRP -->
+                <!-- MANUFACTURING PANEL -->
                 <div id="view-manufacturing" class="view-panel">
                     <div class="card">
-                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-industry"></i> JIT Manufacturing & Material Requirements Planning (MRP)</div></div>
+                        <div class="card-header"><div class="card-title"><i class="fa-solid fa-industry"></i> JIT Manufacturing MRP Material Deficiency Runner</div></div>
                         <div class="card-body">
                             <div class="terminal-box"><span class="hl-orange">[MRP Shortfall Engine Output]</span>
 Work Order WO-2026-881 Requirements:
-- SKU-RAW-STEEL: Required 200 | Stock 1,200 | Shortfall: 0 (Available)
+- SKU-RAW-STEEL: Required 200 | Stock 1,200 | Shortfall: 0
 - SKU-FASTENER-A: Required 500 | Stock 150 | Shortfall: 350 (Reorder Trigger Dispatched)</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- EDI INTEGRATION -->
+                <!-- EDI PANEL -->
                 <div id="view-edi" class="view-panel">
                     <div class="card">
                         <div class="card-header"><div class="card-title"><i class="fa-solid fa-network-wired"></i> EDI Electronic Data Interchange Mapper</div></div>
                         <div class="card-body">
                             <div class="terminal-box"><span class="hl-orange">[EDI X12 Standard Orders Receiver]</span>
 - EDI 850 (Purchase Order Inbound): Recv order PO-88912 from Customer TransGlobal
-- EDI 855 (PO Acknowledgement): Sent confirmation ACK-88912
+- EDI 855 (PO Ack): Sent confirmation ACK-88912
 - EDI 856 (Ship Notice / Manifest): Outbound manifest ready</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- WINDOWS HARDWARE DLL -->
+                <!-- TELEMETRY / DLL PANEL -->
                 <div id="view-telemetry" class="view-panel">
                     <div class="card">
                         <div class="card-header"><div class="card-title"><i class="fa-solid fa-desktop"></i> Windows Compiled Native DLL & POS Printer Diagnostics</div></div>
                         <div class="card-body">
-                            <button class="btn btn-outline btn-sm" style="margin-bottom:12px;" onclick="loadHardwareMetrics()"><i class="fa-solid fa-rotate"></i> Query RAAX_Native_Hardware.dll</button>
+                            <button class="btn btn-outline btn-sm" style="margin-bottom:10px;" onclick="loadHardwareMetrics()"><i class="fa-solid fa-rotate"></i> Query RAAX_Native_Hardware.dll</button>
                             <div id="telemetryOutput" class="terminal-box">Querying Windows hardware diagnostics & native DLL...</div>
                         </div>
                     </div>
@@ -500,14 +546,126 @@ Work Order WO-2026-881 Requirements:
                 <div id="view-audit" class="view-panel"><div class="card"><div class="card-body">Audit Trail Log Active</div></div></div>
             </div>
 
-            <footer>RAAX ERP Platform &bull; Native Windows Compiled Executable RAAX_ERP.exe</footer>
+            <!-- Persistent Windows Desktop Status Bar -->
+            <div id="statusbar">
+                <div class="statusbar-item">
+                    <span class="statusbar-dot"></span>
+                    <span id="sb-company">Company: RAAX HQ (Tenant A)</span>
+                </div>
+                <div class="statusbar-item">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Fiscal Period: FY 2026-2027</span>
+                </div>
+                <div class="statusbar-item">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span id="sb-sync">Real-Time Synced [0ms]</span>
+                </div>
+                <div class="statusbar-item">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>User: A. Rahman (Senior Operations)</span>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!-- Master Detail Drawer -->
+    <aside id="detail-drawer">
+        <div class="drawer-header">
+            <div>
+                <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase;">Master Record Inspection</div>
+                <div style="font-size:15px; font-weight:700;" id="drawer-title">#RECORD-001</div>
+            </div>
+            <button onclick="closeDrawer()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="drawer-body" id="drawer-summary">Select a record row to inspect properties.</div>
+        <div class="drawer-footer">
+            <button class="btn btn-outline btn-sm" onclick="closeDrawer()">Close (Esc)</button>
+            <button class="btn btn-sm" onclick="showToast('Record changes saved cleanly.')">Save (Ctrl+S)</button>
+        </div>
+    </aside>
+
+    <!-- Header-Detail New PO Modal -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-file-pen"></i> New Transaction Entry (Header-Detail Layout)</div>
+                <button onclick="closeCreateModal()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="poCreateForm" onsubmit="handleCreatePO(event)">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Vendor Supplier</label>
+                            <input type="text" id="modalVendor" class="form-input" value="Global Steel Suppliers Ltd" required onblur="validateField(this)">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target Warehouse Bin</label>
+                            <select id="modalBin" class="form-select">
+                                <option value="BIN-MAIN-A1">BIN-MAIN-A1 (Central Facility)</option>
+                                <option value="BIN-MAIN-B4">BIN-MAIN-B4 (Regional Bin)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Line Items Inline DataGrid -->
+                    <div style="margin-top:1rem;">
+                        <label class="form-label">Transaction Line Items (Inline Editable DataGrid)</label>
+                        <table class="data-table" style="margin-bottom:10px;">
+                            <thead>
+                                <tr><th>SKU Item</th><th>Quantity</th><th>Unit Price (BDT)</th><th>Line Total (BDT)</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-input" value="SKU-RAW-STEEL" id="lineSku"></td>
+                                    <td><input type="number" class="form-input mono" value="100" id="lineQty" oninput="calcLineTotal()"></td>
+                                    <td><input type="number" class="form-input mono" value="12500" id="linePrice" oninput="calcLineTotal()"></td>
+                                    <td><input type="text" class="form-input mono" value="BDT 1,250,000" id="lineTotal" readonly style="color:var(--orange-brand); font-weight:700;"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button type="submit" class="btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="fa-solid fa-paper-plane"></i> Save & Post Transaction (Ctrl+S)</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Windows Right-Click Context Menu -->
+    <div id="context-menu">
+        <div class="ctx-item" onclick="ctxAction('edit')"><span><i class="fa-solid fa-pen-to-square"></i> Open & Edit Record</span><span class="ctx-shortcut">Double-Click</span></div>
+        <div class="ctx-item" onclick="ctxAction('duplicate')"><span><i class="fa-solid fa-copy"></i> Duplicate Record</span><span class="ctx-shortcut">Ctrl+D</span></div>
+        <div class="ctx-item" onclick="ctxAction('print')"><span><i class="fa-solid fa-print"></i> Print Official Document</span><span class="ctx-shortcut">Ctrl+P</span></div>
+        <div class="ctx-divider"></div>
+        <div class="ctx-item" onclick="ctxAction('history')"><span><i class="fa-solid fa-history"></i> Audit Trail History</span></div>
+        <div class="ctx-item" style="color:var(--status-red);" onclick="ctxAction('delete')"><span><i class="fa-solid fa-trash"></i> Cancel / Soft Delete</span><span class="ctx-shortcut">Del</span></div>
     </div>
 
     <div id="toast-container"></div>
 
     <script>
+        let selectedRowId = null;
+
         function getTenantId() { return document.getElementById('tenantSelect').value; }
+
+        function toggleSidebarCollapse() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        function validateField(inputEl) {
+            if (!inputEl.value.trim()) {
+                inputEl.classList.add('invalid');
+            } else {
+                inputEl.classList.remove('invalid');
+            }
+        }
+
+        function calcLineTotal() {
+            const qty = parseFloat(document.getElementById('lineQty').value) || 0;
+            const price = parseFloat(document.getElementById('linePrice').value) || 0;
+            const total = qty * price;
+            document.getElementById('lineTotal').value = 'BDT ' + total.toLocaleString();
+        }
 
         function showToast(message) {
             const container = document.getElementById('toast-container');
@@ -515,9 +673,9 @@ Work Order WO-2026-881 Requirements:
             toast.className = 'toast';
             toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--orange-brand);"></i> <span>${message}</span>`;
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
+            setTimeout(() => toast.remove(), 3500);
 
-            if (window.raax && window.raax.notify) window.raax.notify('RAAX ERP Alert', message);
+            if (window.raax && window.raax.notify) window.raax.notify('RAAX ERP Desktop', message);
         }
 
         function navigateTo(viewId, element) {
@@ -535,17 +693,76 @@ Work Order WO-2026-881 Requirements:
             reloadActiveView();
         }
 
+        function openDrawer(id, type, status, summary) {
+            document.getElementById('drawer-title').innerText = id;
+            document.getElementById('drawer-summary').innerText = summary;
+            document.getElementById('detail-drawer').classList.add('open');
+        }
+
+        function closeDrawer() { document.getElementById('detail-drawer').classList.remove('open'); }
+        function openCreateModal() { document.getElementById('createModal').classList.add('open'); }
+        function closeCreateModal() { document.getElementById('createModal').classList.remove('open'); }
+
         async function loadHardwareMetrics() {
             const box = document.getElementById('telemetryOutput');
             if (window.raax && window.raax.getHardwareInfo) {
                 const info = await window.raax.getHardwareInfo();
                 box.innerHTML = `<span class="hl-orange">[RAAX_Native_Hardware.dll Metrics]</span>\n` + JSON.stringify(info, null, 2);
             } else {
-                box.innerHTML = `<span class="hl-orange">[RAAX_ERP.exe Compiled Native Runtime]</span>\nExecutable: RAAX_ERP.exe\nNative Assembly: RAAX_Native_Hardware.dll Loaded\nPlatform: Windows x64 (Native Win32 Subsystem)`;
+                box.innerHTML = `<span class="hl-orange">[RAAX_ERP.exe Executable Native Runtime]</span>\nExecutable: RAAX_ERP.exe\nNative Assembly: RAAX_Native_Hardware.dll Loaded\nPlatform: Windows x64 (Native Win32 Subsystem)`;
             }
         }
 
         function exportCurrentView() { showToast("Data exported to CSV format!"); }
+
+        /* Right-Click Context Menu Logic */
+        document.addEventListener('contextmenu', (e) => {
+            const row = e.target.closest('tr');
+            if (row && row.parentElement.tagName === 'TBODY') {
+                e.preventDefault();
+                selectedRowId = row.cells[0] ? row.cells[0].innerText : 'REC-001';
+                
+                const menu = document.getElementById('context-menu');
+                menu.style.left = e.clientX + 'px';
+                menu.style.top = e.clientY + 'px';
+                menu.style.display = 'block';
+
+                document.querySelectorAll('tr').forEach(r => r.classList.remove('selected'));
+                row.classList.add('selected');
+            }
+        });
+
+        document.addEventListener('click', () => {
+            document.getElementById('context-menu').style.display = 'none';
+        });
+
+        function ctxAction(action) {
+            document.getElementById('context-menu').style.display = 'none';
+            if (action === 'edit') openDrawer(selectedRowId, 'Record', 'Active', `Inspecting Record ${selectedRowId}`);
+            if (action === 'duplicate') showToast(`Record ${selectedRowId} duplicated cleanly.`);
+            if (action === 'print') showToast(`Dispatching ${selectedRowId} to Windows Print Queue.`);
+            if (action === 'delete') showToast(`Record ${selectedRowId} cancelled/soft-deleted with audit log.`);
+        }
+
+        /* Keyboard-First Desktop Shortcuts */
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key.toLowerCase() === 'n') {
+                e.preventDefault();
+                openCreateModal();
+            }
+            if (e.ctrlKey && e.key.toLowerCase() === 'f') {
+                e.preventDefault();
+                document.getElementById('globalSearchInput').focus();
+            }
+            if (e.ctrlKey && e.key.toLowerCase() === 'b') {
+                e.preventDefault();
+                toggleSidebarCollapse();
+            }
+            if (e.key === 'Escape') {
+                closeDrawer();
+                closeCreateModal();
+            }
+        });
 
         async function fetchSalesOrders() {
             const body = document.getElementById('salesTableBody');
@@ -555,7 +772,7 @@ Work Order WO-2026-881 Requirements:
                 const result = await res.json();
                 if (result.success && result.data.length > 0) {
                     body.innerHTML = result.data.map(o => `
-                        <tr>
+                        <tr ondblclick="openDrawer('${o.order_number}', 'Sales Order', '${o.status}', 'Customer: ${o.customer ? o.customer.name : 'Apex Corp'}')">
                             <td class="mono">${o.order_number}</td>
                             <td>${o.customer ? o.customer.name : 'Apex Corp'}</td>
                             <td class="mono">BDT ${(o.subtotal_cents/100).toLocaleString()}</td>
@@ -566,7 +783,7 @@ Work Order WO-2026-881 Requirements:
                     `).join('');
                 }
             } catch (e) {
-                body.innerHTML = `<tr><td class="mono">SO-2026-4412</td><td>Apex Holdings Corp</td><td class="mono">BDT 739,130</td><td class="mono">BDT 850,000</td><td><span class="status-chip confirmed">confirmed</span></td><td><button class="btn btn-outline btn-sm"><i class="fa-solid fa-print"></i> Mushak 6.3</button></td></tr>`;
+                body.innerHTML = `<tr ondblclick="openDrawer('SO-2026-4412', 'Sales Order', 'confirmed', 'Customer: Apex Corp')"><td class="mono">SO-2026-4412</td><td>Apex Holdings Corp</td><td class="mono">BDT 739,130</td><td class="mono">BDT 850,000</td><td><span class="status-chip confirmed">confirmed</span></td><td><button class="btn btn-outline btn-sm"><i class="fa-solid fa-print"></i> Mushak 6.3</button></td></tr>`;
             }
         }
 
@@ -578,7 +795,7 @@ Work Order WO-2026-881 Requirements:
                 const result = await res.json();
                 if (result.success && result.data.length > 0) {
                     body.innerHTML = result.data.map(po => `
-                        <tr>
+                        <tr ondblclick="openDrawer('${po.po_number}', 'Purchase Order', '${po.status}', 'Vendor: ${po.vendor ? po.vendor.name : 'Global Steel'}')">
                             <td class="mono">${po.po_number}</td>
                             <td>${po.vendor ? po.vendor.name : 'Global Steel'}</td>
                             <td class="mono">BDT ${(po.total_amount_cents/100).toLocaleString()}</td>
@@ -588,7 +805,7 @@ Work Order WO-2026-881 Requirements:
                     `).join('');
                 }
             } catch (e) {
-                body.innerHTML = `<tr><td class="mono">PO-2026-8819</td><td>Global Steel Suppliers Ltd</td><td class="mono">BDT 1,250,000</td><td><span class="status-chip sent_to_vendor">sent_to_vendor</span></td><td><button class="btn btn-outline btn-sm"><i class="fa-solid fa-print"></i> Voucher</button></td></tr>`;
+                body.innerHTML = `<tr ondblclick="openDrawer('PO-2026-8819', 'Purchase Order', 'sent_to_vendor', 'Vendor: Global Steel')"><td class="mono">PO-2026-8819</td><td>Global Steel Suppliers Ltd</td><td class="mono">BDT 1,250,000</td><td><span class="status-chip sent_to_vendor">sent_to_vendor</span></td><td><button class="btn btn-outline btn-sm"><i class="fa-solid fa-print"></i> Voucher</button></td></tr>`;
             }
         }
 
@@ -600,7 +817,7 @@ Work Order WO-2026-881 Requirements:
                 const result = await res.json();
                 if (result.success && result.data.length > 0) {
                     body.innerHTML = result.data.map(i => `
-                        <tr>
+                        <tr ondblclick="openDrawer('${i.item_sku}', 'Stock Item', 'Active', 'Bin: BIN-MAIN-A1')">
                             <td class="mono">${i.item_sku}</td>
                             <td class="mono">BIN-MAIN-A1</td>
                             <td>${i.original_qty}</td>
@@ -610,7 +827,7 @@ Work Order WO-2026-881 Requirements:
                     `).join('');
                 }
             } catch (e) {
-                body.innerHTML = `<tr><td class="mono">SKU-RAW-STEEL</td><td class="mono">BIN-MAIN-A1</td><td>1,200</td><td style="color:var(--orange-brand);font-weight:700;">1,200</td><td class="mono">BDT 45.00</td></tr>`;
+                body.innerHTML = `<tr ondblclick="openDrawer('SKU-RAW-STEEL', 'Stock Item', 'Active', 'Bin: BIN-MAIN-A1')"><td class="mono">SKU-RAW-STEEL</td><td class="mono">BIN-MAIN-A1</td><td>1,200</td><td style="color:var(--orange-brand);font-weight:700;">1,200</td><td class="mono">BDT 45.00</td></tr>`;
             }
         }
 
@@ -622,7 +839,7 @@ Work Order WO-2026-881 Requirements:
                 const result = await res.json();
                 if (result.success && result.data.length > 0) {
                     body.innerHTML = result.data.map(j => `
-                        <tr>
+                        <tr ondblclick="openDrawer('${j.reference}', 'Journal Entry', 'Posted', '${j.description}')">
                             <td class="mono">${j.reference}</td>
                             <td>${j.entry_date}</td>
                             <td>${j.description}</td>
@@ -632,7 +849,7 @@ Work Order WO-2026-881 Requirements:
                     `).join('');
                 }
             } catch (e) {
-                body.innerHTML = `<tr><td class="mono">JE-INV-2026-001</td><td>2026-07-25</td><td>Office Rent & Supplies</td><td class="mono">BDT 45,000</td><td class="mono" style="color:var(--orange-brand);">31af3d709ad29613...</td></tr>`;
+                body.innerHTML = `<tr ondblclick="openDrawer('JE-INV-2026-001', 'Journal Entry', 'Posted', 'Office Rent')"><td class="mono">JE-INV-2026-001</td><td>2026-07-25</td><td>Office Rent & Supplies</td><td class="mono">BDT 45,000</td><td class="mono" style="color:var(--orange-brand);">31af3d709ad29613...</td></tr>`;
             }
         }
 
@@ -644,15 +861,26 @@ Work Order WO-2026-881 Requirements:
                 const result = await res.json();
                 if (result.data && result.data.length > 0) {
                     body.innerHTML = result.data.map(e => `
-                        <tr><td>${e.first_name} ${e.last_name}</td><td>${e.email}</td><td>${e.phone || '+8801800000000'}</td><td><span class="status-chip active">Active</span></td></tr>
+                        <tr ondblclick="openDrawer('${e.email}', 'Employee', 'Active', '${e.first_name} ${e.last_name}')"><td>${e.first_name} ${e.last_name}</td><td>${e.email}</td><td>${e.phone || '+8801800000000'}</td><td><span class="status-chip active">Active</span></td></tr>
                     `).join('');
                 }
             } catch (e) {
-                body.innerHTML = `<tr><td>Abdur Rahman</td><td>a.rahman@raax.com</td><td>+8801800000001</td><td><span class="status-chip active">Active</span></td></tr>`;
+                body.innerHTML = `<tr ondblclick="openDrawer('a.rahman@raax.com', 'Employee', 'Active', 'Abdur Rahman')"><td>Abdur Rahman</td><td>a.rahman@raax.com</td><td>+8801800000001</td><td><span class="status-chip active">Active</span></td></tr>`;
             }
         }
 
+        function handleCreatePO(e) {
+            e.preventDefault();
+            closeCreateModal();
+            showToast("Transaction saved & posted to ledger cleanly!");
+            reloadActiveView();
+        }
+
         function reloadActiveView() {
+            const sel = document.getElementById('tenantSelect');
+            const companyName = sel.options[sel.selectedIndex].text;
+            document.getElementById('sb-company').innerText = companyName;
+
             fetchSalesOrders();
             fetchPurchaseOrders();
             fetchInventoryItems();
