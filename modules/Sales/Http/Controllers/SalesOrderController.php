@@ -23,6 +23,19 @@ class SalesOrderController extends Controller
         $this->tenantManager = $tenantManager;
     }
 
+    public function index(): JsonResponse
+    {
+        $orders = SalesOrder::with(['customer', 'lines'])
+            ->where('tenant_id', $this->tenantManager->getTenantId())
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $orders
+        ]);
+    }
+
     public function store(CreateOrderRequest $request): JsonResponse
     {
         $tenantId = $this->tenantManager->getTenantId();

@@ -3,6 +3,7 @@
 namespace Modules\Inventory\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Modules\Inventory\Models\InventoryBatch;
 use Modules\Inventory\Services\FIFOValuationEngine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,13 +17,26 @@ class InventoryValuationController extends Controller
         $this->fifoEngine = $fifoEngine;
     }
 
-    public function valuation(string $sku, Request $request): JsonResponse
+    public function index(): JsonResponse
     {
-        // For standard valuation viewing, we sum the remaining qty * unit cost.
-        // The FIFO Engine is for stock OUT calculation. Let's provide a generic valuation query.
         $tenantId = app(\App\Services\Tenant\TenantContextManager::class)->getTenantId();
 
-        $batches = \Modules\Inventory\Models\InventoryBatch::where('tenant_id', $tenantId)
+        $batches = InventoryBatch::where('tenant_id', $tenantId)
+            ->where('remaining_qty', '>', 0)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $batches
+        ]);
+    }
+
+    public function valuation(string $sku, Request $request): JsonResponse
+    {
+        $tenantId = app(\App\Services\Tenant\TenantContextManager::class)->getTenantId();
+
+        $batches = InventoryBatch::where('tenant_id', $tenantId)
             ->where('item_sku', $sku)
             ->where('remaining_qty', '>', 0)
             ->get();
@@ -38,6 +52,7 @@ class InventoryValuationController extends Controller
                 'sku' => $sku,
                 'available_qty' => $totalQty,
                 'total_valuation_cents' => $totalValueCents,
+                'batches' => $batches
             ]
         ]);
     }

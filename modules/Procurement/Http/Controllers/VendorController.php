@@ -18,6 +18,16 @@ class VendorController extends Controller
         $this->tenantManager = $tenantManager;
     }
 
+    public function index(): JsonResponse
+    {
+        $vendors = Vendor::where('tenant_id', $this->tenantManager->getTenantId())->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $vendors
+        ]);
+    }
+
     public function store(CreateVendorRequest $request): JsonResponse
     {
         $tenantId = $this->tenantManager->getTenantId();

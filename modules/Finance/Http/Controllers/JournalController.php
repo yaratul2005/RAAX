@@ -5,6 +5,7 @@ namespace Modules\Finance\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Finance\Http\Requests\PostJournalRequest;
+use Modules\Finance\Models\JournalEntry;
 use Modules\Finance\Services\PostingEngine;
 
 class JournalController extends Controller
@@ -14,6 +15,21 @@ class JournalController extends Controller
     public function __construct(PostingEngine $postingEngine)
     {
         $this->postingEngine = $postingEngine;
+    }
+
+    public function index(): JsonResponse
+    {
+        $tenantId = app(\App\Services\Tenant\TenantContextManager::class)->getTenantId();
+
+        $journals = JournalEntry::with('lines')
+            ->where('tenant_id', $tenantId)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $journals
+        ]);
     }
 
     public function post(PostJournalRequest $request): JsonResponse

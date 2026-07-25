@@ -18,6 +18,16 @@ class CustomerController extends Controller
         $this->tenantManager = $tenantManager;
     }
 
+    public function index(): JsonResponse
+    {
+        $customers = Customer::where('tenant_id', $this->tenantManager->getTenantId())->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $customers
+        ]);
+    }
+
     public function store(CreateCustomerRequest $request): JsonResponse
     {
         $tenantId = $this->tenantManager->getTenantId();

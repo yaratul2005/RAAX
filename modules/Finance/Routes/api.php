@@ -6,6 +6,7 @@ use Modules\Finance\Http\Controllers\JournalController;
 use Modules\Finance\Http\Controllers\TrialBalanceController;
 
 Route::middleware(['api', 'tenant'])->prefix('api/v1')->group(function () {
+    Route::get('/finance/journals', [JournalController::class, 'index']);
     Route::post('/finance/journals', [JournalController::class, 'post']);
     Route::post('/finance/accounts', [ChartOfAccountsController::class, 'store']);
     Route::get('/finance/accounts', [ChartOfAccountsController::class, 'index']);
