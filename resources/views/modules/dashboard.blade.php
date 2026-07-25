@@ -7,11 +7,12 @@
         <button class="btn btn-outline btn-sm" onclick="openCreateModal('po')"><i class="fa-solid fa-cart-plus"></i> + Purchase Order</button>
         <button class="btn btn-outline btn-sm" onclick="document.getElementById('journalModal').classList.add('open')"><i class="fa-solid fa-book"></i> + Post Journal</button>
         <button class="btn btn-outline btn-sm" onclick="document.getElementById('stockTransferModal').classList.add('open')"><i class="fa-solid fa-boxes-packing"></i> Stock Transfer</button>
+        <button class="btn btn-outline btn-sm" onclick="openAnalyticsViewer()" style="color:var(--orange-brand);"><i class="fa-solid fa-chart-line"></i> Full Analytics</button>
     </div>
 
     <!-- KPI Headline Grid with Trends -->
     <div class="kpi-grid stagger-2">
-        <div class="kpi-card primary-headline">
+        <div class="kpi-card primary-headline" onclick="openAnalyticsViewer()" style="cursor:pointer;">
             <div class="kpi-header">
                 <div class="kpi-title">Gross Operating Revenue</div>
                 <span class="kpi-badge">PRIMARY METRIC</span>
@@ -52,7 +53,7 @@
     <div class="card stagger-3" style="margin-bottom:1.25rem;">
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-chart-bar"></i> Financial Ratios & 12-Month Performance Trend</div>
-            <span style="font-size:11px; color:var(--text-dim);">FY 2026-2027 Audited Metrics</span>
+            <button class="btn btn-outline btn-sm" onclick="openAnalyticsViewer()"><i class="fa-solid fa-expand"></i> Full Analytics Viewer</button>
         </div>
         <div class="card-body">
             <div class="kpi-grid" style="margin-bottom:1rem;">
@@ -79,7 +80,7 @@
             </div>
 
             <!-- SVG Revenue vs Expense Sparkline Bar Chart -->
-            <div style="display:flex; align-items:flex-end; gap:8px; height:80px; padding-top:10px; border-top:1px solid var(--border-subtle);">
+            <div style="display:flex; align-items:flex-end; gap:8px; height:80px; padding-top:10px; border-top:1px solid var(--border-subtle); cursor:pointer;" onclick="openAnalyticsViewer()">
                 <div style="flex:1; background:var(--orange-brand); height:45%; border-radius:3px 3px 0 0;" title="Jan: BDT 10.2M"></div>
                 <div style="flex:1; background:var(--orange-brand); height:55%; border-radius:3px 3px 0 0;" title="Feb: BDT 11.8M"></div>
                 <div style="flex:1; background:var(--orange-brand); height:60%; border-radius:3px 3px 0 0;" title="Mar: BDT 12.5M"></div>
@@ -112,7 +113,7 @@
                                 <td>PO Price Tolerance</td>
                                 <td class="mono">BDT 1,250,000</td>
                                 <td>
-                                    <button class="btn btn-sm" onclick="showToast('Workflow Request REQ-1024 Approved!')">Approve</button>
+                                    <button class="btn btn-sm" onclick="approveWorkflowReq('REQ-1024')">Approve</button>
                                 </td>
                             </tr>
                             <tr>
@@ -120,7 +121,7 @@
                                 <td>Credit Limit Excess</td>
                                 <td class="mono">BDT 850,000</td>
                                 <td>
-                                    <button class="btn btn-sm" onclick="showToast('Workflow Request REQ-1025 Approved!')">Approve</button>
+                                    <button class="btn btn-sm" onclick="approveWorkflowReq('REQ-1025')">Approve</button>
                                 </td>
                             </tr>
                             <tr>
@@ -128,7 +129,7 @@
                                 <td>Manual Journal Void</td>
                                 <td class="mono">BDT 45,000</td>
                                 <td>
-                                    <button class="btn btn-sm" onclick="showToast('Workflow Request REQ-1026 Approved!')">Approve</button>
+                                    <button class="btn btn-sm" onclick="approveWorkflowReq('REQ-1026')">Approve</button>
                                 </td>
                             </tr>
                         </tbody>

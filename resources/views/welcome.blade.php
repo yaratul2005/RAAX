@@ -798,6 +798,152 @@
         </div>
     </div>
 
+    <!-- Power Tool 1: Document & Media Lightbox Viewer Modal -->
+    <div class="modal-overlay" id="documentViewerModal" style="z-index: 650;">
+        <div class="modal-card" style="max-width: 780px;">
+            <div class="modal-header">
+                <div class="card-title" id="docViewerTitle"><i class="fa-solid fa-file-pdf" style="color:var(--orange-brand);"></i> Document Lightbox Viewer</div>
+                <button onclick="document.getElementById('documentViewerModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#09090b; padding:8px 12px; border-radius:5px; margin-bottom:10px; font-size:11.5px;">
+                    <span id="docViewerMeta"><i class="fa-solid fa-shield-halved" style="color:var(--status-green);"></i> Verified Audited Document | SHA-256 Intact</span>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn btn-outline btn-sm" onclick="showToast('Document zoomed in 150%')"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                        <button class="btn btn-outline btn-sm" onclick="showToast('Document rotated 90 deg')"><i class="fa-solid fa-rotate-right"></i></button>
+                        <button class="btn btn-sm" onclick="printDocument('DOC-LIGHTBOX-01', 'mushak63')"><i class="fa-solid fa-print"></i> Print</button>
+                    </div>
+                </div>
+                <div id="docViewerCanvas" style="background:#ffffff; color:#000000; border-radius:6px; padding:1.5rem; min-height:360px; font-family:sans-serif; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                    <!-- Dynamic Document Content Lightbox -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Power Tool 2: Universal Visual Record Editor Modal -->
+    <div class="modal-overlay" id="recordEditorModal" style="z-index: 640;">
+        <div class="modal-card" style="max-width: 680px;">
+            <div class="modal-header">
+                <div class="card-title" id="recEditorTitle"><i class="fa-solid fa-pen-to-square" style="color:var(--orange-brand);"></i> Universal Visual Record Editor</div>
+                <button onclick="document.getElementById('recordEditorModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="recordEditForm" onsubmit="saveRecordEditor(event)">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Record Identifier</label>
+                            <input type="text" class="form-input mono" id="recEditId" readonly style="color:var(--orange-brand); font-weight:700;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Record Category / Domain</label>
+                            <input type="text" class="form-input" id="recEditCategory" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Primary Entity Name / Description</label>
+                        <input type="text" class="form-input" id="recEditName" required>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Transactional Amount / Valuation (BDT)</label>
+                            <input type="number" class="form-input mono" id="recEditAmount" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Operational Status Chip</label>
+                            <select class="form-select mono" id="recEditStatus">
+                                <option value="confirmed">confirmed (Active Ledger)</option>
+                                <option value="posted">posted (Sealed Journal)</option>
+                                <option value="sent_to_vendor">sent_to_vendor (Active PO)</option>
+                                <option value="draft">draft (Pending Review)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="background:#09090b; padding:10px; border-radius:5px; border:1px solid var(--border-subtle); margin-bottom:1rem; font-size:11px; color:var(--text-dim);">
+                        <i class="fa-solid fa-history" style="color:var(--orange-brand);"></i> Note: Modifying this record will post an automatic entry to the Immutable System Audit Trail with user stamp <strong style="color:var(--text-pure);">adminRAAX</strong>.
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center;"><i class="fa-solid fa-floppy-disk"></i> Save & Apply Modifications</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Power Tool 3: High-Density Analytics & Trend Viewer Modal -->
+    <div class="modal-overlay" id="analyticsViewerModal" style="z-index: 630;">
+        <div class="modal-card" style="max-width: 820px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-chart-line" style="color:var(--orange-brand);"></i> High-Density Financial Analytics & Trend Visualizer</div>
+                <button onclick="document.getElementById('analyticsViewerModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div style="font-size:12px; font-weight:700; color:var(--text-pure);">FY 2026-2027 Operating Performance Breakdown</div>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn btn-outline btn-sm active" onclick="showToast('Viewing Q1 performance metrics')">Q1</button>
+                        <button class="btn btn-outline btn-sm" onclick="showToast('Viewing Q2 performance metrics')">Q2</button>
+                        <button class="btn btn-outline btn-sm" onclick="showToast('Viewing Q3 performance metrics')">Q3</button>
+                        <button class="btn btn-outline btn-sm" onclick="showToast('Viewing FY26 Full Year metrics')">FY26 Full Year</button>
+                    </div>
+                </div>
+
+                <div class="kpi-grid" style="margin-bottom:1rem;">
+                    <div style="background:#09090b; padding:10px; border-radius:5px; border:1px solid var(--border-subtle);">
+                        <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase;">Gross Revenue</div>
+                        <div style="font-size:20px; font-weight:700; color:var(--orange-brand);">BDT 142.5M</div>
+                        <div style="font-size:10px; color:var(--status-green);">+14.2% YoY Growth</div>
+                    </div>
+                    <div style="background:#09090b; padding:10px; border-radius:5px; border:1px solid var(--border-subtle);">
+                        <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase;">Net Profit Margin</div>
+                        <div style="font-size:20px; font-weight:700; color:var(--status-green);">18.5%</div>
+                        <div style="font-size:10px; color:var(--status-green);">+2.1% Target Exceeded</div>
+                    </div>
+                    <div style="background:#09090b; padding:10px; border-radius:5px; border:1px solid var(--border-subtle);">
+                        <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase;">Working Capital</div>
+                        <div style="font-size:20px; font-weight:700; color:var(--status-blue);">BDT 38.2M</div>
+                        <div style="font-size:10px; color:var(--status-green);">Quick Ratio: 1.82x</div>
+                    </div>
+                </div>
+
+                <!-- High-Resolution SVG Trend Canvas -->
+                <div style="background:#09090b; border:1px solid var(--border-subtle); border-radius:6px; padding:1rem; height:200px; position:relative; display:flex; flex-direction:column; justify-content:flex-end;">
+                    <div style="display:flex; align-items:flex-end; gap:12px; height:140px;">
+                        <div style="flex:1; background:linear-gradient(180deg, var(--orange-brand) 0%, rgba(255,94,0,0.2) 100%); height:45%; border-radius:4px 4px 0 0;" title="Jan"></div>
+                        <div style="flex:1; background:linear-gradient(180deg, var(--orange-brand) 0%, rgba(255,94,0,0.2) 100%); height:58%; border-radius:4px 4px 0 0;" title="Feb"></div>
+                        <div style="flex:1; background:linear-gradient(180deg, var(--orange-brand) 0%, rgba(255,94,0,0.2) 100%); height:65%; border-radius:4px 4px 0 0;" title="Mar"></div>
+                        <div style="flex:1; background:linear-gradient(180deg, var(--orange-brand) 0%, rgba(255,94,0,0.2) 100%); height:72%; border-radius:4px 4px 0 0;" title="Apr"></div>
+                        <div style="flex:1; background:linear-gradient(180deg, var(--orange-brand) 0%, rgba(255,94,0,0.2) 100%); height:80%; border-radius:4px 4px 0 0;" title="May"></div>
+                        <div style="flex:1; background:linear-gradient(180deg, var(--orange-brand) 0%, rgba(255,94,0,0.2) 100%); height:90%; border-radius:4px 4px 0 0;" title="Jun"></div>
+                        <div style="flex:1; background:linear-gradient(180deg, var(--orange-brand) 0%, rgba(255,94,0,0.2) 100%); height:100%; border-radius:4px 4px 0 0;" title="Jul"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-dim); margin-top:8px;">
+                        <span>JAN (10.2M)</span><span>FEB (11.8M)</span><span>MAR (12.5M)</span><span>APR (14.1M)</span><span>MAY (13.8M)</span><span>JUN (18.2M)</span><span style="color:var(--orange-brand); font-weight:700;">JUL (21.5M)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Power Tool 4: Advanced Code, ZPL & JSON Editor Modal -->
+    <div class="modal-overlay" id="codeEditorModal" style="z-index: 660;">
+        <div class="modal-card" style="max-width: 720px;">
+            <div class="modal-header">
+                <div class="card-title" id="codeEditorTitle"><i class="fa-solid fa-code" style="color:var(--orange-brand);"></i> Advanced Code & Data Inspector Editor</div>
+                <button onclick="document.getElementById('codeEditorModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--text-dim);">
+                    <span>Editor Mode: <strong id="codeEditorMode" style="color:var(--orange-brand);">JSON Schema / ZPL II</strong></span>
+                    <button class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('codeEditorTextarea').value); showToast('Code copied to clipboard!');">Copy Code</button>
+                </div>
+                <textarea id="codeEditorTextarea" class="terminal-box" style="width:100%; height:280px; font-family:'JetBrains Mono', monospace; font-size:12px; background:#000000; color:#38bdf8; outline:none; border:1px solid var(--border-subtle); padding:10px; border-radius:5px; resize:vertical;"></textarea>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+                    <button class="btn btn-outline btn-sm" onclick="document.getElementById('codeEditorModal').classList.remove('open')">Cancel</button>
+                    <button class="btn btn-sm" onclick="saveCodeEditor()"><i class="fa-solid fa-check"></i> Apply Code Updates</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
 
     <!-- Startup Owner & User Login Modal Overlay -->
@@ -1281,6 +1427,72 @@
                     desc.innerText = `Direct Win32 spooler offline. PDF Document generated automatically below.`;
                 }
             }, 800);
+        }
+
+        function openDocumentViewer(docTitle, docType) {
+            document.getElementById('docViewerTitle').innerHTML = `<i class="fa-solid fa-file-pdf" style="color:var(--orange-brand);"></i> Lightbox Document Viewer: ${docTitle}`;
+            const canvas = document.getElementById('docViewerCanvas');
+
+            canvas.innerHTML = `
+                <div style="border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:12px; display:flex; justify-content:space-between;">
+                    <div>
+                        <div style="font-size:16px; font-weight:800; color:#000;">RAAX ENTERPRISE RESOURCE PLANNING</div>
+                        <div style="font-size:12px; color:#475569; font-weight:700;">AUDITED COMMERCIAL DOCUMENT VOUCHER</div>
+                    </div>
+                    <div style="text-align:right; font-size:11px;">
+                        <div>Document #: <strong>${docTitle}</strong></div>
+                        <div>Date: ${new Date().toISOString().substring(0,10)}</div>
+                    </div>
+                </div>
+                <div style="font-size:12px; margin-bottom:1rem; line-height:1.6; color:#1e293b;">
+                    <strong>Document Summary:</strong> This official electronic record represents a sealed transaction entry in the RAAX ERP ledger.<br>
+                    <strong>Security Verification:</strong> SHA-256 Hash Chain Verified Intact.<br>
+                    <strong>Statutory Compliance:</strong> NBR Bangladesh VAT Act 2012 Rules Compliant.
+                </div>
+                <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:10px; border-radius:4px; font-family:monospace; font-size:11px; margin-bottom:1rem;">
+                    [RAAX_DIGITAL_SEAL] ${docTitle}|TIMESTAMP:${new Date().getTime()}|SIGNATURE:31AF3D709AD29613...
+                </div>
+            `;
+
+            document.getElementById('documentViewerModal').classList.add('open');
+        }
+
+        function openRecordEditor(recId, recCategory) {
+            document.getElementById('recEditId').value = recId || 'REC-001';
+            document.getElementById('recEditCategory').value = recCategory || 'Sales Domain';
+            document.getElementById('recEditName').value = `Item / Entity Record ${recId}`;
+            document.getElementById('recEditAmount').value = 850000;
+            document.getElementById('recordEditorModal').classList.add('open');
+        }
+
+        function saveRecordEditor(e) {
+            e.preventDefault();
+            const id = document.getElementById('recEditId').value;
+            const name = document.getElementById('recEditName').value;
+            const amount = parseFloat(document.getElementById('recEditAmount').value) || 0;
+            const status = document.getElementById('recEditStatus').value;
+
+            document.getElementById('recordEditorModal').classList.remove('open');
+            showToast(`Record ${id} updated cleanly! Amount: BDT ${amount.toLocaleString()}`);
+            appendAuditLog(`User adminRAAX updated Record ${id} (${name}, Status: ${status}, BDT ${amount.toLocaleString()})`);
+            renderAllTables();
+        }
+
+        function openAnalyticsViewer() {
+            document.getElementById('analyticsViewerModal').classList.add('open');
+        }
+
+        function openCodeEditor(title, code, mode) {
+            document.getElementById('codeEditorTitle').innerHTML = `<i class="fa-solid fa-code" style="color:var(--orange-brand);"></i> Code & Config Inspector: ${title}`;
+            document.getElementById('codeEditorMode').innerText = mode || 'JSON Schema / ZPL II';
+            document.getElementById('codeEditorTextarea').value = code || `{\n  "module": "${title}",\n  "status": "active",\n  "version": "5.2.0"\n}`;
+            document.getElementById('codeEditorModal').classList.add('open');
+        }
+
+        function saveCodeEditor() {
+            document.getElementById('codeEditorModal').classList.remove('open');
+            showToast("Code & configuration updates applied cleanly!");
+            appendAuditLog("Applied configuration code updates via Power Tool Editor");
         }
 
         function downloadDocumentPdf() {
