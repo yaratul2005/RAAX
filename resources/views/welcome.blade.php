@@ -37,7 +37,39 @@
             --statusbar-height: 26px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* Sleek Modern Dark Scrollbar Design (WebKit & Firefox) */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0d0d11;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--orange-brand);
+            box-shadow: 0 0 10px rgba(255, 94, 0, 0.5);
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: #09090b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scrollbar-width: thin;
+            scrollbar-color: #27272a #0d0d11;
+        }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
