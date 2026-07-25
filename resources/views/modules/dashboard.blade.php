@@ -1,7 +1,7 @@
 <!-- Module View: Role Dashboard -->
 <div id="view-dashboard" class="view-panel active">
     <!-- Quick Action Bar -->
-    <div style="display:flex; gap:8px; margin-bottom:1.25rem; background:var(--card-bg); padding:0.75rem 1rem; border:1px solid var(--border-subtle); border-radius:6px; align-items:center; flex-wrap:wrap;">
+    <div class="stagger-1" style="display:flex; gap:8px; margin-bottom:1.25rem; background:var(--card-bg); padding:0.75rem 1rem; border:1px solid var(--border-subtle); border-radius:6px; align-items:center; flex-wrap:wrap;">
         <span style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; margin-right:4px;"><i class="fa-solid fa-bolt" style="color:var(--orange-brand);"></i> Executive Quick Actions:</span>
         <button class="btn btn-sm" onclick="openCreateModal('so')"><i class="fa-solid fa-plus"></i> + Sales Order</button>
         <button class="btn btn-outline btn-sm" onclick="openCreateModal('po')"><i class="fa-solid fa-cart-plus"></i> + Purchase Order</button>
@@ -10,7 +10,7 @@
     </div>
 
     <!-- KPI Headline Grid with Trends -->
-    <div class="kpi-grid">
+    <div class="kpi-grid stagger-2">
         <div class="kpi-card primary-headline">
             <div class="kpi-header">
                 <div class="kpi-title">Gross Operating Revenue</div>
@@ -49,7 +49,7 @@
     </div>
 
     <!-- Financial Ratios & Performance Sparkline Card -->
-    <div class="card" style="margin-bottom:1.25rem;">
+    <div class="card stagger-3" style="margin-bottom:1.25rem;">
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-chart-bar"></i> Financial Ratios & 12-Month Performance Trend</div>
             <span style="font-size:11px; color:var(--text-dim);">FY 2026-2027 Audited Metrics</span>
@@ -95,7 +95,7 @@
     </div>
 
     <!-- High-Density Commercial Content Layout -->
-    <div class="grid-2">
+    <div class="grid-2 stagger-3">
         <!-- Left Column: Pending Approvals & Live Audit Activity Stream -->
         <div>
             <div class="card">

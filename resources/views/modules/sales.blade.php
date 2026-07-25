@@ -1,7 +1,7 @@
 <!-- Module View: Sales & Invoicing -->
 <div id="view-sales" class="view-panel">
     <!-- Customer Credit Limit & Quotation Converter Bar -->
-    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1rem; margin-bottom:1.25rem;">
+    <div class="stagger-1" style="display:grid; grid-template-columns: 2fr 1fr; gap:1rem; margin-bottom:1.25rem;">
         <div style="background:var(--card-bg); border:1px solid var(--border-subtle); padding:0.85rem 1rem; border-radius:6px; display:flex; align-items:center; justify-content:space-between;">
             <div>
                 <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Customer Credit Risk Checker</div>
@@ -12,14 +12,14 @@
 
         <div style="background:var(--card-bg); border:1px solid var(--border-subtle); padding:0.85rem 1rem; border-radius:6px; display:flex; align-items:center; justify-content:space-between;">
             <div>
-                <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Quotation Converter</div>
-                <div style="font-size:11.5px; color:var(--text-muted);">Convert Quotation to Sales Order</div>
+                <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">NBR Mushak 6.3 Invoice</div>
+                <div style="font-size:11.5px; color:var(--text-muted);">Statutory Tax Invoice Viewer</div>
             </div>
-            <button class="btn btn-sm" onclick="showToast('Quotation QTN-9901 converted to Sales Order SO-2026-4413 cleanly!')"><i class="fa-solid fa-arrows-rotate"></i> Convert</button>
+            <button class="btn btn-sm" onclick="document.getElementById('mushakModal').classList.add('open')"><i class="fa-solid fa-file-contract"></i> View Mushak 6.3</button>
         </div>
     </div>
 
-    <div class="card">
+    <div class="card stagger-2">
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-receipt"></i> Commercial Sales Orders & Invoicing (Double-Click to Edit, Right-Click for Context Menu)</div>
             <button class="btn btn-sm" onclick="openCreateModal('so')"><i class="fa-solid fa-plus"></i> + New Sales Order</button>

@@ -187,10 +187,27 @@
         .page-title { font-size: 18px; font-weight: 700; color: var(--text-pure); }
         .page-actions { display: flex; align-items: center; gap: 6px; }
 
+        /* Dynamic View Transitions & Keyframe Animations */
+        @keyframes slideFadeIn {
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 94, 0, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(255, 94, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 94, 0, 0); }
+        }
+
         /* Workspace Main Body */
         .workspace-content { flex: 1; padding: 1.25rem; overflow-y: auto; }
         .view-panel { display: none; }
-        .view-panel.active { display: block; }
+        .view-panel.active { display: block; animation: slideFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Staggered Card Entry Delay */
+        .stagger-1 { animation: slideFadeIn 0.25s ease-out 0.05s both; }
+        .stagger-2 { animation: slideFadeIn 0.25s ease-out 0.10s both; }
+        .stagger-3 { animation: slideFadeIn 0.25s ease-out 0.15s both; }
 
         /* KPI Cards */
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.85rem; margin-bottom: 1.25rem; }
@@ -523,6 +540,85 @@
         <div class="ctx-divider"></div>
         <div class="ctx-item" onclick="ctxAction('history')"><span><i class="fa-solid fa-history"></i> Audit Trail History</span></div>
         <div class="ctx-item" style="color:var(--status-red);" onclick="ctxAction('delete')"><span><i class="fa-solid fa-trash"></i> Cancel / Soft Delete</span><span class="ctx-shortcut">Del</span></div>
+    </div>
+
+    <!-- ZPL Thermal Barcode Preview Modal -->
+    <div class="modal-overlay" id="zplModal">
+        <div class="modal-card" style="max-width: 580px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-barcode" style="color:var(--orange-brand);"></i> Zebra ZPL II Thermal Label Code Generator</div>
+                <button onclick="document.getElementById('zplModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size:11.5px; color:var(--text-dim); margin-bottom:8px;">Target Printer: <strong>Zebra ZD420 / TSC Thermal Driver (2" x 1" Label)</strong></div>
+                <div class="terminal-box" id="zplCodeBox" style="height:180px; margin-bottom:12px;">^XA
+^FO50,30^A0N,30,30^FDRAAX ERP - BIN LABEL^FS
+^FO50,70^A0N,25,25^FDSKU: SKU-FASTENER-A^FS
+^FO50,105^A0N,20,20^FDHeavy Duty Fastener A^FS
+^FO50,130^A0N,20,20^FDBIN: BIN-MAIN-A1 | COST: BDT 45.00^FS
+^FO50,160^BY2,3,50^BCN,50,Y,N,N^FDSKU-FASTENER-A^FS
+^XZ</div>
+                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                    <button class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('zplCodeBox').innerText); showToast('ZPL II Code copied to clipboard!');">Copy ZPL Code</button>
+                    <button class="btn btn-sm" onclick="showToast('ZPL II Label dispatched to Windows Printer Spooler cleanly!')"><i class="fa-solid fa-print"></i> Send to Zebra Printer Queue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mushak 6.3 Tax Invoice Modal -->
+    <div class="modal-overlay" id="mushakModal">
+        <div class="modal-card" style="max-width: 680px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-file-contract" style="color:var(--orange-brand);"></i> NBR Bangladesh Statutory Tax Invoice (Mushak 6.3)</div>
+                <button onclick="document.getElementById('mushakModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="background:#ffffff; color:#000000; padding:1.5rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:12px;">
+                    <div>
+                        <div style="font-size:16px; font-weight:800; color:#000;">GOVERNMENT OF THE PEOPLE'S REPUBLIC OF BANGLADESH</div>
+                        <div style="font-size:12px; font-weight:700; color:#475569;">NATIONAL BOARD OF REVENUE (NBR)</div>
+                        <div style="font-size:14px; font-weight:800; color:#dc2626; margin-top:4px;">TAX INVOICE (MUSHAK 6.3)</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:11px; font-weight:700;">BIN: 1899201928301</div>
+                        <div style="font-size:11px;">Invoice #: <span class="mono" style="font-weight:700;">SO-2026-4412</span></div>
+                        <div style="font-size:11px;">Date: 2026-07-25</div>
+                    </div>
+                </div>
+
+                <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:12px;">
+                    <thead>
+                        <tr style="background:#f1f5f9;">
+                            <th style="border:1px solid #cbd5e1; padding:5px;">Item Description</th>
+                            <th style="border:1px solid #cbd5e1; padding:5px;">Qty</th>
+                            <th style="border:1px solid #cbd5e1; padding:5px;">Unit Value (BDT)</th>
+                            <th style="border:1px solid #cbd5e1; padding:5px;">SD (0%)</th>
+                            <th style="border:1px solid #cbd5e1; padding:5px;">VAT Rate (15%)</th>
+                            <th style="border:1px solid #cbd5e1; padding:5px;">Total Value (BDT)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="border:1px solid #cbd5e1; padding:5px;">SKU-RAW-STEEL (Heavy Steel Plates)</td>
+                            <td style="border:1px solid #cbd5e1; padding:5px; text-align:center;">100</td>
+                            <td style="border:1px solid #cbd5e1; padding:5px; text-align:right;">7,391.30</td>
+                            <td style="border:1px solid #cbd5e1; padding:5px; text-align:right;">0.00</td>
+                            <td style="border:1px solid #cbd5e1; padding:5px; text-align:right;">110,870.00</td>
+                            <td style="border:1px solid #cbd5e1; padding:5px; text-align:right; font-weight:700;">850,000.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-size:10px; font-family:monospace; background:#f8fafc; padding:6px; border:1px solid #cbd5e1; border-radius:4px; max-width:380px;">
+                        NBR QR PAYLOAD: 1899201928301|SO-2026-4412|739130.00|110870.00<br>
+                        ECDSA DIGITAL SIGNATURE: 31AF3D709AD29613...
+                    </div>
+                    <button class="btn btn-sm" onclick="showToast('Printing official NBR Mushak 6.3 Tax Invoice...')"><i class="fa-solid fa-print"></i> Print Official Mushak 6.3</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="toast-container"></div>
