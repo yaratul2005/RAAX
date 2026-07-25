@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ModuleRegistryController;
+use App\Http\Controllers\Api\SystemSetupController;
 use App\Services\LicenseManagerService;
 use App\Services\DocNumberingEngine;
 use App\Services\ApprovalWorkflowEngine;
@@ -15,8 +16,13 @@ Route::get('/health', function () {
     return response()->json(['status' => 'ok']);
 });
 
+Route::prefix('v1/auth')->group(function () {
+    Route::post('/login', [SystemSetupController::class, 'login']);
+});
+
 Route::prefix('v1/system')->group(function () {
     Route::get('/modules', [ModuleRegistryController::class, 'index']);
+    Route::post('/db-setup', [SystemSetupController::class, 'setupDatabase']);
 
     Route::get('/license', function (Request $request) {
         $key = $request->query('key', 'RAAX-DEV-UNLIMITED-LICENSE-KEY');
