@@ -15,7 +15,7 @@
                 <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Zebra ZPL Label Generator</div>
                 <div style="font-size:12px; color:var(--text-pure); margin-top:2px;">Print 2"x1" Thermal Barcode Bin Label</div>
             </div>
-            <button class="btn btn-sm" onclick="document.getElementById('zplModal').classList.add('open')"><i class="fa-solid fa-barcode"></i> View ZPL Code</button>
+            <button class="btn btn-sm" onclick="printDocument('SKU-FASTENER-A', 'zplLabel')"><i class="fa-solid fa-print"></i> Print ZPL Label</button>
         </div>
     </div>
 

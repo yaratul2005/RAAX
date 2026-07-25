@@ -8,13 +8,14 @@
         </div>
         <div style="display:flex; gap:6px;">
             <button class="btn btn-outline btn-sm" onclick="document.getElementById('threeWayMatchModal').classList.add('open')"><i class="fa-solid fa-magnifying-glass"></i> 3-Way Match Check</button>
-            <button class="btn btn-sm" onclick="openCreateModal('po')"><i class="fa-solid fa-plus"></i> + New PO Record</button>
+            <button class="btn btn-sm" onclick="printDocument('PO-2026-8819', 'poVoucher')"><i class="fa-solid fa-print"></i> Print Voucher</button>
         </div>
     </div>
 
     <div class="card stagger-2">
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-cart-shopping"></i> Purchase Orders Directory & Price Tolerance Checks</div>
+            <button class="btn btn-sm" onclick="openCreateModal('po')"><i class="fa-solid fa-plus"></i> + New PO Record</button>
         </div>
         <div class="data-table-container">
             <table class="data-table" id="poTable">

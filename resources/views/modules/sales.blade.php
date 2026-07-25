@@ -15,7 +15,7 @@
                 <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">NBR Mushak 6.3 Invoice</div>
                 <div style="font-size:11.5px; color:var(--text-muted);">Statutory Tax Invoice Viewer</div>
             </div>
-            <button class="btn btn-sm" onclick="document.getElementById('mushakModal').classList.add('open')"><i class="fa-solid fa-file-contract"></i> View Mushak 6.3</button>
+            <button class="btn btn-sm" onclick="printDocument('SO-2026-4412', 'mushak63')"><i class="fa-solid fa-print"></i> Print Mushak 6.3</button>
         </div>
     </div>
 
