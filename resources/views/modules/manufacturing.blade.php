@@ -7,8 +7,8 @@
             <div style="font-size:12.5px; font-weight:600; color:var(--text-pure); margin-top:2px;">Active Work Orders: <span class="mono" style="color:var(--status-green);">12 Orders</span> | BOM Assemblies: <span class="mono">48 Products</span> | MRP Shortfall Runner: <span style="color:var(--status-green); font-weight:700;">OK (Zero Material Shortfalls)</span></div>
         </div>
         <div style="display:flex; gap:6px;">
-            <button class="btn btn-outline btn-sm" onclick="showToast('Calculated JIT material requirements against 12 active Work Orders!')"><i class="fa-solid fa-calculator"></i> Run MRP Shortfall Runner</button>
-            <button class="btn btn-sm" onclick="showToast('New Work Order WO-2026-991 created for Shop Floor!')"><i class="fa-solid fa-plus"></i> + Create Work Order</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('mrpRunnerModal').classList.add('open')"><i class="fa-solid fa-calculator"></i> Run MRP Shortfall Runner</button>
+            <button class="btn btn-sm" onclick="document.getElementById('workOrderModal').classList.add('open')"><i class="fa-solid fa-plus"></i> + Create Work Order</button>
         </div>
     </div>
 

@@ -7,7 +7,7 @@
                 <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Customer Credit Risk Checker</div>
                 <div style="font-size:13px; font-weight:700; color:var(--text-pure); margin-top:2px;">Apex Holdings Corp — Outstanding: <span class="mono" style="color:var(--status-green);">BDT 850,000</span> / Approved Limit: <span class="mono">BDT 2,000,000</span></div>
             </div>
-            <button class="btn btn-outline btn-sm" onclick="showToast('Customer Credit Limit verified OK!')"><i class="fa-solid fa-shield-halved"></i> Audit Credit Risk</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('creditRiskModal').classList.add('open')"><i class="fa-solid fa-shield-halved"></i> Audit Credit Risk</button>
         </div>
 
         <div style="background:var(--card-bg); border:1px solid var(--border-subtle); padding:0.85rem 1rem; border-radius:6px; display:flex; align-items:center; justify-content:space-between;">

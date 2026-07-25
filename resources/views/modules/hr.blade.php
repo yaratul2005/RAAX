@@ -7,8 +7,8 @@
             <div style="font-size:12.5px; font-weight:600; color:var(--text-pure); margin-top:2px;">Active Headcount: <span class="mono" style="color:var(--status-green);">1,200 Employees</span> | Attendance Rate: <span class="mono" style="color:var(--status-green);">98.4%</span> | Biometric TCP Daemon: <span style="color:var(--status-green); font-weight:700;">Port 4370 Active</span></div>
         </div>
         <div style="display:flex; gap:6px;">
-            <button class="btn btn-outline btn-sm" onclick="showToast('Pulling live biometric attendance punches from ZKTeco/Hikvision TCP daemon...')"><i class="fa-solid fa-sync"></i> Sync Biometric Terminal</button>
-            <button class="btn btn-sm" onclick="showToast('Calculated monthly salary structure disbursemnts for 1,200 employees cleanly!')"><i class="fa-solid fa-calculator"></i> Run Payroll Cycle</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('biometricSyncModal').classList.add('open')"><i class="fa-solid fa-sync"></i> Sync Biometric Terminal</button>
+            <button class="btn btn-sm" onclick="document.getElementById('payrollCycleModal').classList.add('open')"><i class="fa-solid fa-calculator"></i> Run Payroll Cycle</button>
         </div>
     </div>
 
@@ -47,7 +47,7 @@
     <div class="card stagger-3">
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-users"></i> Employee Master Directory</div>
-            <button class="btn btn-sm" onclick="showToast('Employee onboarding modal ready.')"><i class="fa-solid fa-user-plus"></i> + Onboard Employee</button>
+            <button class="btn btn-sm" onclick="document.getElementById('employeeOnboardModal').classList.add('open')"><i class="fa-solid fa-user-plus"></i> + Onboard Employee</button>
         </div>
         <div class="data-table-container">
             <table class="data-table" id="employeeTable">

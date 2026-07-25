@@ -7,8 +7,8 @@
             <div style="font-size:12.5px; font-weight:600; color:var(--text-pure); margin-top:2px;">Total Book Valuation: <span class="mono" style="color:var(--status-green);">BDT 84,100,000</span> | Active Assets: <span class="mono">142 Items</span> | Method: <span style="color:var(--orange-brand); font-weight:700;">SLM & DDB Dual Schedule</span></div>
         </div>
         <div style="display:flex; gap:6px;">
-            <button class="btn btn-outline btn-sm" onclick="showToast('Asset Retirement & Disposal Gain/Loss Calculator ready.')"><i class="fa-solid fa-calculator"></i> Asset Disposal Tool</button>
-            <button class="btn btn-sm" onclick="showToast('Recalculated book values across 142 fixed assets cleanly!')"><i class="fa-solid fa-sync"></i> Run Depreciation Schedule</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('assetDisposalModal').classList.add('open')"><i class="fa-solid fa-calculator"></i> Asset Disposal Tool</button>
+            <button class="btn btn-sm" onclick="document.getElementById('depreciationModal').classList.add('open')"><i class="fa-solid fa-sync"></i> Run Depreciation Schedule</button>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
     <div class="card stagger-3">
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-building-columns"></i> Corporate Fixed Asset Master Registry</div>
-            <button class="btn btn-sm" onclick="showToast('Add Fixed Asset modal ready.')"><i class="fa-solid fa-plus"></i> + Add Fixed Asset</button>
+            <button class="btn btn-sm" onclick="openRecordEditor('AST-NEW', 'Fixed Assets')"><i class="fa-solid fa-plus"></i> + Add Fixed Asset</button>
         </div>
         <div class="data-table-container">
             <table class="data-table">

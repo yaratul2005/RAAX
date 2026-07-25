@@ -1043,6 +1043,300 @@ STATUS: 100% UNTAMPERED & VERIFIED</div>
         </div>
     </div>
 
+    <!-- Modal 1: Asset Disposal & Salvage Calculator Modal -->
+    <div class="modal-overlay" id="assetDisposalModal" style="z-index: 670;">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-calculator" style="color:var(--orange-brand);"></i> Fixed Asset Retirement & Disposal Calculator</div>
+                <button onclick="document.getElementById('assetDisposalModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); document.getElementById('assetDisposalModal').classList.remove('open'); showToast('Asset AST-VEH-004 disposed cleanly! Disposal Gain BDT 450,000 posted to General Ledger.'); appendAuditLog('Disposed Fixed Asset AST-VEH-004 (Salvage: BDT 4,050,000)');">
+                    <div class="form-group">
+                        <label class="form-label">Target Asset Code</label>
+                        <input type="text" class="form-input mono" value="AST-VEH-004" readonly>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Historical Book Value</label>
+                            <input type="text" class="form-input mono" value="BDT 3,600,000" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Realized Salvage Price</label>
+                            <input type="number" class="form-input mono" value="4050000" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Disposal Gain/Loss Account</label>
+                        <input type="text" class="form-input mono" value="GL-4910 (Gain/Loss on Disposal of Capital Assets)" readonly>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="fa-solid fa-check-double"></i> Execute Asset Retirement & Post Disposal Journal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Depreciation Schedule Runner Modal -->
+    <div class="modal-overlay" id="depreciationModal" style="z-index: 671;">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-sync" style="color:var(--orange-brand);"></i> Run 5-Year Depreciation Calculation Schedule</div>
+                <button onclick="document.getElementById('depreciationModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); document.getElementById('depreciationModal').classList.remove('open'); showToast('Executed depreciation schedule across 142 fixed assets cleanly! Total Depreciation: BDT 2.84M.'); appendAuditLog('Executed annual depreciation calculation across 142 fixed assets.');">
+                    <div class="form-group">
+                        <label class="form-label">Depreciation Methodology</label>
+                        <select class="form-select mono">
+                            <option value="slm">Straight-Line Method (SLM - Equal Annual Allocation)</option>
+                            <option value="ddb">Double-Declining Balance (DDB - Accelerated 200%)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fiscal Accounting Period</label>
+                        <input type="text" class="form-input mono" value="FY2026-Q3 (Ending 2026-09-30)" readonly>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="fa-solid fa-calculator"></i> Run Depreciation Engine & Update Book Values</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Biometric TCP Terminal Sync Modal -->
+    <div class="modal-overlay" id="biometricSyncModal" style="z-index: 672;">
+        <div class="modal-card" style="max-width: 540px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-sync" style="color:var(--orange-brand);"></i> ZKTeco / Hikvision Biometric TCP Daemon Reader</div>
+                <button onclick="document.getElementById('biometricSyncModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="terminal-box" style="height:180px; margin-bottom:12px;"><span class="hl-orange">[Biometric TCP Listener Port 4370 Connected]</span>
+Connecting to 192.168.1.105:4370...
+Pulling attendance punch event logs...
+PUNCH_RECV: EMP-1042 (2026-07-25 08:58:12) IN_OK
+PUNCH_RECV: EMP-1088 (2026-07-25 09:01:05) IN_OK
+<span class="hl-green">1,180 attendance punch records synchronized cleanly!</span></div>
+                <button class="btn btn-sm" style="width:100%; justify-content:center;" onclick="document.getElementById('biometricSyncModal').classList.remove('open'); showToast('1,180 biometric punches ingested into HR attendance ledger!'); appendAuditLog('Ingested 1,180 biometric attendance punches via TCP daemon.');"><i class="fa-solid fa-check"></i> Import Punches into Attendance Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Monthly Payroll Disbursement Modal -->
+    <div class="modal-overlay" id="payrollCycleModal" style="z-index: 673;">
+        <div class="modal-card" style="max-width: 540px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-calculator" style="color:var(--orange-brand);"></i> Execute Monthly Payroll Disbursement Engine</div>
+                <button onclick="document.getElementById('payrollCycleModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); document.getElementById('payrollCycleModal').classList.remove('open'); showToast('Payroll cycle executed! BDT 30.67M disbursed across 1,200 employees.'); appendAuditLog('Executed monthly payroll cycle (Gross: BDT 36.5M, Net: BDT 30.67M)');">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Total Active Personnel</label>
+                            <input type="text" class="form-input mono" value="1,200 Employees" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gross Salary Pool</label>
+                            <input type="text" class="form-input mono" value="BDT 36,500,000" readonly style="color:var(--orange-brand);">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">BEFTN Bank Clearing Output File</label>
+                        <input type="text" class="form-input mono" value="BEFTN_PAYROLL_JUL2026_1200.TXT" readonly>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="fa-solid fa-file-invoice-dollar"></i> Disburse Salaries & Export BEFTN File</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: Employee Profile Onboarding Wizard Modal -->
+    <div class="modal-overlay" id="employeeOnboardModal" style="z-index: 674;">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-user-plus" style="color:var(--orange-brand);"></i> Employee Profile Onboarding Wizard</div>
+                <button onclick="document.getElementById('employeeOnboardModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); const n = document.getElementById('empOnName').value; document.getElementById('employeeOnboardModal').classList.remove('open'); showToast(`Employee ${n} onboarded cleanly!`); appendAuditLog(`Onboarded new employee ${n}`);">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="empOnName" class="form-input" placeholder="e.g. Mahfuzur Rahman" required>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <select class="form-select">
+                                <option value="Finance">Finance & Accounting</option>
+                                <option value="Procurement">Supply Chain & Procurement</option>
+                                <option value="Production">Factory Production</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Monthly Gross Salary (BDT)</label>
+                            <input type="number" class="form-input mono" value="45000" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="fa-solid fa-user-check"></i> Complete Onboarding Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Inventory Shrinkage & Write-Off Modal -->
+    <div class="modal-overlay" id="stockAdjustmentModal" style="z-index: 675;">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-sliders" style="color:var(--orange-brand);"></i> Inventory Stock Adjustment & Write-Off Tool</div>
+                <button onclick="document.getElementById('stockAdjustmentModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); document.getElementById('stockAdjustmentModal').classList.remove('open'); showToast('Stock adjustment write-off executed cleanly!'); appendAuditLog('Executed stock adjustment write-off for SKU-FASTENER-A');">
+                    <div class="form-group">
+                        <label class="form-label">Select SKU Item</label>
+                        <select class="form-select mono">
+                            <option value="SKU-FASTENER-A">SKU-FASTENER-A (Heavy Duty Fastener)</option>
+                            <option value="SKU-RAW-STEEL">SKU-RAW-STEEL (Heavy Steel Plates)</option>
+                        </select>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Adjustment Quantity</label>
+                            <input type="number" class="form-input mono" value="-5" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Adjustment Reason</label>
+                            <select class="form-select">
+                                <option value="damage">Physical Handling Damage</option>
+                                <option value="shrinkage">Cycle Count Discrepancy</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="fa-solid fa-check"></i> Post Stock Adjustment Entry</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 7: JIT MRP Material Shortfall Calculator Modal -->
+    <div class="modal-overlay" id="mrpRunnerModal" style="z-index: 676;">
+        <div class="modal-card" style="max-width: 540px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-calculator" style="color:var(--orange-brand);"></i> JIT Material Requirements Planning (MRP) Runner</div>
+                <button onclick="document.getElementById('mrpRunnerModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="terminal-box" style="height:180px; margin-bottom:12px;"><span class="hl-orange">[JIT MRP Engine Calculations Active]</span>
+Analyzing 12 Active Work Orders against inventory bins...
+- Work Order WO-2026-0881: Requires 3,000 kg SKU-RAW-STEEL (Current Stock: 4,500 kg - OK)
+- Work Order WO-2026-0882: Requires 20,000 units SKU-FASTENER-A (Current Stock: 25,000 units - OK)
+<span class="hl-green">Zero Material Shortfalls Detected! Production Plan 100% Feasible.</span></div>
+                <button class="btn btn-sm" style="width:100%; justify-content:center;" onclick="document.getElementById('mrpRunnerModal').classList.remove('open'); showToast('MRP Run completed! Production plan verified feasible.'); appendAuditLog('Executed JIT MRP Runner against 12 active Work Orders.');"><i class="fa-solid fa-check-double"></i> Confirm Production Requirements Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 8: Shop Floor Production Work Order Dispatcher Modal -->
+    <div class="modal-overlay" id="workOrderModal" style="z-index: 677;">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-industry" style="color:var(--orange-brand);"></i> Dispatch New Shop Floor Work Order</div>
+                <button onclick="document.getElementById('workOrderModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); document.getElementById('workOrderModal').classList.remove('open'); showToast('Work Order WO-2026-991 dispatched to Shop Floor!'); appendAuditLog('Dispatched Work Order WO-2026-991 to WC-FABRICATION');">
+                    <div class="form-group">
+                        <label class="form-label">Finished Good BOM Assembly</label>
+                        <select class="form-select mono">
+                            <option value="FG-STEEL-STRUCTURE-01">FG-STEEL-STRUCTURE-01 (Structural Steel Building Frame)</option>
+                        </select>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Production Target Qty</label>
+                            <input type="number" class="form-input mono" value="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target Work Center</label>
+                            <select class="form-select mono">
+                                <option value="WC-FABRICATION">WC-FABRICATION (Main Cutting & Welding)</option>
+                                <option value="WC-ASSEMBLY">WC-ASSEMBLY (Final Torque Check)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="fa-solid fa-paper-plane"></i> Dispatch Work Order to Shop Floor</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 9: Customer Credit Limit & Risk Auditor Modal -->
+    <div class="modal-overlay" id="creditRiskModal" style="z-index: 678;">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-shield-halved" style="color:var(--orange-brand);"></i> Customer Credit Risk Auditor</div>
+                <button onclick="document.getElementById('creditRiskModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="background:#09090b; border:1px solid var(--border-subtle); padding:1rem; border-radius:6px; margin-bottom:1rem;">
+                    <div style="font-size:12px; font-weight:700; color:var(--text-pure); margin-bottom:4px;">Customer: Apex Holdings Corp</div>
+                    <div style="font-size:11px; color:var(--text-dim); margin-bottom:10px;">Approved Credit Terms: Net 30 Days | Credit Limit: BDT 2,000,000</div>
+                    <div style="background:#27272a; height:8px; border-radius:4px; overflow:hidden; margin-bottom:6px;">
+                        <div style="width:42.5%; height:100%; background:var(--status-green);"></div>
+                    </div>
+                    <div style="font-size:10.5px; color:var(--status-green); font-weight:700;">Utilization: 42.5% (BDT 850,000 Outstanding) — Risk Level: LOW</div>
+                </div>
+                <button class="btn btn-sm" style="width:100%; justify-content:center;" onclick="document.getElementById('creditRiskModal').classList.remove('open'); showToast('Customer Credit Risk Audit verified OK! Orders permitted.');"><i class="fa-solid fa-check-circle"></i> Approve Order Release</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 10: USB HID Barcode Listener Modal -->
+    <div class="modal-overlay" id="barcodeListenerModal" style="z-index: 679;">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-barcode" style="color:var(--orange-brand);"></i> USB HID Barcode Scanner Event Monitor</div>
+                <button onclick="document.getElementById('barcodeListenerModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="terminal-box" style="height:180px; margin-bottom:12px;"><span class="hl-orange">[USB HID Barcode Listener Active]</span>
+Listening on COM3 / USB HID Event Loop...
+<span class="hl-green">[SCANNED] Barcode: SKU-FASTENER-A (Timestamp: 22:20:15)</span>
+Match Found: Heavy Duty Fastener | Bin: BIN-MAIN-A1</div>
+                <button class="btn btn-sm" style="width:100%; justify-content:center;" onclick="document.getElementById('barcodeListenerModal').classList.remove('open'); showToast('Scanned SKU-FASTENER-A loaded into workspace!');"><i class="fa-solid fa-check"></i> Load Scanned Item Properties</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 11: NBR Mushak 6.6 VDS Withholding Certificate Issuer Modal -->
+    <div class="modal-overlay" id="vdsCertificateModal" style="z-index: 680;">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-file-shield" style="color:var(--orange-brand);"></i> Issue NBR Mushak 6.6 VDS Withholding Certificate</div>
+                <button onclick="document.getElementById('vdsCertificateModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); document.getElementById('vdsCertificateModal').classList.remove('open'); printDocument('VDS-2026-012', 'mushak63'); showToast('Mushak 6.6 VDS Certificate VDS-2026-012 issued cleanly!'); appendAuditLog('Issued Mushak 6.6 VDS Certificate VDS-2026-012');">
+                    <div class="form-group">
+                        <label class="form-label">Supplier Entity Name</label>
+                        <input type="text" class="form-input" value="Global Steel Suppliers Ltd" readonly>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Supplier Invoice Amount</label>
+                            <input type="text" class="form-input mono" value="BDT 1,250,000" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">VDS Withholding Amount (15%)</label>
+                            <input type="text" class="form-input mono" value="BDT 187,500" readonly style="color:var(--orange-brand); font-weight:700;">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="fa-solid fa-stamp"></i> Issue Sealed Mushak 6.6 Certificate</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
 
     <!-- Startup Owner & User Login Modal Overlay -->

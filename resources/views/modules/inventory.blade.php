@@ -22,7 +22,7 @@
     <div class="card stagger-2">
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-boxes-packing"></i> FIFO Stock Valuation & Multi-Bin Location Directory</div>
-            <button class="btn btn-sm" onclick="showToast('Stock adjustment write-off modal ready.')"><i class="fa-solid fa-sliders"></i> Stock Adjustment</button>
+            <button class="btn btn-sm" onclick="document.getElementById('stockAdjustmentModal').classList.add('open')"><i class="fa-solid fa-sliders"></i> Stock Adjustment</button>
         </div>
         <div class="data-table-container">
             <table class="data-table" id="inventoryTable">
