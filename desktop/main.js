@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Tray, Menu, ipcMain, dialog, Notification, clipboard, shell } from 'electron';
+import { app, BrowserWindow, Tray, Menu, ipcMain, dialog, Notification, clipboard, shell, nativeImage } from 'electron';
 import { spawn, execSync } from 'child_process';
 import http from 'http';
 import path from 'path';
@@ -137,23 +137,36 @@ function createSplashWindow() {
 // Build System Tray Menu
 function createTray() {
     const iconPath = path.join(__dirname, 'icon.png');
-    // Use fallback empty image if icon file missing
-    tray = new Tray(fs.existsSync(iconPath) ? iconPath : path.join(__dirname, 'splash.html'));
-    
-    const contextMenu = Menu.buildFromTemplate([
-        { label: 'RAAX ERP Platform v2.0', enabled: false },
-        { type: 'separator' },
-        { label: 'Show Application', click: () => mainWindow && mainWindow.show() },
-        { label: 'Create Purchase Order', click: () => mainWindow && mainWindow.webContents.send('tray-action', 'create-po') },
-        { label: 'Create Sales Order', click: () => mainWindow && mainWindow.webContents.send('tray-action', 'create-so') },
-        { label: 'System Telemetry', click: () => mainWindow && mainWindow.webContents.send('tray-action', 'telemetry') },
-        { type: 'separator' },
-        { label: 'Exit Application', click: () => app.quit() }
-    ]);
+    let trayImage;
 
-    tray.setToolTip('RAAX Enterprise Resource Planning');
-    tray.setContextMenu(contextMenu);
-    tray.on('double-click', () => mainWindow && mainWindow.show());
+    if (fs.existsSync(iconPath)) {
+        trayImage = nativeImage.createFromPath(iconPath);
+    } else {
+        // Fallback 16x16 orange icon as Data URL PNG
+        const fallbackPng = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAERJREFUOE9jZKAQMFKon4FqBhSg0TBJ0kRRNYB0v2BgYGBg+M/AwEC2AWQZAEsz0tTjNACT01A04DYAdQMImUFWoIsCADWpEA212b0hAAAAAElFTkSuQmCC';
+        trayImage = nativeImage.createFromDataURL(fallbackPng);
+    }
+
+    try {
+        tray = new Tray(trayImage);
+        
+        const contextMenu = Menu.buildFromTemplate([
+            { label: 'RAAX ERP Platform v2.0', enabled: false },
+            { type: 'separator' },
+            { label: 'Show Application', click: () => mainWindow && mainWindow.show() },
+            { label: 'Create Purchase Order', click: () => mainWindow && mainWindow.webContents.send('tray-action', 'create-po') },
+            { label: 'Create Sales Order', click: () => mainWindow && mainWindow.webContents.send('tray-action', 'create-so') },
+            { label: 'System Telemetry', click: () => mainWindow && mainWindow.webContents.send('tray-action', 'telemetry') },
+            { type: 'separator' },
+            { label: 'Exit Application', click: () => app.quit() }
+        ]);
+
+        tray.setToolTip('RAAX Enterprise Resource Planning');
+        tray.setContextMenu(contextMenu);
+        tray.on('double-click', () => mainWindow && mainWindow.show());
+    } catch (err) {
+        console.warn('[RAAX Desktop] Warning initializing tray:', err.message);
+    }
 }
 
 // Create Main Application Window
