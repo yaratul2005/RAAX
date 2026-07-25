@@ -1,5 +1,24 @@
 <!-- Module View: Inventory & Warehousing -->
 <div id="view-inventory" class="view-panel">
+    <!-- Stock Transfer Wizard & ZPL Label Generator Bar -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1.25rem;">
+        <div style="background:var(--card-bg); border:1px solid var(--border-subtle); padding:0.85rem 1rem; border-radius:6px; display:flex; align-items:center; justify-content:space-between;">
+            <div>
+                <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Inter-Bin Stock Transfer Wizard</div>
+                <div style="font-size:12px; color:var(--text-pure); margin-top:2px;">Move stock from BIN-MAIN-A1 to BIN-MAIN-B4</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="showToast('Transferred 50 units of SKU-FASTENER-A from BIN-MAIN-A1 to BIN-MAIN-B4 cleanly!')"><i class="fa-solid fa-arrows-left-right"></i> Transfer Stock</button>
+        </div>
+
+        <div style="background:var(--card-bg); border:1px solid var(--border-subtle); padding:0.85rem 1rem; border-radius:6px; display:flex; align-items:center; justify-content:space-between;">
+            <div>
+                <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Zebra ZPL Label Generator</div>
+                <div style="font-size:12px; color:var(--text-pure); margin-top:2px;">Print 2"x1" Thermal Barcode Bin Label</div>
+            </div>
+            <button class="btn btn-sm" onclick="showToast('Dispatched ZPL II Barcode label payload to Zebra Thermal Printer queue!')"><i class="fa-solid fa-barcode"></i> Print ZPL Label</button>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-boxes-packing"></i> FIFO Stock Valuation & Multi-Bin Location Directory</div>
