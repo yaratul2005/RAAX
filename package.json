@@ -7,7 +7,8 @@
         "build": "vite build",
         "dev": "vite",
         "desktop": "electron .",
-        "start:desktop": "vite build && electron ."
+        "start:desktop": "vite build && electron .",
+        "pack:win": "electron-builder --win nsis"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
@@ -16,5 +17,29 @@
         "laravel-vite-plugin": "^3.1",
         "tailwindcss": "^4.0.0",
         "vite": "^8.0.0"
+    },
+    "build": {
+        "appId": "com.raax.erp",
+        "productName": "RAAX Enterprise Resource Planning Platform",
+        "directories": {
+            "output": "dist_desktop"
+        },
+        "files": [
+            "desktop/**/*",
+            "public/build/**/*",
+            "resources/views/**/*",
+            "app/**/*",
+            "bootstrap/**/*",
+            "config/**/*",
+            "database/**/*",
+            "modules/**/*",
+            "routes/**/*",
+            "artisan",
+            "composer.json",
+            ".env"
+        ],
+        "win": {
+            "target": ["nsis", "portable"]
+        }
     }
 }
