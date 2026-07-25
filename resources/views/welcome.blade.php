@@ -621,6 +621,161 @@
         </div>
     </div>
 
+    <!-- Double-Entry Journal Builder Modal -->
+    <div class="modal-overlay" id="journalModal">
+        <div class="modal-card" style="max-width: 650px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-book" style="color:var(--orange-brand);"></i> Manual Double-Entry Journal Builder</div>
+                <button onclick="document.getElementById('journalModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="journalCreateForm" onsubmit="handlePostJournal(event)">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Reference Number</label>
+                            <input type="text" class="form-input mono" id="jRef" value="JE-INV-2026-099" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Entry Date</label>
+                            <input type="date" class="form-input mono" value="2026-07-25">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Journal Description</label>
+                        <input type="text" class="form-input" id="jDesc" value="Monthly Office Rent & Facility Expenses Allocation">
+                    </div>
+
+                    <table class="data-table" style="margin-bottom:10px;">
+                        <thead><tr><th>Account Name</th><th>Debit (BDT)</th><th>Credit (BDT)</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td>6010 - Rent Expense Account</td>
+                                <td><input type="number" class="form-input mono" value="45000" id="jDeb" oninput="calcJournalBalance()"></td>
+                                <td><input type="number" class="form-input mono" value="0" readonly></td>
+                            </tr>
+                            <tr>
+                                <td>1010 - Cash & Bank Clearing</td>
+                                <td><input type="number" class="form-input mono" value="0" readonly></td>
+                                <td><input type="number" class="form-input mono" value="45000" id="jCred" oninput="calcJournalBalance()"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; background:#09090b; padding:8px 12px; border-radius:5px;">
+                        <span style="font-size:11.5px;">Balance Check ($\sum \text{Debits} - \sum \text{Credits}$):</span>
+                        <span id="jBalanceStatus" style="font-weight:700; color:var(--status-green);">BALANCED (Delta: BDT 0.00)</span>
+                    </div>
+
+                    <button type="submit" class="btn" style="width:100%; justify-content:center;"><i class="fa-solid fa-check"></i> Post Double-Entry Journal to Ledger</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inter-Bin Stock Transfer Wizard Modal -->
+    <div class="modal-overlay" id="stockTransferModal">
+        <div class="modal-card" style="max-width: 540px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-arrows-left-right" style="color:var(--orange-brand);"></i> Inter-Bin Stock Transfer Wizard</div>
+                <button onclick="document.getElementById('stockTransferModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="handleStockTransfer(event)">
+                    <div class="form-group">
+                        <label class="form-label">Stock Item SKU</label>
+                        <select class="form-select mono" id="stSku">
+                            <option value="SKU-FASTENER-A">SKU-FASTENER-A (Heavy Duty Fastener - Stock: 150)</option>
+                            <option value="SKU-RAW-STEEL">SKU-RAW-STEEL (Heavy Steel Plates - Stock: 1,200)</option>
+                        </select>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Source Bin Location</label>
+                            <input type="text" class="form-input mono" value="BIN-MAIN-A1" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target Bin Location</label>
+                            <select class="form-select mono" id="stTarget">
+                                <option value="BIN-MAIN-B4">BIN-MAIN-B4 (Regional Rack)</option>
+                                <option value="BIN-MAIN-C2">BIN-MAIN-C2 (Overflow Bin)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Transfer Quantity</label>
+                        <input type="number" class="form-input mono" value="50" id="stQty" required>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center;"><i class="fa-solid fa-paper-plane"></i> Execute Stock Transfer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3-Way Matching Inspector Modal -->
+    <div class="modal-overlay" id="threeWayMatchModal">
+        <div class="modal-card" style="max-width: 640px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-magnifying-glass" style="color:var(--orange-brand);"></i> 3-Way Match Verification Inspector</div>
+                <button onclick="document.getElementById('threeWayMatchModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="grid-2" style="margin-bottom:1rem;">
+                    <div style="background:#09090b; padding:10px; border-radius:5px; border:1px solid var(--border-subtle);">
+                        <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase;">1. Purchase Order #PO-2026-8819</div>
+                        <div style="font-size:14px; font-weight:700;" class="mono">BDT 1,250,000</div>
+                        <div style="font-size:10px; color:var(--status-green);">Authorized Rate: BDT 12,500 / unit</div>
+                    </div>
+                    <div style="background:#09090b; padding:10px; border-radius:5px; border:1px solid var(--border-subtle);">
+                        <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase;">2. Goods Received Note #GRN-4410</div>
+                        <div style="font-size:14px; font-weight:700;" class="mono">100 Units Recv</div>
+                        <div style="font-size:10px; color:var(--status-green);">Inspection: 0 Defective</div>
+                    </div>
+                </div>
+                <div style="background:#09090b; padding:10px; border-radius:5px; border:1px solid var(--border-subtle); margin-bottom:1rem;">
+                    <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase;">3. Vendor Invoice #INV-8819</div>
+                    <div style="font-size:14px; font-weight:700;" class="mono">BDT 1,250,000</div>
+                    <div style="font-size:10px; color:var(--status-green);">Matched 100% against PO & GRN</div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:10px; border-radius:5px;">
+                    <span style="font-size:12px; font-weight:700; color:var(--status-green);"><i class="fa-solid fa-circle-check"></i> 3-WAY MATCHING PASSED: 0% Price/Qty Variance</span>
+                    <button class="btn btn-sm" onclick="showToast('PO #PO-2026-8819 payment voucher authorized cleanly!'); document.getElementById('threeWayMatchModal').classList.remove('open');">Authorize Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JSON Before/After Diff Inspector Modal -->
+    <div class="modal-overlay" id="jsonDiffModal">
+        <div class="modal-card" style="max-width: 620px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-history" style="color:var(--orange-brand);"></i> Immutable Audit Trail JSON Diff Inspector</div>
+                <button onclick="document.getElementById('jsonDiffModal').classList.remove('open')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:16px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size:11.5px; color:var(--text-dim); margin-bottom:8px;">Transaction Action: <strong>JournalEntry.Posted</strong> | User: <strong>A. Rahman (ID: e1000000)</strong></div>
+                <div class="grid-2">
+                    <div>
+                        <div style="font-size:10px; font-weight:700; color:var(--status-red); text-transform:uppercase; margin-bottom:4px;">Before State (Old Values)</div>
+                        <div class="terminal-box" style="height:160px; color:var(--status-red);">{
+  "status": "draft",
+  "amount_cents": 4500000,
+  "is_sealed": false
+}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px; font-weight:700; color:var(--status-green); text-transform:uppercase; margin-bottom:4px;">After State (New Values)</div>
+                        <div class="terminal-box" style="height:160px; color:var(--status-green);">{
+  "status": "posted",
+  "amount_cents": 4500000,
+  "is_sealed": true,
+  "hash": "31af3d709ad29613..."
+}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
 
     <!-- Startup Owner & User Login Modal Overlay -->
@@ -960,10 +1115,43 @@
             }
         }
 
-        function handleCreatePO(e) {
+        function calcJournalBalance() {
+            const deb = parseFloat(document.getElementById('jDeb').value) || 0;
+            const cred = parseFloat(document.getElementById('jCred').value) || 0;
+            const status = document.getElementById('jBalanceStatus');
+
+            if (deb === cred && deb > 0) {
+                status.style.color = 'var(--status-green)';
+                status.innerText = `BALANCED (Delta: BDT 0.00)`;
+            } else {
+                status.style.color = 'var(--status-red)';
+                status.innerText = `UNBALANCED (Delta: BDT ${(deb - cred).toLocaleString()})`;
+            }
+        }
+
+        function handlePostJournal(e) {
             e.preventDefault();
-            closeCreateModal();
-            showToast("Transaction saved & posted to ledger cleanly!");
+            const deb = parseFloat(document.getElementById('jDeb').value) || 0;
+            const cred = parseFloat(document.getElementById('jCred').value) || 0;
+
+            if (deb !== cred) {
+                alert("Cannot post unbalanced journal! Debits must equal Credits.");
+                return;
+            }
+
+            document.getElementById('journalModal').classList.remove('open');
+            showToast("Double-entry journal JE-INV-2026-099 posted to General Ledger cleanly!");
+            reloadActiveView();
+        }
+
+        function handleStockTransfer(e) {
+            e.preventDefault();
+            const sku = document.getElementById('stSku').value;
+            const qty = document.getElementById('stQty').value;
+            const target = document.getElementById('stTarget').value;
+
+            document.getElementById('stockTransferModal').classList.remove('open');
+            showToast(`Transferred ${qty} units of ${sku} to ${target} cleanly!`);
             reloadActiveView();
         }
 

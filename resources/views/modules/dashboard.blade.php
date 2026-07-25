@@ -5,8 +5,8 @@
         <span style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; margin-right:4px;"><i class="fa-solid fa-bolt" style="color:var(--orange-brand);"></i> Executive Quick Actions:</span>
         <button class="btn btn-sm" onclick="openCreateModal('so')"><i class="fa-solid fa-plus"></i> + Sales Order</button>
         <button class="btn btn-outline btn-sm" onclick="openCreateModal('po')"><i class="fa-solid fa-cart-plus"></i> + Purchase Order</button>
-        <button class="btn btn-outline btn-sm" onclick="navigateTo('finance')"><i class="fa-solid fa-book"></i> + Post Journal</button>
-        <button class="btn btn-outline btn-sm" onclick="navigateTo('inventory')"><i class="fa-solid fa-boxes-packing"></i> Stock Transfer</button>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('journalModal').classList.add('open')"><i class="fa-solid fa-book"></i> + Post Journal</button>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('stockTransferModal').classList.add('open')"><i class="fa-solid fa-boxes-packing"></i> Stock Transfer</button>
     </div>
 
     <!-- KPI Headline Grid with Trends -->

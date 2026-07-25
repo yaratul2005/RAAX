@@ -7,7 +7,7 @@
                 <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Inter-Bin Stock Transfer Wizard</div>
                 <div style="font-size:12px; color:var(--text-pure); margin-top:2px;">Move stock from BIN-MAIN-A1 to BIN-MAIN-B4</div>
             </div>
-            <button class="btn btn-outline btn-sm" onclick="showToast('Transferred 50 units of SKU-FASTENER-A from BIN-MAIN-A1 to BIN-MAIN-B4 cleanly!')"><i class="fa-solid fa-arrows-left-right"></i> Transfer Stock</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('stockTransferModal').classList.add('open')"><i class="fa-solid fa-arrows-left-right"></i> Transfer Stock</button>
         </div>
 
         <div style="background:var(--card-bg); border:1px solid var(--border-subtle); padding:0.85rem 1rem; border-radius:6px; display:flex; align-items:center; justify-content:space-between;">
