@@ -1,0 +1,71 @@
+<UserControl x:Class="ErpSample.Views.InvoiceModuleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:ErpSample.Views"
+             xmlns:inv="clr-namespace:ErpSample.Modules.Invoicing">
+
+    <!-- DataContext is an InvoiceShellViewModel, set from the main window / DI container -->
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/ValidationStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Maps InvoiceDetailViewModel to its view - this is what makes
+                 <ContentControl Content="{Binding DetailViewModel}"/> below render
+                 the actual form instead of just calling ToString() on the view model. -->
+            <DataTemplate DataType="{x:Type inv:InvoiceDetailViewModel}">
+                <views:InvoiceDetailForm/>
+            </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- LIST PANEL - always visible, full width until something is being edited -->
+        <DockPanel Grid.Column="0" DataContext="{Binding ListViewModel}">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="8">
+                <Button Content="New"    Command="{Binding NewCommand}"    Margin="0,0,6,0"/>
+                <Button Content="Edit"   Command="{Binding EditCommand}"   Margin="0,0,6,0"/>
+                <Button Content="Delete" Command="{Binding DeleteCommand}" Margin="0,0,6,0"/>
+                <TextBox Width="180" Margin="12,0,0,0"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+
+            <DataGrid ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Extended">
+                <!-- Double-click opens the same Edit path as the toolbar button, per the
+                     click-logic convention: single click selects, double click opens. -->
+                <DataGrid.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}"/>
+                </DataGrid.InputBindings>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Invoice #" Width="100" Binding="{Binding InvoiceNumber}"/>
+                    <DataGridTextColumn Header="Customer"  Width="*"   Binding="{Binding CustomerName}"/>
+                    <DataGridTextColumn Header="Date"      Width="100" Binding="{Binding InvoiceDate, StringFormat=d}"/>
+                    <DataGridTextColumn Header="Total"     Width="100" Binding="{Binding Total, StringFormat=C}"/>
+                    <DataGridTextColumn Header="Status"    Width="100" Binding="{Binding Status}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
+        <!-- DETAIL PANEL - docked to the right, only takes up space while DetailViewModel
+             is not null. This is the "docked side panel" master-detail pattern; swap the
+             Visibility/Width binding for a full ContentControl swap if you'd rather the
+             detail form replace the list entirely (better for line-item-heavy forms on
+             smaller screens). -->
+        <Border Grid.Column="1" Width="380" Padding="12"
+                BorderThickness="1,0,0,0" BorderBrush="#DDDDDD"
+                Visibility="{Binding DetailViewModel, Converter={StaticResource NullToVisibility}}">
+            <ContentControl Content="{Binding DetailViewModel}"/>
+        </Border>
+    </Grid>
+</UserControl>
