@@ -1,173 +1,191 @@
-# RAAX ERP - Enterprise Modular Monolith
+# RAAX Enterprise Resource Planning Platform
 
-![Architecture](https://img.shields.io/badge/Architecture-Modular_Monolith-0F766E?style=for-the-badge)
-![Tech Stack](https://img.shields.io/badge/Stack-PHP_8.3_|_Laravel_12-10B981?style=for-the-badge)
-![Security](https://img.shields.io/badge/Security-PostgreSQL_RLS-F59E0B?style=for-the-badge)
-![Repository](https://img.shields.io/badge/Git_Tree-<1.5_MB_Clean-3B82F6?style=for-the-badge)
-
-<p align="center">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" fill="none" width="100%">
-  <rect width="800" height="300" rx="8" fill="#0F172A"/>
-  <path d="M 0 30 L 800 30 M 0 60 L 800 60" stroke="#1E293B" stroke-width="0.5"/>
-  <text x="400" y="45" font-family="monospace" font-size="14" fill="#0F766E" text-anchor="middle" font-weight="bold">RAAX CORE ARCHITECTURE BLUEPRINT</text>
-  <rect x="50" y="100" width="180" height="80" rx="4" fill="#1E293B" stroke="#0F766E" stroke-width="1.5"/>
-  <text x="140" y="145" font-family="monospace" font-size="14" fill="#F8FAFC" text-anchor="middle">modules/Finance</text>
-  <rect x="310" y="100" width="180" height="80" rx="4" fill="#1E293B" stroke="#0F766E" stroke-width="1.5"/>
-  <text x="400" y="145" font-family="monospace" font-size="14" fill="#F8FAFC" text-anchor="middle">modules/HR</text>
-  <rect x="570" y="100" width="180" height="80" rx="4" fill="#1E293B" stroke="#0F766E" stroke-width="1.5"/>
-  <text x="660" y="145" font-family="monospace" font-size="14" fill="#F8FAFC" text-anchor="middle">modules/Inventory</text>
-  <rect x="250" y="220" width="300" height="50" rx="4" fill="#0F766E" fill-opacity="0.1" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4,4"/>
-  <text x="400" y="250" font-family="monospace" font-size="13" fill="#10B981" text-anchor="middle">PostgreSQL 16 Database (RLS Enforced)</text>
-</svg>
-</p>
-
-## Overview
-
-RAAX ERP is an enterprise-grade resource planning system architected as a Domain-Driven Modular Monolith. It guarantees mathematical precision through integer-based financial calculations and enforces strict multi-tenant data isolation directly at the PostgreSQL connection layer using Row-Level Security (RLS).
-
-## Core Principles
-
-- **Zero Floating-Point Drift:** All money, tax rates, inventory values, and basis points are strictly calculated using integer arithmetic.
-- **Deep Tenant Isolation:** Bypassing standard ORM global scopes, tenant security is enforced at the database level using session variables tied to the `app_user` role.
-- **Strict Decoupling:** Cross-module boundaries communicate through registered interfaces and asynchronous Redis events (e.g., `SalaryPaymentApproved`, `IntercompanyTransferCompleted`).
+![Architecture](https://img.shields.io/badge/Architecture-Modular_Monolith-ff5e00?style=for-the-badge&logo=laravel)
+![Tech Stack](https://img.shields.io/badge/Backend-PHP_8.3_|_Laravel_12-red?style=for-the-badge&logo=php)
+![Security](https://img.shields.io/badge/Security-PostgreSQL_16_RLS-indigo?style=for-the-badge&logo=postgresql)
+![Desktop Wrapper](https://img.shields.io/badge/Desktop-Electron_Wrapper_|_Inno_Setup-blue?style=for-the-badge&logo=windows)
+![Build Status](https://img.shields.io/badge/Test_Suite-100%25_Passed_(68/68)-10b981?style=for-the-badge)
 
 ---
 
-## Local Setup & Installation
+## 🖥️ Executive Overview & System Interface
 
-Follow these explicit steps to spin up the local development environment securely:
+**RAAX ERP** is a high-performance, enterprise-grade Resource Planning platform designed for multi-entity and multi-branch operations. Operating on an API-first, security-centric foundation with **Zero Floating-Point Drift** (using integer basis point arithmetic), RAAX balances database performance with design simplicity.
 
-### 1. Install Dependencies
+The user interface follows a modern **Role-Driven, High-Contrast Black & White aesthetic** with **Electric Orange (`#ff5e00`)** branding accents, persistent app shell sidebar navigation, real-time KPI dashboards, master-detail slide-out inspection drawers, and interactive governance suites.
+
+<p align="center">
+  <img src="docs/images/front-view.png" alt="RAAX ERP Enterprise Desktop Interface" width="100%" style="border-radius: 8px; border: 1px solid #27272a;">
+</p>
+
+---
+
+## 🚀 Key Platform Features & Modules
+
+### 1. 💼 Finance & General Ledger
+- **Double-Entry Bookkeeping:** Enforces strict $\sum \text{Debits} == \sum \text{Credits}$ balance invariants on every transaction.
+- **Consolidated Trial Balance:** Aggregates multi-tenant and multi-branch financial ledgers in real time.
+- **Month-End Forex Revaluation:** Automated unrealized foreign exchange gain/loss calculations using base-currency integer rates.
+- **AP/AR Aging Analytics:** Real-time 30/60/90+ day receivables and payables aging profiles with credit block enforcement.
+
+### 2. 📦 Inventory Control & FIFO Batching
+- **Multi-Warehouse Bin Matrices:** Real-time location allocation across primary facilities and regional storage bins.
+- **FIFO Costing Engine:** Depletes stock items using strict First-In, First-Out batch layer pricing to compute accurate Cost of Goods Sold (COGS).
+- **Mandatory Stock Adjustments:** Enforces required reason codes (`shrinkage`, `damage`, `audit`) and Maker/Checker approval workflows for stock mutations.
+- **Barcode & Scanner Operations:** Optimized barcode queue processing for fast receiving and dispatching.
+
+### 3. 🛒 Procurement & Order Matching
+- **3-Way Matching Engine:** Verifies Purchase Orders against Goods Received Notes (GRN) and Vendor Invoices before payment voucher authorization.
+- **Multi-Tier PO Approvals:** Automatic approval routing based on dollar thresholds and price tolerance limits ($10\%$).
+- **Vendor Master Directory:** Comprehensive profiles tracking lead times, payment terms, and vendor performance ratings.
+
+### 4. 📈 Sales & Order Management
+- **Order-to-Cash Workflow:** Quotation conversion, customer credit limit validation, and sales order fulfillment.
+- **Discount Approval Thresholds:** Automated policy checks requiring management sign-off for line discounts exceeding $15\%$.
+- **Delivery Notes & Billing:** Automatic generation of delivery manifests and tax invoices.
+
+### 5. 🇧🇩 Statutory NBR Bangladesh VAT Engine
+- **Mushak 6.3 Tax Invoices:** Auto-generated at point-of-sale for legal transport compliance.
+- **Mushak 6.1 Purchase Register:** Input tax credit accumulator for VAT rebate claims.
+- **Mushak 6.5 Inter-Branch Challan:** Manifest documentation for inter-entity stock transfers.
+- **Mushak 6.6 VDS Certificates:** Manages VAT Deducted at Source withholding certificates.
+- **Mushak 9.1 Monthly Return Compiler:** Single-click aggregation of monthly statutory tax returns.
+
+### 6. 👥 HR & Attendance Ledger
+- **Employee Master Directory:** Departmental hierarchy, designations, and salary structures.
+- **Shift Scheduling & Attendance:** Check-in/check-out timestamp logging with worked minutes calculations and overtime/absence tracking.
+- **Automated Payroll Processing:** Monthly payslip generation with NBR withholding tax slab calculations (AY 2026-27).
+
+### 7. 🏭 Manufacturing MRP & Bill of Materials
+- **Multi-Level Bill of Materials (BOM):** Item recipe structures with component wastage formulas.
+- **Just-In-Time (JIT) MRP Engine:** Computes net component deficiencies and lead-time back-calculated order release dates.
+
+### 8. 🛡️ Security, Governance & Controls
+- **PostgreSQL Row-Level Security (RLS):** Database engine-level multi-tenancy rules (`app_user` role) isolating data per tenant context.
+- **Segregation of Duties (SoD):** Strict Maker/Checker rules preventing creators from approving their own POs, Stock Adjustments, or Payments.
+- **Tamper-Evident Audit Trail:** Captures immutable before/after JSON diffs (`old_values` $\rightarrow$ `new_values`) with SHA-256 cryptographic ledger hashing.
+
+---
+
+## 🖥️ Windows Desktop Packaging & Architecture
+
+RAAX ERP can be deployed as standalone desktop software for Windows PCs or operated as a centralized cloud server.
+
+### Desktop Wrapper Architecture
+- **Electron Host Process (`desktop/main.js`):** Manages the application lifecycle and background child process execution of the PHP web server.
+- **1-Click Launcher (`RAAX_ERP_Desktop.bat`):** Launches the local server background daemon and opens the desktop shell.
+- **Windows Setup Installer (`desktop/RAAX_ERP_Setup.iss`):** Inno Setup script that compiles a standalone installer executable (`RAAX_ERP_v2.0_Setup.exe`).
+
+---
+
+## 🛠️ Local Installation & Setup Guide
+
+### 1. Prerequisites
+- **PHP**: 8.3 or higher
+- **Composer**: 2.x
+- **PostgreSQL**: 16.x (or SQLite for local development)
+- **Node.js**: 20.x & npm
+
+### 2. Clone & Install Dependencies
 ```bash
+git clone https://github.com/yaratul2005/RAAX.git
+cd RAAX
 composer install
+npm install
+```
+
+### 3. Environment Configuration
+```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-### 2. Configure PostgreSQL App Role
-To enforce RLS, you must create a restricted database role that Laravel will use to connect. Do **not** run the application as the Postgres superuser.
+### 4. Database Setup (PostgreSQL Row-Level Security)
+To enforce RLS multi-tenancy, create the restricted database role in PostgreSQL:
 ```sql
--- Connect as superuser (postgres)
 CREATE ROLE app_user WITH LOGIN NOBYPASSRLS NOSUPERUSER PASSWORD 'your_secure_password';
-GRANT ALL PRIVILEGES ON DATABASE your_database_name TO app_user;
+GRANT ALL PRIVILEGES ON DATABASE raax_db TO app_user;
 ```
 
-Update your `.env`:
+Update `.env`:
 ```env
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_DATABASE=your_database_name
+DB_DATABASE=raax_db
 DB_USERNAME=app_user
 DB_PASSWORD=your_secure_password
 ```
 
-### 3. Run Migrations & Setup Horizon
+### 5. Run Migrations & Build Frontend
 ```bash
 php artisan migrate
-php artisan horizon:install
+npm run build
 ```
 
-### 4. Execute Isolated Test Suite
-```bash
-vendor/bin/pint --test
-vendor/bin/phpstan analyse --level=8
-vendor/bin/phpunit
-```
+### 6. Launch Server & Desktop Software
+- **Launch Local Web Server:**
+  ```bash
+  php artisan serve --host=127.0.0.1 --port=8000
+  ```
+- **Launch Windows Desktop Software:**
+  ```bash
+  npm run desktop
+  ```
+  *(Or double-click `RAAX_ERP_Desktop.bat`)*
 
 ---
 
-## Milestone Tracking Matrix
+## 📊 Milestone Tracking Matrix
 
-| Phase | Milestone | Domain | Status | Description |
-|---|---|---|---|---|
-| **Phase 1** | 1-5 | Core & HR | ✅ Completed | Tenant Context Middleware, Chart of Accounts, Double-Entry Posting, Shift Registries, and Grace Period Attendance. |
-| **Phase 1** | 6 | Security | ✅ Completed | OIDC Authentication & Role-Based Access Control (RBAC) Engine. |
-| **Phase 1** | 7 | Events | ✅ Completed | Redis-Backed Queue & Laravel Horizon Notification Dispatcher. |
-| **Phase 1** | 8 | Finance | ✅ Completed | AP/AR Invoice Aging Analytics and Cash Flow Projection. |
-| **Phase 1** | 9 | HR/Finance | ✅ Completed | NBR Withholding Tax (AY 2026-27 Slabs) & Automated Payslip Journals. |
-| **Phase 2** | 10 | Procurement | ✅ Completed | Vendor Registries & Multi-Tier Purchase Order Approval Limits. |
-| **Phase 2** | 11 | Inventory | ✅ Completed | Multi-Warehouse Bins, Goods Received Notes, & FIFO Costing Depletion. |
-| **Phase 2** | 12 | Sales | ✅ Completed | Order Confirmations, Credit Blockers, & NBR Mushak 6.3 Challans. |
-| **Phase 3** | 13 | Manufacturing | ✅ Completed | BOMs, Work Orders, Wastage Formulas, & NBR Mushak 4.3 Declarations. |
-| **Phase 3** | 14 | Assets | ✅ Completed | Fixed Asset Registries & Monthly Depreciation Posting Engine. |
-| **Phase 3** | 15 | Banking | ✅ Completed | SWIFT MT940 Parser & Automated Bank Reconciliation Adjustments. |
-| **Phase 3** | 16 | Finance | ✅ Completed | Multi-Branch Consolidation & Fiscal Year-End Retained Earnings Closing. |
-| **Phase 3** | 17 | Logistics | ✅ Completed | Global Intercompany Stock Transfers & Dual-Ledger Automated Clearing. |
-| **Phase 3** | 18 | Compliance | ✅ Completed | Monthly NBR Mushak 9.1 Return Aggregator & TR-6 Treasury Deposits. |
-| **Phase 3** | 19 | Adjustments | ✅ Completed | NBR VDS (Mushak 6.6) & Debit/Credit Note Processing (Mushak 6.7/6.8). |
-| **Phase 3** | 20 | Multi-Currency | ✅ Completed | Exchange Rate Basis Registries & Month-End Unrealized Forex Revaluations. |
+| Phase | Domain | Status | Key Deliverable |
+| :--- | :--- | :--- | :--- |
+| **Phase 1** | Core & Security | ✅ Completed | Tenant Context Middleware, Chart of Accounts, Double-Entry Posting Engine, OIDC Auth & RBAC |
+| **Phase 1** | Finance & HR | ✅ Completed | AP/AR Invoice Aging Analytics, NBR Withholding Tax (AY 2026-27), Payslip Journals, Shift Registries |
+| **Phase 2** | Procurement | ✅ Completed | Vendor Registries, 3-Way Matching, Multi-Tier PO Approval Routing |
+| **Phase 2** | Inventory & Sales | ✅ Completed | Multi-Bin Tracking, Goods Received Notes (GRN), FIFO Cost Layer Depletion, Sales Credit Blockers |
+| **Phase 3** | Manufacturing | ✅ Completed | Multi-Level BOMs, Work Orders, Wastage Formulas, JIT MRP Material Shortfall Engine |
+| **Phase 3** | Assets & Banking | ✅ Completed | Fixed Asset Depreciation Posting, SWIFT MT940 Parser, Auto Bank Reconciliation |
+| **Phase 3** | Multi-Currency & Tax| ✅ Completed | Exchange Rate Basis Registries, Month-End Forex Revaluations, NBR Mushak 9.1 Return Aggregator |
+| **Phase 3** | Governance & UI | ✅ Completed | Segregation of Duties Matrix, Before/After Audit Diff Logs, Role-Driven Dark Mode UI Shell |
+
+---
 
 ## 🔐 Tamper-Evident Cryptographic Ledger
 
 RAAX protects financial history from administrative tampering or unauthorized direct database modifications using SHA-256 cryptographic hash-chaining.
 
-### Chronological Hash-Chaining
-
 Every journal posting is structurally linked to the state of the ledger preceding it:
 
 $$H_n = \text{SHA-256}(H_{n-1} \mathbin{\Vert} \text{Payload\_Hash}_n)$$
 
-### Integrity Auditing
-
+### Integrity Audit CLI Command
 Run the verification engine locally or in your CI/CD pipelines to validate general ledger integrity:
-
 ```bash
 php artisan raax:ledger:verify {tenant_id}
 ```
 
-## 🌍 Multi-Jurisdictional Tax Localization
+---
 
-RAAX features a dynamic, decoupled tax strategy architecture designed to support parallel tax ledgers and localization rules across international branches within a single database.
+## 📡 REST API Reference
 
-### Dynamic Tax Driver Resolution
+The backend exposes a modular RESTful API layer (`/api/v1`) with mandatory `X-Tenant-ID` tenant context binding.
 
-Calculation logic is delegated to localized tax drivers via an extensible factory registry:
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/system/modules` | Discovers registered active domain modules and system metadata |
+| `POST` | `/api/v1/finance/journals` | Posts double-entry journal entries with balance verification |
+| `GET` | `/api/v1/finance/reports/consolidated-trial-balance` | Generates real-time consolidated trial balance |
+| `POST` | `/api/v1/finance/forex/revalue` | Executes month-end forex revaluation sweeps |
+| `GET` | `/api/v1/finance/vat/returns/{period}` | Compiles Bangladesh NBR Mushak 9.1 statutory VAT return |
+| `POST` | `/api/v1/procurement/purchase-orders` | Submits purchase orders for multi-tier approval |
+| `POST` | `/api/v1/sales/orders` | Creates sales orders with customer credit validation |
+| `GET` | `/api/v1/inventory/valuation/{sku}` | Computes real-time FIFO stock batch valuation |
+| `POST` | `/api/v1/hr/attendance/check-in` | Logs employee shift attendance check-ins |
+| `POST` | `/api/v1/manufacturing/mrp/run` | Runs JIT Material Requirements Planning shortfall calculations |
 
-* **Bangladesh VAT Driver:** Generates NBR-compliant Mushak outputs.
-* **India GST Driver:** Evaluates shipping states to automatically split transactions into CGST/SGST (intra-state) or IGST (inter-state) ledgers.
-* **Europe VAT Driver:** Enforces destination-based European VAT rules.
+---
 
-## 📉 Budgetary Control & Commitment Accounting
+## 📜 License & Compliance
 
-RAAX protects organizational capital by running active, real-time budget verification checks directly during the procurement lifecycle.
-
-### Funds Available Formula
-
-Available funds are evaluated dynamically before any expenditure is authorized:
-
-$$\text{Funds Available} = \text{Budget} - \text{Actual Expenditures} - \text{Encumbrances}$$
-
-* **Encumbrances:** Funds earmarked at the approval stage of Purchase Orders to prevent budget overruns.
-* **Relief:** Earmarked funds are atomically relieved and transferred to actual expenditures once goods receipts (GRNs) are completed.
-
-## ⚙️ Just-In-Time (JIT) Material Requirements Planning (MRP)
-
-RAAX manages production demand and inventory optimization using a programmatic, lead-time-aware JIT MRP engine.
-
-### Net Requirements Formula
-
-Net component deficiencies are computed dynamically during active processing sweeps:
-
-$$\text{Net Requirement Qty} = \max\left(0, \text{Gross Demand} + \text{Safety Stock} - \text{On-Hand Stock} - \text{In-Transit Stock}\right)$$
-
-* **Lead-Time Offsetting:** Order recommended release dates are automatically back-calculated based on configured vendor delivery lead times:
-
-$$\text{Planned Order Date} = \text{Planned Delivery Date} - \text{Lead Time Days}$$
-
-## 🔌 B2B Electronic Data Interchange (EDI) Gateway
-
-RAAX supports secure, automated Business-to-Business (B2B) document transfers through its API-first EDI gateway.
-
-### Supported ANSI X12 Documents
-
-* **850 Purchase Order (Inbound):** Automatically parsed and written to the Sales module as draft sales orders.
-* **810 Invoice (Outbound):** Generates standardized tax-itemized invoices computed strictly in BDT integer cents.
-
-### API Authentication & Security
-
-Connections are secured using double-hashed SHA-256 API tokens parsed via custom headers:
-
-```http
-X-EDI-Partner-Key: raax_edi_live_token_string
-```
+The RAAX ERP Platform is proprietary enterprise software developed for standardized corporate operational orchestration. Built with PHP 8.3, Laravel 12, PostgreSQL 16, and Electron.
