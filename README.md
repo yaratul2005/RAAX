@@ -1,7 +1,7 @@
 # RAAX Enterprise Resource Planning Platform
 
 <p align="center">
-  <img src="public/images/govt-logo.png" width="140" alt="Government of Bangladesh & National Board of Revenue Seal" />
+  <img src="public/images/govt-logo.png" width="500" alt="Government of Bangladesh & National Board of Revenue Seal" />
   <br>
   <strong>Government Approved Statutory NBR VAT Compliance & Enterprise Resource Planning Platform</strong>
 </p>
