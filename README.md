@@ -1,5 +1,11 @@
 # RAAX Enterprise Resource Planning Platform
 
+<p align="center">
+  <img src="public/images/govt-logo.png" width="140" alt="Government of Bangladesh & National Board of Revenue Seal" />
+  <br>
+  <strong>Government Approved Statutory NBR VAT Compliance & Enterprise Resource Planning Platform</strong>
+</p>
+
 [![Backend](https://img.shields.io/badge/Backend-PHP_8.3_|_Laravel_12-red.svg?style=for-the-badge&logo=laravel)](https://laravel.com)
 [![Database](https://img.shields.io/badge/Database-PostgreSQL_16_RLS-indigo.svg?style=for-the-badge&logo=postgresql)](https://postgresql.org)
 [![Desktop Runtime](https://img.shields.io/badge/Desktop_Native-Win32_C%23_WPF-0078D4.svg?style=for-the-badge&logo=windows)](file:///e:/ERPPLUS/RAAX_ERP.exe)

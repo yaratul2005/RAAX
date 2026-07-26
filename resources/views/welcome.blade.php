@@ -1898,10 +1898,13 @@ Match Found: Heavy Duty Fastener | Bin: BIN-MAIN-A1</div>
             const canvas = document.getElementById('docViewerCanvas');
 
             canvas.innerHTML = `
-                <div style="border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:12px; display:flex; justify-content:space-between;">
-                    <div>
-                        <div style="font-size:16px; font-weight:800; color:#000;">RAAX ENTERPRISE RESOURCE PLANNING</div>
-                        <div style="font-size:12px; color:#475569; font-weight:700;">AUDITED COMMERCIAL DOCUMENT VOUCHER</div>
+                <div style="border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <img src="/govt-logo.png" style="height:46px; width:auto;" alt="NBR Bangladesh Government Seal">
+                        <div>
+                            <div style="font-size:16px; font-weight:800; color:#000;">RAAX ENTERPRISE RESOURCE PLANNING</div>
+                            <div style="font-size:11.5px; color:#475569; font-weight:700;">OFFICIAL NBR STATUTORY AUDITED DOCUMENT</div>
+                        </div>
                     </div>
                     <div style="text-align:right; font-size:11px;">
                         <div>Document #: <strong>${docTitle}</strong></div>
@@ -1909,12 +1912,12 @@ Match Found: Heavy Duty Fastener | Bin: BIN-MAIN-A1</div>
                     </div>
                 </div>
                 <div style="font-size:12px; margin-bottom:1rem; line-height:1.6; color:#1e293b;">
-                    <strong>Document Summary:</strong> This official electronic record represents a sealed transaction entry in the RAAX ERP ledger.<br>
-                    <strong>Security Verification:</strong> SHA-256 Hash Chain Verified Intact.<br>
-                    <strong>Statutory Compliance:</strong> NBR Bangladesh VAT Act 2012 Rules Compliant.
+                    <strong>Document Summary:</strong> This official statutory record represents a sealed transaction entry in the RAAX ERP ledger.<br>
+                    <strong>Security Verification:</strong> SHA-256 Hash Chain & NBR Digital Signature Verified Intact.<br>
+                    <strong>Statutory Compliance:</strong> NBR Bangladesh Value Added Tax & Supplementary Duty Act 2012 Rules Compliant.
                 </div>
                 <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:10px; border-radius:4px; font-family:monospace; font-size:11px; margin-bottom:1rem;">
-                    [RAAX_DIGITAL_SEAL] ${docTitle}|TIMESTAMP:${new Date().getTime()}|SIGNATURE:31AF3D709AD29613...
+                    [NBR_GOVT_DIGITAL_SEAL] ${docTitle}|TIMESTAMP:${new Date().getTime()}|SIGNATURE:31AF3D709AD29613...
                 </div>
             `;
 

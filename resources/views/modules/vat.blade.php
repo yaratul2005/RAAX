@@ -2,9 +2,12 @@
 <div id="view-vat" class="view-panel">
     <!-- Statutory VAT Return & Certificate Action Toolbar -->
     <div class="stagger-1" style="display:flex; justify-content:space-between; align-items:center; background:var(--card-bg); border:1px solid var(--border-subtle); padding:0.85rem 1rem; border-radius:6px; margin-bottom:1.25rem; flex-wrap:wrap; gap:10px;">
-        <div>
-            <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">NBR Bangladesh Statutory VAT Engine</div>
-            <div style="font-size:12.5px; font-weight:600; color:var(--text-pure); margin-top:2px;">BIN: <span class="mono">1899201928301</span> | Current Period: <span class="mono">2026-07</span> | Net Tax Payable: <span class="mono" style="color:var(--orange-brand); font-weight:700;">BDT 65,869.57</span></div>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <img src="/govt-logo.png" style="height:42px; width:auto; border-radius:4px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));" alt="NBR Bangladesh Government Seal">
+            <div>
+                <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">NBR Bangladesh Statutory VAT Engine</div>
+                <div style="font-size:12.5px; font-weight:600; color:var(--text-pure); margin-top:2px;">BIN: <span class="mono">1899201928301</span> | Current Period: <span class="mono">2026-07</span> | Net Tax Payable: <span class="mono" style="color:var(--orange-brand); font-weight:700;">BDT 65,869.57</span></div>
+            </div>
         </div>
         <div style="display:flex; gap:6px;">
             <button class="btn btn-outline btn-sm" onclick="document.getElementById('vdsCertificateModal').classList.add('open')"><i class="fa-solid fa-file-shield"></i> Issue Mushak 6.6 VDS</button>
