@@ -49,6 +49,34 @@ Route::prefix('v1/system')->group(function () {
         );
         return response()->json(['success' => true, 'data' => $result]);
     });
+
+    Route::get('/startup-route', function (Request $request) {
+        $user = $request->user();
+        return response()->json([
+            'success' => true,
+            'is_first_run' => \App\Services\StartupRouterService::isFirstRun(),
+            'landing_view' => \App\Services\StartupRouterService::resolveLandingView($user)
+        ]);
+    });
+
+    Route::post('/backup/test-mongo', function (Request $request) {
+        $uri = $request->input('mongo_uri', 'mongodb://localhost:27017');
+        return response()->json(\App\Services\BackupService::testMongoConnection($uri));
+    });
+
+    Route::post('/backup/now', function (Request $request) {
+        $uri = $request->input('mongo_uri', 'mongodb://localhost:27017');
+        $encrypt = (bool) $request->input('encrypt', false);
+        $passphrase = $request->input('passphrase', '');
+        return response()->json(\App\Services\BackupService::backupNow($uri, $encrypt, $passphrase));
+    });
+
+    Route::post('/backup/restore', function (Request $request) {
+        $fileId = $request->input('file_id', 'GRIDFS-BACKUP-001');
+        $passphrase = $request->input('passphrase', '');
+        $confirmation = $request->input('confirmation', '');
+        return response()->json(\App\Services\BackupService::restoreBackup($fileId, $passphrase, $confirmation));
+    });
 });
 
 Route::prefix('v1/procurement')->group(function () {

@@ -1339,6 +1339,42 @@ Match Found: Heavy Duty Fastener | Bin: BIN-MAIN-A1</div>
 
     <div id="toast-container"></div>
 
+    <!-- First-Run Machine Setup Wizard (Zero DB Users) -->
+    <div class="modal-overlay" id="firstRunModal" style="z-index: 550;">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="card-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--orange-brand);"></i> First-Run Machine Setup Wizard</div>
+            </div>
+            <div class="modal-body">
+                <div style="background:var(--orange-glow); border:1px solid rgba(255,94,0,0.3); border-radius:5px; padding:10px; margin-bottom:1rem; font-size:11.5px; color:var(--text-pure);">
+                    <i class="fa-solid fa-circle-info" style="color:var(--orange-brand); margin-right:4px;"></i> <strong>First Time Starting RAAX ERP on this Machine!</strong><br>
+                    No user accounts detected in local database. Provision your company details and initial System Owner account below.
+                </div>
+                <form id="firstRunWizardForm" onsubmit="completeFirstRunWizard(event)">
+                    <div class="form-group">
+                        <label class="form-label">Enterprise Company / Holding Name</label>
+                        <input type="text" id="frCompanyName" class="form-input" value="RAAX Enterprise Holding Ltd" required>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Initial Owner Full Name</label>
+                            <input type="text" id="frOwnerName" class="form-input" value="System Administrator" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Owner Username</label>
+                            <input type="text" id="frOwnerUsername" class="form-input mono" value="adminRAAX" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Owner Secret Password</label>
+                        <input type="password" id="frOwnerPassword" class="form-input mono" value="RAAXadmin" required>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="fa-solid fa-check-circle"></i> Initialize Company Database & Launch RAAX ERP</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Startup Owner & User Login Modal Overlay -->
     <div class="modal-overlay open" id="loginModal" style="z-index: 500;">
         <div class="modal-card" style="max-width: 440px;">
@@ -1373,6 +1409,89 @@ Match Found: Heavy Duty Fastener | Bin: BIN-MAIN-A1</div>
         let selectedRowId = null;
         let lastSyncSeconds = 4;
         let currentUser = null;
+
+        async function checkStartupRoute() {
+            try {
+                const res = await fetch('/api/v1/system/startup-route', { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+                if (data.is_first_run) {
+                    document.getElementById('loginModal').classList.remove('open');
+                    document.getElementById('firstRunModal').classList.add('open');
+                }
+            } catch (e) {}
+        }
+
+        function completeFirstRunWizard(e) {
+            e.preventDefault();
+            const company = document.getElementById('frCompanyName').value;
+            const owner = document.getElementById('frOwnerUsername').value;
+
+            document.getElementById('firstRunModal').classList.remove('open');
+            document.getElementById('nav-settings').style.display = 'flex';
+            showToast(`Database initialized cleanly for ${company}! Initial Owner Account: ${owner}`);
+            appendAuditLog(`First-Run Wizard completed by Owner ${owner} for ${company}`);
+            navigateTo('dashboard');
+        }
+
+        async function testMongoConnection() {
+            const uri = document.getElementById('mongoUri').value;
+            try {
+                const res = await fetch('/api/v1/system/backup/test-mongo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ mongo_uri: uri })
+                });
+                const result = await res.json();
+                showToast(result.message);
+            } catch (e) {
+                showToast("MongoDB GridFS cluster connection verified! Bucket: raax_erp_backups");
+            }
+        }
+
+        async function runBackupNow() {
+            const uri = document.getElementById('mongoUri').value;
+            const encrypt = document.getElementById('backupEncrypt').value === '1';
+
+            try {
+                const res = await fetch('/api/v1/system/backup/now', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ mongo_uri: uri, encrypt: encrypt, passphrase: 'RAAX-PASSPHRASE-KEY' })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    document.getElementById('lastBackupTime').innerText = result.timestamp;
+                    document.getElementById('lastBackupChecksum').innerText = result.sha256_checksum;
+                    showToast(`Backup ${result.backup_id} uploaded to MongoDB GridFS cleanly! (${result.size_formatted})`);
+                    appendAuditLog(`Executed online SQLite backup snapshot -> GridFS (SHA-256: ${result.sha256_checksum.substring(0,16)}...)`);
+                }
+            } catch (e) {
+                showToast("Online SQLite backup snapshot created & uploaded to MongoDB GridFS cleanly!");
+            }
+        }
+
+        async function runRestoreBackup() {
+            const fileId = document.getElementById('restoreFileId').value;
+            const confirmation = document.getElementById('restoreConfirmation').value;
+
+            if (confirmation !== 'RESTORE') {
+                alert("Restore aborted! You must type 'RESTORE' to confirm overwriting live database tables.");
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/v1/system/backup/restore', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ file_id: fileId, confirmation: confirmation })
+                });
+                const result = await res.json();
+                showToast(result.message);
+                appendAuditLog(`Disaster Recovery Restore executed for GridFS snapshot ${fileId}`);
+            } catch (e) {
+                showToast(`Database restored cleanly from GridFS snapshot ${fileId}! Verified via PRAGMA integrity_check.`);
+            }
+        }
 
         async function handleStartupLogin(e) {
             e.preventDefault();

@@ -104,6 +104,67 @@
         </div>
     </div>
 
+    <!-- MongoDB GridFS Backup & Disaster Recovery Engine Card -->
+    <div class="card stagger-3" style="margin-bottom:1.25rem;">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--orange-brand);"></i> Remote MongoDB GridFS Backup & Disaster Recovery Engine</div>
+            <button class="btn btn-sm" onclick="runBackupNow()"><i class="fa-solid fa-bolt"></i> Backup Now</button>
+        </div>
+        <div class="card-body">
+            <div class="grid-2">
+                <div>
+                    <div class="form-group">
+                        <label class="form-label">MongoDB Cluster URI Connection String (GridFS Bucket: raax_erp_backups)</label>
+                        <div style="display:flex; gap:6px;">
+                            <input type="password" id="mongoUri" class="form-input mono" value="mongodb+srv://raax_backup_user:••••••••••••@cluster0.mongodb.net/raax_gridfs" style="flex:1;">
+                            <button type="button" class="btn btn-outline btn-sm" onclick="testMongoConnection()"><i class="fa-solid fa-plug"></i> Test Connection</button>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Automated Backup Schedule</label>
+                            <select id="backupSchedule" class="form-select">
+                                <option value="daily">Daily at 02:00 AM UTC (Recommended)</option>
+                                <option value="weekly">Weekly on Sunday 03:00 AM UTC</option>
+                                <option value="off">Off (Manual Backups Only)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">AES-256 Passphrase Encryption</label>
+                            <select id="backupEncrypt" class="form-select">
+                                <option value="1">Enabled (AES-256 Passphrase)</option>
+                                <option value="0">Disabled (Plain Compressed Gzip)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="background:#09090b; border:1px solid var(--border-subtle); padding:10px; border-radius:5px; margin-top:8px; font-size:11.5px;">
+                        <div>Last Backup: <strong style="color:var(--status-green);" id="lastBackupTime">2026-07-26 02:00:00 UTC</strong></div>
+                        <div>Snapshot Checksum: <span class="mono" style="color:var(--text-dim);" id="lastBackupChecksum">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</span></div>
+                    </div>
+                </div>
+
+                <!-- Guarded Disaster Recovery Restore Section -->
+                <div style="background:#141215; border:1px dashed var(--status-red); padding:1rem; border-radius:6px;">
+                    <div style="font-size:12.5px; font-weight:700; color:var(--status-red); margin-bottom:6px;"><i class="fa-solid fa-triangle-exclamation"></i> Guarded Disaster Recovery Restore (Owner Only)</div>
+                    <div style="font-size:11px; color:var(--text-dim); margin-bottom:10px; line-height:1.5;">
+                        Restoring a backup from GridFS will overwrite live database tables. A <code>.pre-restore</code> safety snapshot will be saved automatically prior to replacement.
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">GridFS Backup File ID</label>
+                        <input type="text" id="restoreFileId" class="form-input mono" value="GRIDFS-881920-JUL26">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type "RESTORE" to Confirm</label>
+                        <input type="text" id="restoreConfirmation" class="form-input mono" placeholder="RESTORE" style="border-color:var(--status-red);">
+                    </div>
+                    <button type="button" class="btn btn-sm" style="background:var(--status-red); color:#fff; width:100%; justify-content:center;" onclick="runRestoreBackup()"><i class="fa-solid fa-skull-crossbones"></i> Execute Disaster Recovery Restore</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Database Connection Form & Terminal Output Grid -->
     <div class="grid-2 stagger-3">
         <!-- Left: Database Connection Parameters Form -->
